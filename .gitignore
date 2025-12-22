@@ -1,0 +1,41 @@
+# Claude Code
+.claude/
+
+# Build outputs (all modules)
+**/build/
+build/
+
+# Gradle
+.gradle/
+!gradle/wrapper/gradle-wrapper.jar
+
+# IDE
+.idea/
+*.iml
+
+# Local configuration
+local.properties
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Kotlin
+.kotlin/
+.konan/
+kotlin-js-store/
+
+# Android
+*.hprof
+*.log
+.externalNativeBuild/
+.cxx/
+captures/
+
+# iOS
+iosApp/iosApp.xcodeproj/project.xcworkspace/
+iosApp/iosApp.xcodeproj/xcuserdata/
+iosApp/Pods/
+iosApp/build/
+*.xcuserstate
+DerivedData/
