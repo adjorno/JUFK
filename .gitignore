@@ -31,6 +31,8 @@ kotlin-js-store/
 .externalNativeBuild/
 .cxx/
 captures/
+*.jks
+*.keystore
 
 # iOS
 iosApp/iosApp.xcodeproj/project.xcworkspace/
@@ -39,3 +41,12 @@ iosApp/Pods/
 iosApp/build/
 *.xcuserstate
 DerivedData/
+
+# Fastlane
+fastlane/report.xml
+fastlane/Preview.html
+fastlane/screenshots/
+fastlane/test_output/
+fastlane/readme.md
+vendor/bundle/
+Gemfile.lock
