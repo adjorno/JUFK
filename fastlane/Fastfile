@@ -30,11 +30,11 @@ platform :android do
       begin
         version_codes = google_play_track_version_codes(
           track: "internal",
-          json_key_data: ENV["PLAY_SERVICE_ACCOUNT_JSON"],
-          package_name: "com.ifochka.jufk"
+          json_key_data: ENV["PLAY_SERVICE_ACCOUNT_JSON"]
         )
         version_code = (version_codes.max || 0) + 1
-      rescue
+      rescue => e
+        UI.message("Failed to get version code from Play Store, defaulting to 1. Error: #{e.message}")
         version_code = 1
       end
     end
@@ -49,7 +49,7 @@ platform :android do
       properties: {
         "android.injected.signing.store.file" => ENV["KEYSTORE_PATH"],
         "android.injected.signing.store.password" => ENV["KEYSTORE_PASSWORD"],
-        "android.injected.signing.key.alias" => "jufk",
+        "android.injected.signing.key.alias" => ENV["KEY_ALIAS"],
         "android.injected.signing.key.password" => ENV["KEY_PASSWORD"],
         "VERSION_NAME" => version_name,
         "VERSION_CODE" => version_code.to_s
@@ -60,48 +60,34 @@ platform :android do
     lane_context[:VERSION_CODE] = version_code
   end
 
-  desc "Deploy to Play Store internal track"
-  lane :internal do
+  desc "Deploy to a specific Play Store track"
+  private_lane :deploy_to_track do |options|
     build
     upload_to_play_store(
-      track: "internal",
+      track: options[:track],
       aab: "../androidApp/build/outputs/bundle/release/androidApp-release.aab",
-      json_key_data: ENV["PLAY_SERVICE_ACCOUNT_JSON"],
-      package_name: "com.ifochka.jufk"
+      json_key_data: ENV["PLAY_SERVICE_ACCOUNT_JSON"]
     )
+  end
+
+  desc "Deploy to Play Store internal track"
+  lane :internal do
+    deploy_to_track(track: "internal")
   end
 
   desc "Deploy to Play Store alpha track"
   lane :alpha do
-    build
-    upload_to_play_store(
-      track: "alpha",
-      aab: "../androidApp/build/outputs/bundle/release/androidApp-release.aab",
-      json_key_data: ENV["PLAY_SERVICE_ACCOUNT_JSON"],
-      package_name: "com.ifochka.jufk"
-    )
+    deploy_to_track(track: "alpha")
   end
 
   desc "Deploy to Play Store beta track"
   lane :beta do
-    build
-    upload_to_play_store(
-      track: "beta",
-      aab: "../androidApp/build/outputs/bundle/release/androidApp-release.aab",
-      json_key_data: ENV["PLAY_SERVICE_ACCOUNT_JSON"],
-      package_name: "com.ifochka.jufk"
-    )
+    deploy_to_track(track: "beta")
   end
 
   desc "Deploy to Play Store production"
   lane :production do
-    build
-    upload_to_play_store(
-      track: "production",
-      aab: "../androidApp/build/outputs/bundle/release/androidApp-release.aab",
-      json_key_data: ENV["PLAY_SERVICE_ACCOUNT_JSON"],
-      package_name: "com.ifochka.jufk"
-    )
+    deploy_to_track(track: "production")
   end
 end
 
@@ -116,10 +102,10 @@ platform :ios do
     unless build_number
       begin
         build_number = latest_testflight_build_number(
-          api_key_path: ENV["APP_STORE_CONNECT_API_KEY_PATH"],
-          app_identifier: "com.ifochka.jufk"
+          api_key_path: ENV["APP_STORE_CONNECT_API_KEY_PATH"]
         ) + 1
-      rescue
+      rescue => e
+        UI.message("Failed to get build number from TestFlight, defaulting to 1. Error: #{e.message}")
         build_number = 1
       end
     end
@@ -144,7 +130,7 @@ platform :ios do
       export_method: "app-store",
       export_options: {
         provisioningProfiles: {
-          "com.ifochka.jufk" => ENV["PROVISIONING_PROFILE_NAME"]
+          CredentialsManager::AppfileConfig.try_fetch_value(:app_identifier) => ENV["PROVISIONING_PROFILE_NAME"]
         }
       }
     )
@@ -177,7 +163,6 @@ platform :ios do
   lane :certificates do
     match(
       type: "appstore",
-      app_identifier: "com.ifochka.jufk",
       readonly: true
     )
   end
