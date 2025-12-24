@@ -1,0 +1,184 @@
+default_platform(:android)
+
+# Helper to extract version from git tag or branch
+def get_version_name
+  # Try to get version from git tag (e.g., v1.2.3 -> 1.2.3)
+  tag = `git describe --tags --abbrev=0 2>/dev/null`.strip
+  if tag =~ /^v?(\d+\.\d+\.\d+)/
+    return $1
+  end
+
+  # Try to get from branch name (e.g., release/1.2.3 -> 1.2.3)
+  branch = `git rev-parse --abbrev-ref HEAD`.strip
+  if branch =~ /(\d+\.\d+\.\d+)/
+    return $1
+  end
+
+  # Fallback
+  "1.0.0"
+end
+
+# Android lanes
+platform :android do
+  desc "Build release AAB"
+  lane :build do |options|
+    version_name = options[:version] || get_version_name
+
+    # Get next version code from Play Store
+    version_code = options[:version_code]
+    unless version_code
+      begin
+        version_codes = google_play_track_version_codes(
+          track: "internal",
+          json_key_data: ENV["PLAY_SERVICE_ACCOUNT_JSON"],
+          package_name: "com.ifochka.jufk"
+        )
+        version_code = (version_codes.max || 0) + 1
+      rescue
+        version_code = 1
+      end
+    end
+
+    UI.message("Building version #{version_name} (#{version_code})")
+
+    gradle(
+      task: "bundle",
+      build_type: "Release",
+      project_dir: "..",
+      gradle_path: "../gradlew",
+      properties: {
+        "android.injected.signing.store.file" => ENV["KEYSTORE_PATH"],
+        "android.injected.signing.store.password" => ENV["KEYSTORE_PASSWORD"],
+        "android.injected.signing.key.alias" => "jufk",
+        "android.injected.signing.key.password" => ENV["KEY_PASSWORD"],
+        "VERSION_NAME" => version_name,
+        "VERSION_CODE" => version_code.to_s
+      }
+    )
+
+    lane_context[:VERSION_NAME] = version_name
+    lane_context[:VERSION_CODE] = version_code
+  end
+
+  desc "Deploy to Play Store internal track"
+  lane :internal do
+    build
+    upload_to_play_store(
+      track: "internal",
+      aab: "../androidApp/build/outputs/bundle/release/androidApp-release.aab",
+      json_key_data: ENV["PLAY_SERVICE_ACCOUNT_JSON"],
+      package_name: "com.ifochka.jufk"
+    )
+  end
+
+  desc "Deploy to Play Store alpha track"
+  lane :alpha do
+    build
+    upload_to_play_store(
+      track: "alpha",
+      aab: "../androidApp/build/outputs/bundle/release/androidApp-release.aab",
+      json_key_data: ENV["PLAY_SERVICE_ACCOUNT_JSON"],
+      package_name: "com.ifochka.jufk"
+    )
+  end
+
+  desc "Deploy to Play Store beta track"
+  lane :beta do
+    build
+    upload_to_play_store(
+      track: "beta",
+      aab: "../androidApp/build/outputs/bundle/release/androidApp-release.aab",
+      json_key_data: ENV["PLAY_SERVICE_ACCOUNT_JSON"],
+      package_name: "com.ifochka.jufk"
+    )
+  end
+
+  desc "Deploy to Play Store production"
+  lane :production do
+    build
+    upload_to_play_store(
+      track: "production",
+      aab: "../androidApp/build/outputs/bundle/release/androidApp-release.aab",
+      json_key_data: ENV["PLAY_SERVICE_ACCOUNT_JSON"],
+      package_name: "com.ifochka.jufk"
+    )
+  end
+end
+
+# iOS lanes
+platform :ios do
+  desc "Build iOS app"
+  lane :build do |options|
+    version_name = options[:version] || get_version_name
+
+    # Get next build number from TestFlight
+    build_number = options[:build_number]
+    unless build_number
+      begin
+        build_number = latest_testflight_build_number(
+          api_key_path: ENV["APP_STORE_CONNECT_API_KEY_PATH"],
+          app_identifier: "com.ifochka.jufk"
+        ) + 1
+      rescue
+        build_number = 1
+      end
+    end
+
+    UI.message("Building version #{version_name} (#{build_number})")
+
+    increment_version_number(
+      version_number: version_name,
+      xcodeproj: "../iosApp/iosApp.xcodeproj"
+    )
+
+    increment_build_number(
+      build_number: build_number,
+      xcodeproj: "../iosApp/iosApp.xcodeproj"
+    )
+
+    build_app(
+      workspace: "../iosApp/iosApp.xcworkspace",
+      scheme: "iosApp",
+      output_directory: "../iosApp/build",
+      output_name: "JUFK.ipa",
+      export_method: "app-store",
+      export_options: {
+        provisioningProfiles: {
+          "com.ifochka.jufk" => ENV["PROVISIONING_PROFILE_NAME"]
+        }
+      }
+    )
+
+    lane_context[:VERSION_NAME] = version_name
+    lane_context[:BUILD_NUMBER] = build_number
+  end
+
+  desc "Deploy to TestFlight"
+  lane :testflight_upload do
+    build
+    upload_to_testflight(
+      api_key_path: ENV["APP_STORE_CONNECT_API_KEY_PATH"],
+      skip_waiting_for_build_processing: true
+    )
+  end
+
+  desc "Deploy to App Store"
+  lane :release do
+    build
+    upload_to_app_store(
+      api_key_path: ENV["APP_STORE_CONNECT_API_KEY_PATH"],
+      skip_screenshots: true,
+      skip_metadata: false,
+      submit_for_review: false
+    )
+  end
+
+  desc "Sync certificates with Match"
+  lane :certificates do
+    match(
+      type: "appstore",
+      app_identifier: "com.ifochka.jufk",
+      readonly: true
+    )
+  end
+end

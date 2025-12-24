@@ -1,0 +1,9 @@
+# Android
+json_key_file(ENV["PLAY_SERVICE_ACCOUNT_JSON_PATH"])
+package_name("com.ifochka.jufk")
+
+# iOS
+app_identifier("com.ifochka.jufk")
+apple_id(ENV["APPLE_ID"])
+team_id(ENV["TEAM_ID"])
+itc_team_id(ENV["ITC_TEAM_ID"])
