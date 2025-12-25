@@ -1,6 +1,9 @@
 name: Deploy Android to Play Store
 
 on:
+  push:
+    branches:
+      - main
   workflow_dispatch:
     inputs:
       track:
@@ -48,4 +51,4 @@ jobs:
           PLAY_SERVICE_ACCOUNT_JSON: ${{ secrets.PLAY_SERVICE_ACCOUNT_JSON }}
         run: |
           cd fastlane
-          bundle exec fastlane android ${{ inputs.track }}
+          bundle exec fastlane android ${{ inputs.track || 'internal' }}

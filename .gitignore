@@ -35,6 +35,10 @@ captures/
 *.keystore
 /androidApp/release/
 
+# Google Play Service Account
+*-service-account*.json
+*-gserviceaccount.json
+
 # iOS
 iosApp/iosApp.xcodeproj/project.xcworkspace/
 iosApp/iosApp.xcodeproj/xcuserdata/
