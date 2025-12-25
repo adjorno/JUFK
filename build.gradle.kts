@@ -13,7 +13,7 @@ subprojects {
     apply(plugin = "org.jlleitschuh.gradle.ktlint")
 
     configure<org.jlleitschuh.gradle.ktlint.KtlintExtension> {
-        ktlintVersion.set("1.7.1")
+        version.set("1.7.1")
         android.set(true)
         outputColorName.set("RED")
         filter {
