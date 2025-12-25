@@ -1,5 +1,6 @@
 package com.ifochka.jufk
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -14,11 +15,36 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.ifochka.jufk.theme.JUFKTheme
+
+private const val WEBSITE_URL = "https://justusefuckingkotlin.com"
+private const val GITHUB_URL = "https://github.com/adjorno/JUFK"
+private const val PLAY_STORE_URL = "https://play.google.com/store/apps/details?id=com.ifochka.jufk"
+
+@Composable
+private fun LinkText(
+    text: String,
+    url: String,
+    modifier: Modifier = Modifier,
+) {
+    val uriHandler = LocalUriHandler.current
+
+    Text(
+        text = text,
+        fontSize = 14.sp,
+        color = MaterialTheme.colorScheme.primary,
+        textAlign = TextAlign.Center,
+        modifier =
+            modifier.clickable {
+                uriHandler.openUri(url)
+            },
+    )
+}
 
 @Composable
 fun App() {
@@ -111,29 +137,23 @@ fun App() {
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                Text(
+                LinkText(
                     text = "🌐 justusefuckingkotlin.com",
-                    fontSize = 14.sp,
-                    color = MaterialTheme.colorScheme.primary,
-                    textAlign = TextAlign.Center,
+                    url = WEBSITE_URL,
                 )
 
                 Spacer(modifier = Modifier.height(8.dp))
 
-                Text(
+                LinkText(
                     text = "📱 Google Play Store",
-                    fontSize = 14.sp,
-                    color = MaterialTheme.colorScheme.primary,
-                    textAlign = TextAlign.Center,
+                    url = PLAY_STORE_URL,
                 )
 
                 Spacer(modifier = Modifier.height(8.dp))
 
-                Text(
+                LinkText(
                     text = "💻 github.com/adjorno/JUFK",
-                    fontSize = 14.sp,
-                    color = MaterialTheme.colorScheme.primary,
-                    textAlign = TextAlign.Center,
+                    url = GITHUB_URL,
                 )
 
                 Spacer(modifier = Modifier.height(24.dp))
