@@ -12,7 +12,7 @@ plugins {
 kotlin {
     androidLibrary {
         namespace = "com.ifochka.jufk"
-        compileSdk = 35
+        compileSdk = 36
         minSdk = 24
 
         compilerOptions {
