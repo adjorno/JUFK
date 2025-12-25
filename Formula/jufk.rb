@@ -1,16 +1,16 @@
 class Jufk < Formula
   desc "Kotlin Multiplatform CLI - One language, one codebase, every platform"
   homepage "https://github.com/adjorno/JUFK"
-  version "0.1.0"
+  version "0.1.3"
   license "MIT"
 
   on_macos do
     if Hardware::CPU.arm?
       url "https://github.com/adjorno/JUFK/releases/download/v#{version}/jufk-macos-arm64"
-      sha256 "baede8f1b26fad289c615327081d8a6da7edf789b73d566d5c6313d9f6c1fc7b"
+      sha256 "4a18c188a4095f3d01e1276b12f8965e00d4dadb826c8d2ecf543da8b18510ba"
     else
       url "https://github.com/adjorno/JUFK/releases/download/v#{version}/jufk-macos-x64"
-      sha256 "36f65bcafa507246c538e493406e60b8040dcc226c975fd30b32986da7a52c9b"
+      sha256 "052ed08500ad47acd82936bbf8018c19af859697306edac4dfeb4b4f411a085d"
     end
   end
 
