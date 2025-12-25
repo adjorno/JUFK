@@ -2,8 +2,8 @@ name: Release CLI
 
 on:
   push:
-    tags:
-      - 'v*'
+    branches:
+      - 'release/*'
 
 jobs:
   build-macos:
@@ -98,16 +98,55 @@ jobs:
           name: jufk-windows-x64.exe
           path: jufk-windows-x64.exe
 
-  release:
+  update-formula-and-release:
     needs: [build-macos, build-linux, build-windows]
     runs-on: ubuntu-latest
     permissions:
       contents: write
     steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref }}
+
       - name: Download all artifacts
         uses: actions/download-artifact@v4
         with:
           path: artifacts
+
+      - name: Extract version from branch name
+        id: version
+        run: |
+          VERSION="${GITHUB_REF_NAME#release/}"
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "tag=v$VERSION" >> $GITHUB_OUTPUT
+
+      - name: Update formula with new hashes
+        run: |
+          VERSION="${{ steps.version.outputs.version }}"
+          SHA_MACOS_ARM64=$(sha256sum artifacts/jufk-macos-arm64/jufk-macos-arm64 | cut -d' ' -f1)
+          SHA_MACOS_X64=$(sha256sum artifacts/jufk-macos-x64/jufk-macos-x64 | cut -d' ' -f1)
+          SHA_LINUX_X64=$(sha256sum artifacts/jufk-linux-x64/jufk-linux-x64 | cut -d' ' -f1)
+
+          sed -i "s/version \".*\"/version \"$VERSION\"/" Formula/jufk.rb
+          sed -i "/jufk-macos-arm64/{n;s/sha256 \"[a-f0-9]*\"/sha256 \"$SHA_MACOS_ARM64\"/}" Formula/jufk.rb
+          sed -i "/jufk-macos-x64/{n;s/sha256 \"[a-f0-9]*\"/sha256 \"$SHA_MACOS_X64\"/}" Formula/jufk.rb
+          sed -i "/jufk-linux-x64/{n;s/sha256 \"[a-f0-9]*\"/sha256 \"$SHA_LINUX_X64\"/}" Formula/jufk.rb
+
+          echo "Updated formula:"
+          cat Formula/jufk.rb
+
+      - name: Commit formula update
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add Formula/jufk.rb
+          git commit -m "Update Homebrew formula for ${{ steps.version.outputs.tag }}"
+          git push
+
+      - name: Create tag
+        run: |
+          git tag ${{ steps.version.outputs.tag }}
+          git push origin ${{ steps.version.outputs.tag }}
 
       - name: Prepare release files
         run: |
@@ -121,47 +160,14 @@ jobs:
       - name: Create Release
         uses: softprops/action-gh-release@v2
         with:
+          tag_name: ${{ steps.version.outputs.tag }}
           files: release/*
           generate_release_notes: true
           draft: false
 
-  update-formula:
-    needs: [release]
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write
-      pull-requests: write
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          ref: main
-
-      - name: Download release artifacts
-        uses: actions/download-artifact@v4
-        with:
-          path: artifacts
-
-      - name: Update formula with new hashes
+      - name: Merge to main
         run: |
-          VERSION="${GITHUB_REF_NAME#v}"
-          SHA_MACOS_ARM64=$(sha256sum artifacts/jufk-macos-arm64/jufk-macos-arm64 | cut -d' ' -f1)
-          SHA_MACOS_X64=$(sha256sum artifacts/jufk-macos-x64/jufk-macos-x64 | cut -d' ' -f1)
-          SHA_LINUX_X64=$(sha256sum artifacts/jufk-linux-x64/jufk-linux-x64 | cut -d' ' -f1)
-
-          sed -i "s/version \".*\"/version \"$VERSION\"/" Formula/jufk.rb
-          sed -i "/jufk-macos-arm64/{n;s/sha256 \"[a-f0-9]*\"/sha256 \"$SHA_MACOS_ARM64\"/}" Formula/jufk.rb
-          sed -i "/jufk-macos-x64/{n;s/sha256 \"[a-f0-9]*\"/sha256 \"$SHA_MACOS_X64\"/}" Formula/jufk.rb
-          sed -i "/jufk-linux-x64/{n;s/sha256 \"[a-f0-9]*\"/sha256 \"$SHA_LINUX_X64\"/}" Formula/jufk.rb
-
-      - name: Create Pull Request
-        uses: peter-evans/create-pull-request@v7
-        with:
-          commit-message: "Update Homebrew formula for ${{ github.ref_name }}"
-          title: "Update Homebrew formula for ${{ github.ref_name }}"
-          body: |
-            Automated PR to update Homebrew formula with new SHA256 hashes.
-
-            Release: ${{ github.ref_name }}
-          branch: update-formula-${{ github.ref_name }}
-          delete-branch: true
-          add-paths: Formula/
+          git checkout main
+          git pull origin main
+          git merge ${{ github.ref_name }} -m "Merge ${{ github.ref_name }} into main"
+          git push origin main
