@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="1024" height="500" viewBox="0 0 1024 500" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background gradient -->
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#7F52FF;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#5C3AB8;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+
+  <rect width="1024" height="500" fill="url(#bg)"/>
+
+  <!-- Large K icon on left -->
+  <g transform="translate(80, 150)">
+    <path fill="rgba(255,255,255,0.15)" d="M 0 0 L 0 200 L 40 200 L 40 100 L 80 200 L 130 200 L 70 100 L 120 0 L 70 0 L 40 80 L 40 0 Z" transform="scale(1.5)"/>
+  </g>
+
+  <!-- Main text -->
+  <text x="400" y="180" font-family="Arial, Helvetica, sans-serif" font-size="110" font-weight="bold" fill="white">
+    JUFK
+  </text>
+
+  <!-- Tagline -->
+  <text x="400" y="250" font-family="Arial, Helvetica, sans-serif" font-size="36" fill="rgba(255,255,255,0.9)">
+    Just Use Kotlin
+  </text>
+
+  <!-- Platform badges -->
+  <g transform="translate(400, 290)">
+    <!-- Android -->
+    <rect x="0" y="0" width="90" height="32" rx="16" fill="rgba(255,255,255,0.2)"/>
+    <text x="45" y="21" font-family="Arial" font-size="14" fill="white" text-anchor="middle">Android</text>
+
+    <!-- iOS -->
+    <rect x="100" y="0" width="60" height="32" rx="16" fill="rgba(255,255,255,0.2)"/>
+    <text x="130" y="21" font-family="Arial" font-size="14" fill="white" text-anchor="middle">iOS</text>
+
+    <!-- Web -->
+    <rect x="170" y="0" width="60" height="32" rx="16" fill="rgba(255,255,255,0.2)"/>
+    <text x="200" y="21" font-family="Arial" font-size="14" fill="white" text-anchor="middle">Web</text>
+
+    <!-- Desktop -->
+    <rect x="240" y="0" width="80" height="32" rx="16" fill="rgba(255,255,255,0.2)"/>
+    <text x="280" y="21" font-family="Arial" font-size="14" fill="white" text-anchor="middle">Desktop</text>
+  </g>
+
+  <!-- Subtitle -->
+  <text x="400" y="380" font-family="Arial, Helvetica, sans-serif" font-size="28" fill="rgba(255,255,255,0.8)">
+    One codebase. Every platform.
+  </text>
+</svg>
