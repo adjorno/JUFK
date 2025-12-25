@@ -66,15 +66,9 @@ fun App() {
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                val platforms =
-                    listOf(
-                        "Web (this page)",
-                        "Android",
-                        "iOS",
-                        "macOS",
-                        "Windows",
-                        "Linux",
-                    )
+                val platforms = Platform.supportedPlatforms.map {
+                    if (it == "Web") "$it (this page)" else it
+                }
 
                 platforms.forEach { platform ->
                     Text(
