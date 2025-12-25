@@ -33,6 +33,7 @@ kotlin-js-store/
 captures/
 *.jks
 *.keystore
+/androidApp/release/
 
 # iOS
 iosApp/iosApp.xcodeproj/project.xcworkspace/
