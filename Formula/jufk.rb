@@ -15,13 +15,8 @@ class Jufk < Formula
   end
 
   on_linux do
-    if Hardware::CPU.arm?
-      url "https://github.com/adjorno/JUFK/releases/download/v#{version}/jufk-linux-arm64"
-      sha256 "PLACEHOLDER_LINUX_ARM64"
-    else
-      url "https://github.com/adjorno/JUFK/releases/download/v#{version}/jufk-linux-x64"
-      sha256 "PLACEHOLDER_LINUX_X64"
-    end
+    url "https://github.com/adjorno/JUFK/releases/download/v#{version}/jufk-linux-x64"
+    sha256 "PLACEHOLDER_LINUX_X64"
   end
 
   def install
