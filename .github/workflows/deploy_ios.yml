@@ -52,16 +52,13 @@ jobs:
           MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
           MATCH_GIT_URL: ${{ secrets.MATCH_GIT_URL }}
           MATCH_GIT_BASIC_AUTHORIZATION: ${{ secrets.MATCH_GIT_BASIC_AUTHORIZATION }}
-        run: |
-          cd fastlane
-          bundle exec fastlane ios certificates
+        run: bundle exec fastlane ios certificates
 
       - name: Deploy to ${{ inputs.destination }}
         env:
           APP_STORE_CONNECT_API_KEY_PATH: ${{ github.workspace }}/api_key.json
           PROVISIONING_PROFILE_NAME: ${{ secrets.PROVISIONING_PROFILE_NAME }}
         run: |
-          cd fastlane
           if [ "${{ inputs.destination }}" = "testflight" ]; then
             bundle exec fastlane ios testflight_upload
           else
