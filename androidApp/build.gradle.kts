@@ -7,7 +7,7 @@ plugins {
 
 android {
     namespace = "com.ifochka.jufk.android"
-    compileSdk = 35
+    compileSdk = 36
 
     signingConfigs {
         create("release") {
@@ -50,6 +50,15 @@ android {
         compilerOptions {
             jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17)
         }
+    }
+
+    lint {
+        warningsAsErrors = true
+        abortOnError = true
+        checkDependencies = true
+        htmlReport = true
+        xmlReport = true
+        sarifReport = true
     }
 }
 
