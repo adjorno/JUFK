@@ -18,7 +18,7 @@ A Kotlin Multiplatform demo showing that a single codebase can target:
 ### Homebrew (macOS/Linux)
 
 ```bash
-brew install adjorno/jufk/jufk
+brew install --formula https://raw.githubusercontent.com/adjorno/JUFK/main/Formula/jufk.rb
 ```
 
 ### Direct Download
