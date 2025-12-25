@@ -131,6 +131,26 @@ fun App() {
                 Spacer(modifier = Modifier.height(48.dp))
 
                 Text(
+                    text = "Install the CLI:",
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Medium,
+                    color = MaterialTheme.colorScheme.onBackground,
+                    textAlign = TextAlign.Center,
+                )
+
+                Spacer(modifier = Modifier.height(12.dp))
+
+                Text(
+                    text = "brew tap adjorno/jufk https://github.com/adjorno/JUFK && brew install jufk",
+                    fontSize = 12.sp,
+                    color = MaterialTheme.colorScheme.secondary,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.padding(horizontal = 16.dp),
+                )
+
+                Spacer(modifier = Modifier.height(48.dp))
+
+                Text(
                     text = "Get the app:",
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Medium,
@@ -157,6 +177,16 @@ fun App() {
                 LinkText(
                     text = "💻 github.com/adjorno/JUFK",
                     url = GITHUB_URL,
+                )
+
+                Spacer(modifier = Modifier.height(24.dp))
+
+                Text(
+                    text = "⭐ Star us on GitHub to help get jufk into Homebrew core!",
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.Medium,
+                    color = MaterialTheme.colorScheme.primary.copy(alpha = 0.9f),
+                    textAlign = TextAlign.Center,
                 )
 
                 Spacer(modifier = Modifier.height(24.dp))
