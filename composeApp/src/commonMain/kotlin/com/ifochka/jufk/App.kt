@@ -15,10 +15,12 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -28,6 +30,7 @@ import com.ifochka.jufk.theme.JUFKTheme
 private const val WEBSITE_URL = "https://justusefuckingkotlin.com"
 private const val GITHUB_URL = "https://github.com/adjorno/JUFK"
 private const val PLAY_STORE_URL = "https://play.google.com/store/apps/details?id=com.ifochka.jufk"
+private const val BREW_INSTALL_COMMAND = "brew tap adjorno/jufk https://github.com/adjorno/JUFK && brew install jufk"
 
 @Composable
 private fun LinkText(
@@ -131,6 +134,29 @@ fun App() {
                 Spacer(modifier = Modifier.height(48.dp))
 
                 Text(
+                    text = "Install the CLI:",
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Medium,
+                    color = MaterialTheme.colorScheme.onBackground,
+                    textAlign = TextAlign.Center,
+                )
+
+                Spacer(modifier = Modifier.height(12.dp))
+
+                val clipboardManager = LocalClipboardManager.current
+                Text(
+                    text = BREW_INSTALL_COMMAND,
+                    fontSize = 12.sp,
+                    color = MaterialTheme.colorScheme.secondary,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier
+                        .padding(horizontal = 16.dp)
+                        .clickable { clipboardManager.setText(AnnotatedString(BREW_INSTALL_COMMAND)) },
+                )
+
+                Spacer(modifier = Modifier.height(48.dp))
+
+                Text(
                     text = "Get the app:",
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Medium,
@@ -157,6 +183,18 @@ fun App() {
                 LinkText(
                     text = "💻 github.com/adjorno/JUFK",
                     url = GITHUB_URL,
+                )
+
+                Spacer(modifier = Modifier.height(24.dp))
+
+                val uriHandler = LocalUriHandler.current
+                Text(
+                    text = "⭐ Star us on GitHub to help get jufk into Homebrew core!",
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.Medium,
+                    color = MaterialTheme.colorScheme.primary.copy(alpha = 0.9f),
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.clickable { uriHandler.openUri(GITHUB_URL) },
                 )
 
                 Spacer(modifier = Modifier.height(24.dp))
