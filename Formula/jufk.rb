@@ -1,25 +1,25 @@
 class Jufk < Formula
-  desc "Just Use Fucking Kotlin - One language, one codebase, every platform"
+  desc "Kotlin Multiplatform CLI - One language, one codebase, every platform"
   homepage "https://github.com/adjorno/JUFK"
   version "0.1.0"
   license "MIT"
 
   on_macos do
     if Hardware::CPU.arm?
-      url "https://github.com/adjorno/JUFK/releases/download/v0.1.0/jufk-macos-arm64"
+      url "https://github.com/adjorno/JUFK/releases/download/v#{version}/jufk-macos-arm64"
       sha256 "PLACEHOLDER_MACOS_ARM64"
     else
-      url "https://github.com/adjorno/JUFK/releases/download/v0.1.0/jufk-macos-x64"
+      url "https://github.com/adjorno/JUFK/releases/download/v#{version}/jufk-macos-x64"
       sha256 "PLACEHOLDER_MACOS_X64"
     end
   end
 
   on_linux do
     if Hardware::CPU.arm?
-      url "https://github.com/adjorno/JUFK/releases/download/v0.1.0/jufk-linux-arm64"
+      url "https://github.com/adjorno/JUFK/releases/download/v#{version}/jufk-linux-arm64"
       sha256 "PLACEHOLDER_LINUX_ARM64"
     else
-      url "https://github.com/adjorno/JUFK/releases/download/v0.1.0/jufk-linux-x64"
+      url "https://github.com/adjorno/JUFK/releases/download/v#{version}/jufk-linux-x64"
       sha256 "PLACEHOLDER_LINUX_X64"
     end
   end
@@ -30,6 +30,6 @@ class Jufk < Formula
   end
 
   test do
-    assert_match "Just Use Fucking Kotlin", shell_output("#{bin}/jufk")
+    assert_match "One language. One codebase. Every platform.", shell_output("#{bin}/jufk")
   end
 end

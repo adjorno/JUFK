@@ -44,7 +44,9 @@ Requires JDK 17+.
 ```bash
 # CLI (native binary)
 ./gradlew :cli:linkReleaseExecutableHost
-./cli/build/bin/*/releaseExecutable/jufk.kexe
+
+# Run the executable (path depends on your platform: macosArm64, macosX64, linuxX64, etc.)
+./cli/build/bin/macosArm64/releaseExecutable/jufk.kexe
 
 # Android
 ./gradlew :androidApp:assembleRelease
