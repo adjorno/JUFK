@@ -24,7 +24,7 @@ naming:
     ignoreAnnotated:
       - 'Composable'
   TopLevelPropertyNaming:
-    constantPattern: '[A-Z][A-Za-z0-9]*'
+    constantPattern: '[A-Z][A-Z_0-9]*'
 
 style:
   MagicNumber:
