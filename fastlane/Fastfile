@@ -127,7 +127,13 @@ platform :ios do
       scheme: "iosApp",
       output_directory: "iosApp/build",
       output_name: "JUFK.ipa",
-      export_method: "app-store"
+      export_method: "app-store",
+      export_options: {
+        signingStyle: "manual",
+        provisioningProfiles: {
+          "com.ifochka.jufk" => ENV["PROVISIONING_PROFILE_SPECIFIER"] || "JUFK App Store"
+        }
+      }
     )
 
     lane_context[:VERSION_NAME] = version_name
