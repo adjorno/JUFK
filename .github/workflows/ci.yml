@@ -8,21 +8,13 @@ on:
       - 'androidApp/**'
       - 'iosApp/**'
       - 'cli/**'
+      - 'fastlane/**'
       - '*.gradle.kts'
       - 'gradle.properties'
       - 'gradle/**'
       - '.github/workflows/ci.yml'
   pull_request:
     branches: [main]
-    paths:
-      - 'composeApp/**'
-      - 'androidApp/**'
-      - 'iosApp/**'
-      - 'cli/**'
-      - '*.gradle.kts'
-      - 'gradle.properties'
-      - 'gradle/**'
-      - '.github/workflows/ci.yml'
 
 concurrency:
   group: ci-${{ github.ref }}
