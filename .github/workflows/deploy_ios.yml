@@ -83,7 +83,7 @@ jobs:
           echo "$APP_STORE_CONNECT_API_KEY_BASE64" | base64 --decode > $GITHUB_WORKSPACE/api_key.json
 
       - name: Build Kotlin Framework
-        run: ./gradlew :composeApp:assembleXCFramework
+        run: ./gradlew :composeApp:linkReleaseFrameworkIosArm64
 
       - name: Build and Upload to TestFlight
         if: github.event_name == 'push' || inputs.destination == 'testflight'
