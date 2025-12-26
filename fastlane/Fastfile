@@ -123,14 +123,15 @@ platform :ios do
     )
 
     build_app(
-      workspace: "iosApp/iosApp.xcworkspace",
+      project: "iosApp/iosApp.xcodeproj",
       scheme: "iosApp",
       output_directory: "iosApp/build",
       output_name: "JUFK.ipa",
       export_method: "app-store",
       export_options: {
+        signingStyle: "manual",
         provisioningProfiles: {
-          CredentialsManager::AppfileConfig.try_fetch_value(:app_identifier) => ENV["PROVISIONING_PROFILE_NAME"]
+          CredentialsManager::AppfileConfig.try_fetch_value(:app_identifier) => ENV.fetch("PROVISIONING_PROFILE_SPECIFIER")
         }
       }
     )
@@ -156,14 +157,6 @@ platform :ios do
       skip_screenshots: true,
       skip_metadata: false,
       submit_for_review: false
-    )
-  end
-
-  desc "Sync certificates with Match"
-  lane :certificates do
-    match(
-      type: "appstore",
-      readonly: true
     )
   end
 end
