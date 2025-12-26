@@ -89,12 +89,14 @@ jobs:
         if: github.event_name == 'push' || inputs.destination == 'testflight'
         env:
           APP_STORE_CONNECT_API_KEY_PATH: ${{ github.workspace }}/api_key.json
+          PROVISIONING_PROFILE_SPECIFIER: ${{ secrets.PROVISIONING_PROFILE_SPECIFIER }}
         run: bundle exec fastlane ios testflight_upload
 
       - name: Build and Upload to App Store
         if: inputs.destination == 'release'
         env:
           APP_STORE_CONNECT_API_KEY_PATH: ${{ github.workspace }}/api_key.json
+          PROVISIONING_PROFILE_SPECIFIER: ${{ secrets.PROVISIONING_PROFILE_SPECIFIER }}
         run: bundle exec fastlane ios release
 
       - name: Cleanup keychain

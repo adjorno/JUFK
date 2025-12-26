@@ -131,7 +131,7 @@ platform :ios do
       export_options: {
         signingStyle: "manual",
         provisioningProfiles: {
-          CredentialsManager::AppfileConfig.try_fetch_value(:app_identifier) => ENV["PROVISIONING_PROFILE_SPECIFIER"] || "JUFK App Store"
+          CredentialsManager::AppfileConfig.try_fetch_value(:app_identifier) => ENV["PROVISIONING_PROFILE_SPECIFIER"]
         }
       }
     )
