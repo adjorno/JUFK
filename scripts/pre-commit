@@ -1,0 +1,79 @@
+#!/bin/sh
+######## KTLINT-GRADLE HOOK START ########
+set +e
+CHANGED_FILES="$(git --no-pager diff --name-status --no-color --cached | awk '$1 != "D" && $NF ~ /\.kts?$/ { print $NF }')"
+
+if [ -z "$CHANGED_FILES" ]; then
+    echo "No Kotlin staged files."
+else
+    echo "Running ktlint over these files:"
+    echo "$CHANGED_FILES"
+
+    diff=.git/unstaged-ktlint-git-hook.diff
+    git diff --binary --color=never > $diff
+    if [ -s $diff ]; then
+      git apply -R $diff
+    fi
+
+    ./gradlew --quiet ktlintFormat -PinternalKtlintGitFilter="$CHANGED_FILES"
+    gradle_command_exit_code=$?
+
+    echo "Completed ktlint run."
+
+    echo "$CHANGED_FILES" | while read -r file; do
+        if [ -f $file ]; then
+            git add $file
+        fi
+    done
+
+    if [ -s $diff ]; then
+      git apply --ignore-whitespace $diff
+    fi
+    rm $diff
+    unset diff
+
+    echo "Completed ktlint hook."
+
+    if [ $gradle_command_exit_code -ne 0 ]; then
+        exit $gradle_command_exit_code
+    fi
+fi
+######## KTLINT-GRADLE HOOK END ########
+
+######## TRAILING NEWLINE CHECK START ########
+echo "Checking for trailing newlines..."
+
+# Get all staged text files (excluding binary files)
+STAGED_FILES="$(git --no-pager diff --name-status --no-color --cached | awk '$1 != "D" { print $NF }')"
+
+MISSING_NEWLINE=0
+for file in $STAGED_FILES; do
+    # Only check text files that should have trailing newlines
+    case "$file" in
+        *.kt|*.kts|*.java|*.xml|*.gradle|*.properties|*.md|*.txt|*.yml|*.yaml|*.json|*.sh)
+            # Check if file exists and is not empty
+            if [ -f "$file" ] && [ -s "$file" ]; then
+                # Check if file ends with newline
+                if [ "$(tail -c 1 "$file" | wc -l)" -eq 0 ]; then
+                    echo "ERROR: File missing trailing newline: $file"
+                    MISSING_NEWLINE=1
+                fi
+            fi
+            ;;
+        *)
+            # Skip all other files (binary, unknown extensions, etc.)
+            ;;
+    esac
+done
+
+if [ $MISSING_NEWLINE -eq 1 ]; then
+    echo ""
+    echo "Some files are missing trailing newlines."
+    echo "Add a newline to the end of each file listed above."
+    exit 1
+fi
+
+echo "All files have trailing newlines."
+######## TRAILING NEWLINE CHECK END ########
+
+exit 0
