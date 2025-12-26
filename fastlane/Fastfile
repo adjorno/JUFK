@@ -128,7 +128,7 @@ platform :ios do
       output_directory: "iosApp/build",
       output_name: "JUFK.ipa",
       export_method: "app-store",
-      xcargs: "DEVELOPMENT_TEAM=#{ENV.fetch('DEVELOPMENT_TEAM')}",
+      xcargs: "DEVELOPMENT_TEAM=#{ENV.fetch('DEVELOPMENT_TEAM')} CODE_SIGN_STYLE=Manual PROVISIONING_PROFILE_SPECIFIER='#{ENV.fetch('PROVISIONING_PROFILE_SPECIFIER')}'",
       export_options: {
         signingStyle: "manual",
         provisioningProfiles: {
