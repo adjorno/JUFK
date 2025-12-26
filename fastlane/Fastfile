@@ -122,17 +122,23 @@ platform :ios do
       xcodeproj: "iosApp/iosApp.xcodeproj"
     )
 
+    provisioning_profile = ENV.fetch("PROVISIONING_PROFILE_SPECIFIER")
+
     build_app(
       project: "iosApp/iosApp.xcodeproj",
       scheme: "iosApp",
       output_directory: "iosApp/build",
       output_name: "JUFK.ipa",
       export_method: "app-store",
-      xcargs: "DEVELOPMENT_TEAM=#{ENV.fetch('DEVELOPMENT_TEAM')} CODE_SIGN_STYLE=Manual PROVISIONING_PROFILE_SPECIFIER='#{ENV.fetch('PROVISIONING_PROFILE_SPECIFIER')}'",
+      xcargs: [
+        "DEVELOPMENT_TEAM=#{ENV.fetch('DEVELOPMENT_TEAM')}",
+        "CODE_SIGN_STYLE=Manual",
+        "PROVISIONING_PROFILE_SPECIFIER='#{provisioning_profile}'"
+      ].join(" "),
       export_options: {
         signingStyle: "manual",
         provisioningProfiles: {
-          CredentialsManager::AppfileConfig.try_fetch_value(:app_identifier) => ENV.fetch("PROVISIONING_PROFILE_SPECIFIER")
+          CredentialsManager::AppfileConfig.try_fetch_value(:app_identifier) => provisioning_profile
         }
       }
     )
