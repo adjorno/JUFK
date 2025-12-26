@@ -47,7 +47,7 @@ echo "Checking for trailing newlines..."
 STAGED_FILES="$(git --no-pager diff --name-status --no-color --cached | awk '$1 != "D" { print $NF }')"
 
 MISSING_NEWLINE=0
-for file in $STAGED_FILES; do
+echo "$STAGED_FILES" | while read -r file; do
     # Only check text files that should have trailing newlines
     case "$file" in
         *.kt|*.kts|*.java|*.xml|*.gradle|*.properties|*.md|*.txt|*.yml|*.yaml|*.json|*.sh)
