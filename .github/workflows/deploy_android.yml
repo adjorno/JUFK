@@ -4,6 +4,11 @@ on:
   push:
     branches:
       - main
+    paths:
+      - 'composeApp/**'
+      - 'androidApp/**'
+      - 'fastlane/**'
+      - '.github/workflows/deploy_android.yml'
   workflow_dispatch:
     inputs:
       track:
