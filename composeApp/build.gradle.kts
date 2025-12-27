@@ -88,6 +88,12 @@ compose.desktop {
                 bundleID = "com.ifochka.jufk"
                 iconFile.set(project.file("icons/icon.icns"))
 
+                // App Store category (required for submission)
+                appCategory = "public.app-category.utilities"
+
+                // Set minimum macOS version to 12.0 for arm64-only support
+                minimumSystemVersion = "12.0"
+
                 // Mac App Store configuration
                 val signIdentity = System.getenv("MAC_SIGN_IDENTITY")
                 val isAppStore = System.getenv("MAC_APP_STORE")?.toBoolean() ?: false
