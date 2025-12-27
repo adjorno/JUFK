@@ -176,10 +176,24 @@ platform :mac do
     version_name = options[:version] || get_version_name
     UI.message("Building macOS version #{version_name}")
 
-    # Build using Gradle (Compose Desktop)
-    sh("cd .. && MAC_SIGN_IDENTITY='#{ENV.fetch('MAC_SIGN_IDENTITY')}' MAC_APP_STORE=true ./gradlew :composeApp:packagePkg -PappVersion=#{version_name}")
+    # 1. Build .app with Gradle
+    java_home = ENV['JAVA_HOME'] || '/Users/adjorno/Library/Java/JavaVirtualMachines/jbr-17.0.14/Contents/Home'
+    sh("cd .. && JAVA_HOME=#{java_home} ./gradlew :composeApp:packageReleaseDistributionForCurrentOS -PappVersion=#{version_name}")
+
+    # 2. Sign .app with Mac App Distribution certificate
+    app_path = "../composeApp/build/compose/binaries/main-release/app/JUFK.app"
+    sh("codesign --deep --force --options runtime --entitlements ../composeApp/entitlements.plist --sign '#{ENV.fetch('MAC_APP_SIGN_IDENTITY')}' #{app_path}")
+
+    # 3. Create and sign PKG with Mac Installer Distribution certificate
+    pkg_path = "../JUFK-#{version_name}.pkg"
+    sh("productbuild --component #{app_path} /Applications --sign '#{ENV.fetch('MAC_INSTALLER_SIGN_IDENTITY')}' #{pkg_path}")
+
+    # 4. Verify signatures
+    sh("codesign --verify --verbose #{app_path}")
+    sh("pkgutil --check-signature #{pkg_path}")
 
     lane_context[:VERSION_NAME] = version_name
+    lane_context[:PKG_PATH] = pkg_path
   end
 
   desc "Upload to TestFlight"
@@ -189,7 +203,7 @@ platform :mac do
       api_key_path: ENV["APP_STORE_CONNECT_API_KEY_PATH"],
       skip_waiting_for_build_processing: true,
       platform: "osx",
-      pkg: "../composeApp/build/compose/binaries/main/pkg/JUFK-#{lane_context[:VERSION_NAME]}.pkg"
+      pkg: lane_context[:PKG_PATH]
     )
   end
 
@@ -202,7 +216,7 @@ platform :mac do
       skip_metadata: false,
       submit_for_review: false,
       platform: "osx",
-      pkg: "../composeApp/build/compose/binaries/main/pkg/JUFK-#{lane_context[:VERSION_NAME]}.pkg"
+      pkg: lane_context[:PKG_PATH]
     )
   end
 end
