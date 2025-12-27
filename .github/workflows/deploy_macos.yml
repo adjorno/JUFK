@@ -41,16 +41,10 @@ jobs:
           ruby-version: '3.2'
           bundler-cache: true
 
-      - name: Import Mac App Distribution certificate
+      - name: Import Mac App Store certificates (combined)
         uses: apple-actions/import-codesign-certs@v3
         with:
-          p12-file-base64: ${{ secrets.MAC_APP_CERT_BASE64 }}
-          p12-password: ${{ secrets.MAC_CERT_PASSWORD }}
-
-      - name: Import Mac Installer Distribution certificate
-        uses: apple-actions/import-codesign-certs@v3
-        with:
-          p12-file-base64: ${{ secrets.MAC_INSTALLER_CERT_BASE64 }}
+          p12-file-base64: ${{ secrets.MAC_COMBINED_CERT_BASE64 }}
           p12-password: ${{ secrets.MAC_CERT_PASSWORD }}
 
       - name: Verify certificates and set signing identity
