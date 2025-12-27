@@ -57,12 +57,24 @@ jobs:
           # Import Mac App Distribution certificate
           APP_CERT_PATH=$RUNNER_TEMP/mac_app.p12
           echo "$MAC_APP_CERT_BASE64" | base64 --decode > $APP_CERT_PATH
-          security import $APP_CERT_PATH -P "$CERT_PASSWORD" -A -t cert -f pkcs12 -k $KEYCHAIN_PATH
+          echo "Importing Mac App Distribution certificate..."
+          if security import $APP_CERT_PATH -P "$CERT_PASSWORD" -A -t cert -f pkcs12 -k $KEYCHAIN_PATH; then
+            echo "✓ Mac App Distribution certificate imported successfully"
+          else
+            echo "✗ Failed to import Mac App Distribution certificate"
+            exit 1
+          fi
 
           # Import Mac Installer Distribution certificate
           INSTALLER_CERT_PATH=$RUNNER_TEMP/mac_installer.p12
           echo "$MAC_INSTALLER_CERT_BASE64" | base64 --decode > $INSTALLER_CERT_PATH
-          security import $INSTALLER_CERT_PATH -P "$CERT_PASSWORD" -A -t cert -f pkcs12 -k $KEYCHAIN_PATH
+          echo "Importing Mac Installer Distribution certificate..."
+          if security import $INSTALLER_CERT_PATH -P "$CERT_PASSWORD" -A -t cert -f pkcs12 -k $KEYCHAIN_PATH; then
+            echo "✓ Mac Installer Distribution certificate imported successfully"
+          else
+            echo "✗ Failed to import Mac Installer Distribution certificate"
+            exit 1
+          fi
 
           security set-key-partition-list -S apple-tool:,apple: -k "$KEYCHAIN_PASSWORD" $KEYCHAIN_PATH
           security list-keychain -d user -s $KEYCHAIN_PATH
