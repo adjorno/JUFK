@@ -82,7 +82,7 @@ compose.desktop {
         nativeDistributions {
             targetFormats(TargetFormat.Dmg, TargetFormat.Pkg, TargetFormat.Msi, TargetFormat.Deb)
             packageName = "JUFK"
-            packageVersion = "1.0.0"
+            packageVersion = project.findProperty("appVersion") as? String ?: "1.0.0"
 
             macOS {
                 bundleID = "com.ifochka.jufk"
@@ -92,7 +92,7 @@ compose.desktop {
                 val signIdentity = System.getenv("MAC_SIGN_IDENTITY")
                 val isAppStore = System.getenv("MAC_APP_STORE")?.toBoolean() ?: false
 
-                if (signIdentity != null) {
+                if (!signIdentity.isNullOrBlank()) {
                     signing {
                         sign.set(true)
                         identity.set(signIdentity)
