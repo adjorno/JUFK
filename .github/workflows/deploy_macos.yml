@@ -89,14 +89,14 @@ jobs:
         if: github.event_name == 'push' || inputs.destination == 'testflight'
         env:
           APP_STORE_CONNECT_API_KEY_PATH: ${{ github.workspace }}/api_key.json
-          MAC_SIGN_IDENTITY: 3rd Party Mac Developer Application
-        run: bundle exec fastlane mac testflight
+          MAC_SIGN_IDENTITY: 3rd Party Mac Developer Application: Mykhailo Dorokhin (7XHUV5UUCP)
+        run: bundle exec fastlane mac testflight_upload
 
       - name: Build and Upload to App Store
         if: inputs.destination == 'release'
         env:
           APP_STORE_CONNECT_API_KEY_PATH: ${{ github.workspace }}/api_key.json
-          MAC_SIGN_IDENTITY: 3rd Party Mac Developer Application
+          MAC_SIGN_IDENTITY: 3rd Party Mac Developer Application: Mykhailo Dorokhin (7XHUV5UUCP)
         run: bundle exec fastlane mac release
 
       - name: Cleanup keychain

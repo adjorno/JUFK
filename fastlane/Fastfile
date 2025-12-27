@@ -183,7 +183,7 @@ platform :mac do
   end
 
   desc "Upload to TestFlight"
-  lane :testflight do
+  lane :testflight_upload do
     build
     upload_to_testflight(
       api_key_path: ENV["APP_STORE_CONNECT_API_KEY_PATH"],
