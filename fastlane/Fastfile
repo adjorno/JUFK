@@ -185,7 +185,8 @@ platform :mac do
     sh("codesign --deep --force --options runtime --entitlements ../composeApp/entitlements.plist --sign '#{ENV.fetch('MAC_APP_SIGN_IDENTITY')}' #{app_path}")
 
     # 3. Create and sign PKG with Mac Installer Distribution certificate
-    pkg_path = "../JUFK-#{version_name}.pkg"
+    pkg_filename = "JUFK-#{version_name}.pkg"
+    pkg_path = File.expand_path("../#{pkg_filename}", __dir__)
     sh("productbuild --component #{app_path} /Applications --sign '#{ENV.fetch('MAC_INSTALLER_SIGN_IDENTITY')}' #{pkg_path}")
 
     # 4. Verify signatures
