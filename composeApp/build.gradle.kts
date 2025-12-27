@@ -82,9 +82,7 @@ compose.desktop {
         nativeDistributions {
             targetFormats(TargetFormat.Dmg, TargetFormat.Pkg, TargetFormat.Msi, TargetFormat.Deb)
             packageName = "JUFK"
-            // macOS packaging requires MAJOR version > 0, so use 1.0.0 for 0.x.y versions
-            val appVersion = project.findProperty("appVersion") as? String ?: "1.0.0"
-            packageVersion = if (appVersion.startsWith("0.")) "1.0.0" else appVersion
+            packageVersion = project.findProperty("appVersion") as? String ?: "1.0.0"
 
             macOS {
                 bundleID = "com.ifochka.jufk"
@@ -95,6 +93,12 @@ compose.desktop {
 
                 // Set minimum macOS version to 12.0 for arm64-only support
                 minimumSystemVersion = "12.0"
+
+                // macOS packaging requires MAJOR version > 0, override for 0.x.y versions
+                val appVersion = project.findProperty("appVersion") as? String
+                if (appVersion?.startsWith("0.") == true) {
+                    packageVersion = "1.0.0"
+                }
 
                 // Mac App Store configuration
                 val signIdentity = System.getenv("MAC_SIGN_IDENTITY")
