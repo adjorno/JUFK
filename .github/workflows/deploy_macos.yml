@@ -91,14 +91,19 @@ jobs:
           echo "MAC_APP_SIGN_IDENTITY=$MAC_APP_SIGN_IDENTITY" >> $GITHUB_ENV
           echo "Found app signing identity: $MAC_APP_SIGN_IDENTITY"
 
-          # Verify installer certificate (for .pkg) - won't show in codesigning, use find-certificate
-          echo "Installer certificates:"
-          security find-certificate -c "Mac Installer Distribution" build.keychain
+          # List all certificates to see what we have
+          echo "All certificates in keychain:"
+          security find-certificate -a build.keychain | grep "labl" || true
+
+          # Verify installer certificate exists (won't show in codesigning)
+          echo "Checking for installer certificate..."
+          security find-certificate -c "3rd Party Mac Developer Installer" build.keychain || true
+          security find-certificate -c "Mac Installer Distribution" build.keychain || true
 
           # Set installer identity explicitly (full certificate name with Team ID)
           MAC_INSTALLER_SIGN_IDENTITY="3rd Party Mac Developer Installer: Mykhailo Dorokhin (7XHUV5UUCP)"
           echo "MAC_INSTALLER_SIGN_IDENTITY=$MAC_INSTALLER_SIGN_IDENTITY" >> $GITHUB_ENV
-          echo "Found installer signing identity: $MAC_INSTALLER_SIGN_IDENTITY"
+          echo "Using installer signing identity: $MAC_INSTALLER_SIGN_IDENTITY"
 
       - name: Install provisioning profile
         env:
