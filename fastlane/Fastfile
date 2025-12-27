@@ -202,7 +202,7 @@ platform :mac do
     upload_to_testflight(
       api_key_path: ENV["APP_STORE_CONNECT_API_KEY_PATH"],
       skip_waiting_for_build_processing: true,
-      platform: "osx",
+      app_platform: "osx",
       pkg: lane_context[:PKG_PATH]
     )
   end
@@ -215,7 +215,7 @@ platform :mac do
       skip_screenshots: true,
       skip_metadata: false,
       submit_for_review: false,
-      platform: "osx",
+      app_platform: "osx",
       pkg: lane_context[:PKG_PATH]
     )
   end
