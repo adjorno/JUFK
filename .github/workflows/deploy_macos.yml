@@ -72,6 +72,10 @@ jobs:
           echo "MAC_SIGN_IDENTITY=$MAC_SIGN_IDENTITY" >> $GITHUB_ENV
           echo "Found signing identity: $MAC_SIGN_IDENTITY"
 
+          # Verify both certificates are present
+          echo "All certificates in keychain:"
+          security find-identity -v -p codesigning $KEYCHAIN_PATH
+
       - name: Install provisioning profile
         env:
           MAC_PROVISIONING_PROFILE_BASE64: ${{ secrets.MAC_PROVISIONING_PROFILE_BASE64 }}
