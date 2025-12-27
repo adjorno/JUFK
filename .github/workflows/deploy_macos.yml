@@ -47,37 +47,16 @@ jobs:
           p12-file-base64: ${{ secrets.MAC_COMBINED_CERT_BASE64 }}
           p12-password: ${{ secrets.MAC_CERT_PASSWORD }}
 
-      - name: List signing identities
+      - name: Verify certificates and set signing identity
         run: |
-            security find-identity -v -p codesigning
+          # List all available signing identities
+          echo "All certificates in keychain:"
+          security find-identity -v -p codesigning
 
-#      - name: Verify certificates and set signing identity
-#        run: |
-#          # List all available signing identities
-#          echo "All certificates in keychain:"
-#          security find-identity -v -p codesigning
-#
-#          # Count certificates
-#          APP_CERT_COUNT=$(security find-identity -v -p codesigning | grep -c "3rd Party Mac Developer Application" || true)
-#          INSTALLER_CERT_COUNT=$(security find-identity -v -p codesigning | grep -c "3rd Party Mac Developer Installer" || true)
-#
-#          echo "Mac App Distribution certificates found: $APP_CERT_COUNT"
-#          echo "Mac Installer Distribution certificates found: $INSTALLER_CERT_COUNT"
-#
-#          if [ "$APP_CERT_COUNT" -eq 0 ]; then
-#            echo "ERROR: Mac App Distribution certificate not found!"
-#            exit 1
-#          fi
-#
-#          if [ "$INSTALLER_CERT_COUNT" -eq 0 ]; then
-#            echo "ERROR: Mac Installer Distribution certificate not found!"
-#            exit 1
-#          fi
-#
-#          # Dynamically find and export the Mac App Distribution certificate name
-#          MAC_SIGN_IDENTITY=$(security find-identity -v -p codesigning | grep "3rd Party Mac Developer Application" | head -1 | sed -n 's/.*"\(.*\)"/\1/p')
-#          echo "MAC_SIGN_IDENTITY=$MAC_SIGN_IDENTITY" >> $GITHUB_ENV
-#          echo "Found signing identity: $MAC_SIGN_IDENTITY"
+          # Extract and export the Mac App Distribution certificate name
+          MAC_SIGN_IDENTITY=$(security find-identity -v -p codesigning | grep "3rd Party Mac Developer Application" | head -1 | sed -n 's/.*"\(.*\)"/\1/p')
+          echo "MAC_SIGN_IDENTITY=$MAC_SIGN_IDENTITY" >> $GITHUB_ENV
+          echo "Found signing identity: $MAC_SIGN_IDENTITY"
 
       - name: Install provisioning profile
         env:
