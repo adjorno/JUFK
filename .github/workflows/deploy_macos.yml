@@ -68,8 +68,13 @@ jobs:
           # Import Mac Installer Distribution certificate
           INSTALLER_CERT_PATH=$RUNNER_TEMP/mac_installer.p12
           echo "$MAC_INSTALLER_CERT_BASE64" | base64 --decode > $INSTALLER_CERT_PATH
+
+          # Check what's in the P12 file
+          echo "Analyzing Mac Installer P12 contents..."
+          openssl pkcs12 -in $INSTALLER_CERT_PATH -passin pass:"$CERT_PASSWORD" -nokeys -clcerts 2>&1 | grep -A 2 "subject"
+
           echo "Importing Mac Installer Distribution certificate..."
-          if security import $INSTALLER_CERT_PATH -P "$CERT_PASSWORD" -A -t cert -f pkcs12 -k $KEYCHAIN_PATH; then
+          if security import $INSTALLER_CERT_PATH -P "$CERT_PASSWORD" -A -f pkcs12 -k $KEYCHAIN_PATH; then
             echo "✓ Mac Installer Distribution certificate imported successfully"
           else
             echo "✗ Failed to import Mac Installer Distribution certificate"
