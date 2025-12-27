@@ -45,7 +45,12 @@ jobs:
 
       - name: Prepare artifact
         run: |
-          cp cli/build/bin/${{ inputs.dir }}/releaseExecutable/jufk${{ inputs.executable_extension }} ${{ inputs.artifact_name }}
+          # Kotlin/Native produces .kexe for Unix, .exe for Windows
+          SOURCE_EXT="${{ inputs.executable_extension }}"
+          if [ -z "$SOURCE_EXT" ]; then
+            SOURCE_EXT=".kexe"
+          fi
+          cp cli/build/bin/${{ inputs.dir }}/releaseExecutable/jufk${SOURCE_EXT} ${{ inputs.artifact_name }}
         shell: bash
 
       - name: Make executable (Unix only)
