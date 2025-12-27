@@ -6,134 +6,86 @@ on:
       - 'release/*'
 
 jobs:
-  build-macos:
-    runs-on: macos-latest
-    strategy:
-      matrix:
-        include:
-          - target: MacosArm64
-            dir: macosArm64
-            artifact: jufk-macos-arm64
-          - target: MacosX64
-            dir: macosX64
-            artifact: jufk-macos-x64
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Set up JDK 17
-        uses: actions/setup-java@v4
-        with:
-          java-version: '17'
-          distribution: 'temurin'
-
-      - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v4
-
-      - name: Build CLI binary
-        run: ./gradlew :cli:linkReleaseExecutable${{ matrix.target }}
-
-      - name: Prepare artifact
-        run: |
-          cp cli/build/bin/${{ matrix.dir }}/releaseExecutable/jufk.kexe ${{ matrix.artifact }}
-          chmod +x ${{ matrix.artifact }}
-
-      - name: Upload artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: ${{ matrix.artifact }}
-          path: ${{ matrix.artifact }}
-
-  build-linux:
+  # Extract version from branch name (e.g., release/1.0.0 -> 1.0.0)
+  extract-version:
     runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+      tag: ${{ steps.version.outputs.tag }}
     steps:
-      - uses: actions/checkout@v4
-
-      - name: Set up JDK 17
-        uses: actions/setup-java@v4
-        with:
-          java-version: '17'
-          distribution: 'temurin'
-
-      - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v4
-
-      - name: Build CLI binary
-        run: ./gradlew :cli:linkReleaseExecutableLinuxX64
-
-      - name: Prepare artifact
-        run: |
-          cp cli/build/bin/linuxX64/releaseExecutable/jufk.kexe jufk-linux-x64
-          chmod +x jufk-linux-x64
-
-      - name: Upload artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: jufk-linux-x64
-          path: jufk-linux-x64
-
-  build-windows:
-    runs-on: windows-latest
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Set up JDK 17
-        uses: actions/setup-java@v4
-        with:
-          java-version: '17'
-          distribution: 'temurin'
-
-      - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v4
-
-      - name: Build CLI binary
-        run: ./gradlew :cli:linkReleaseExecutableMingwX64
-
-      - name: Prepare artifact
-        run: |
-          cp cli/build/bin/mingwX64/releaseExecutable/jufk.exe jufk-windows-x64.exe
-
-      - name: Upload artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: jufk-windows-x64.exe
-          path: jufk-windows-x64.exe
-
-  build-desktop-dmg:
-    runs-on: macos-latest
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Set up JDK 17
-        uses: actions/setup-java@v4
-        with:
-          java-version: '17'
-          distribution: 'temurin'
-
-      - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v4
-
       - name: Extract version from branch name
         id: version
         run: |
           VERSION="${GITHUB_REF_NAME#release/}"
           echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "tag=v$VERSION" >> $GITHUB_OUTPUT
 
-      - name: Build DMG
-        run: ./gradlew :composeApp:packageDmg -PappVersion=${{ steps.version.outputs.version }}
+  # =============================================================================
+  # MOBILE STAGE - Closed Testing (Not ready for public releases)
+  # =============================================================================
+  # Future: Uncomment these jobs when ready for public mobile releases
+  #
+  # mobile-build-android:
+  #   uses: ./.github/workflows/template-build-android.yml
+  #   with:
+  #     track: internal
+  #   secrets: inherit
+  #
+  # mobile-build-ios:
+  #   uses: ./.github/workflows/template-build-ios.yml
+  #   with:
+  #     destination: testflight
+  #   secrets: inherit
 
-      - name: Find and rename DMG
-        run: |
-          DMG_PATH=$(find composeApp/build/compose/binaries/main/dmg -name "*.dmg" | head -1)
-          mv "$DMG_PATH" JUFK-${{ steps.version.outputs.version }}.dmg
+  # =============================================================================
+  # DESKTOP STAGE - Desktop App Installer
+  # =============================================================================
 
-      - name: Upload artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: JUFK-${{ steps.version.outputs.version }}.dmg
-          path: JUFK-${{ steps.version.outputs.version }}.dmg
+  desktop-build-dmg:
+    needs: extract-version
+    uses: ./.github/workflows/template-build-desktop-dmg.yml
+    with:
+      version: ${{ needs.extract-version.outputs.version }}
 
-  update-formula-and-release:
-    needs: [build-macos, build-linux, build-windows, build-desktop-dmg]
+  # =============================================================================
+  # HOMEBREW STAGE - CLI Binaries & Formula Update
+  # =============================================================================
+
+  homebrew-build-macos-arm64:
+    uses: ./.github/workflows/template-build-cli.yml
+    with:
+      target: MacosArm64
+      dir: macosArm64
+      artifact_name: jufk-macos-arm64
+      runner: macos-latest
+
+  homebrew-build-macos-x64:
+    uses: ./.github/workflows/template-build-cli.yml
+    with:
+      target: MacosX64
+      dir: macosX64
+      artifact_name: jufk-macos-x64
+      runner: macos-latest
+
+  homebrew-build-linux:
+    uses: ./.github/workflows/template-build-cli.yml
+    with:
+      target: LinuxX64
+      dir: linuxX64
+      artifact_name: jufk-linux-x64
+      runner: ubuntu-latest
+
+  homebrew-build-windows:
+    uses: ./.github/workflows/template-build-cli.yml
+    with:
+      target: MingwX64
+      dir: mingwX64
+      artifact_name: jufk-windows-x64.exe
+      runner: windows-latest
+      executable_extension: .exe
+
+  homebrew-release:
+    needs: [homebrew-build-macos-arm64, homebrew-build-macos-x64, homebrew-build-linux, homebrew-build-windows, desktop-build-dmg, extract-version]
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -148,16 +100,9 @@ jobs:
         with:
           path: artifacts
 
-      - name: Extract version from branch name
-        id: version
-        run: |
-          VERSION="${GITHUB_REF_NAME#release/}"
-          echo "version=$VERSION" >> $GITHUB_OUTPUT
-          echo "tag=v$VERSION" >> $GITHUB_OUTPUT
-
       - name: Update formula with new hashes
         run: |
-          VERSION="${{ steps.version.outputs.version }}"
+          VERSION="${{ needs.extract-version.outputs.version }}"
           SHA_MACOS_ARM64=$(sha256sum artifacts/jufk-macos-arm64/jufk-macos-arm64 | cut -d' ' -f1)
           SHA_MACOS_X64=$(sha256sum artifacts/jufk-macos-x64/jufk-macos-x64 | cut -d' ' -f1)
           SHA_LINUX_X64=$(sha256sum artifacts/jufk-linux-x64/jufk-linux-x64 | cut -d' ' -f1)
@@ -175,13 +120,13 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add Formula/jufk.rb
-          git commit -m "Update Homebrew formula for ${{ steps.version.outputs.tag }}"
+          git commit -m "Update Homebrew formula for ${{ needs.extract-version.outputs.tag }}"
           git push
 
       - name: Create tag
         run: |
-          git tag ${{ steps.version.outputs.tag }}
-          git push origin ${{ steps.version.outputs.tag }}
+          git tag ${{ needs.extract-version.outputs.tag }}
+          git push origin ${{ needs.extract-version.outputs.tag }}
 
       - name: Prepare release files
         run: |
@@ -197,7 +142,7 @@ jobs:
       - name: Create Release
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: ${{ steps.version.outputs.tag }}
+          tag_name: ${{ needs.extract-version.outputs.tag }}
           files: release/*
           generate_release_notes: true
           draft: false

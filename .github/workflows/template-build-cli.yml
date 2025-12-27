@@ -1,0 +1,59 @@
+name: Build CLI Binary
+
+on:
+  workflow_call:
+    inputs:
+      target:
+        description: 'Gradle target (e.g., MacosArm64, LinuxX64, MingwX64)'
+        required: true
+        type: string
+      dir:
+        description: 'Build directory name (e.g., macosArm64, linuxX64, mingwX64)'
+        required: true
+        type: string
+      artifact_name:
+        description: 'Artifact name (e.g., jufk-macos-arm64, jufk-linux-x64)'
+        required: true
+        type: string
+      runner:
+        description: 'GitHub runner OS (macos-latest, ubuntu-latest, windows-latest)'
+        required: true
+        type: string
+      executable_extension:
+        description: 'Executable extension (empty for Unix, .exe for Windows)'
+        required: false
+        type: string
+        default: ''
+
+jobs:
+  build:
+    runs-on: ${{ inputs.runner }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Build CLI binary
+        run: ./gradlew :cli:linkReleaseExecutable${{ inputs.target }}
+
+      - name: Prepare artifact
+        run: |
+          cp cli/build/bin/${{ inputs.dir }}/releaseExecutable/jufk${{ inputs.executable_extension }} ${{ inputs.artifact_name }}
+        shell: bash
+
+      - name: Make executable (Unix only)
+        if: inputs.executable_extension == ''
+        run: chmod +x ${{ inputs.artifact_name }}
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ inputs.artifact_name }}
+          path: ${{ inputs.artifact_name }}
