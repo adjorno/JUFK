@@ -41,36 +41,62 @@ jobs:
           ruby-version: '3.2'
           bundler-cache: true
 
-      - name: Import Mac App Distribution certificate
-        uses: apple-actions/import-codesign-certs@v3
-        with:
-          p12-file-base64: ${{ secrets.MAC_APP_CERT_BASE64 }}
-          p12-password: ${{ secrets.MAC_CERT_PASSWORD }}
-          keychain: app-signing
-          keychain-password: ${{ secrets.MAC_CERT_PASSWORD }}
+      - name: Import signing certificates
+        env:
+          MAC_APP_CERT_BASE64: ${{ secrets.MAC_APP_CERT_BASE64 }}
+          MAC_INSTALLER_CERT_BASE64: ${{ secrets.MAC_INSTALLER_CERT_BASE64 }}
+          MAC_CERT_PASSWORD: ${{ secrets.MAC_CERT_PASSWORD }}
+          KEYCHAIN_PASSWORD: ${{ secrets.MAC_CERT_PASSWORD }}
+        run: |
+          # Create temporary keychain
+          security create-keychain -p "$KEYCHAIN_PASSWORD" build.keychain
+          security default-keychain -s build.keychain
+          security unlock-keychain -p "$KEYCHAIN_PASSWORD" build.keychain
+          security set-keychain-settings -t 3600 -u build.keychain
 
-      - name: Import Mac Installer Distribution certificate
-        uses: apple-actions/import-codesign-certs@v3
-        with:
-          p12-file-base64: ${{ secrets.MAC_INSTALLER_CERT_BASE64 }}
-          p12-password: ${{ secrets.MAC_CERT_PASSWORD }}
-          keychain: app-signing
-          keychain-password: ${{ secrets.MAC_CERT_PASSWORD }}
-          create-keychain: false
+          # Decode and import Mac App Distribution certificate
+          echo "$MAC_APP_CERT_BASE64" | base64 --decode > /tmp/mac_app.p12
+          security import /tmp/mac_app.p12 \
+            -k build.keychain \
+            -P "$MAC_CERT_PASSWORD" \
+            -T /usr/bin/codesign \
+            -T /usr/bin/security
+
+          # Decode and import Mac Installer Distribution certificate
+          echo "$MAC_INSTALLER_CERT_BASE64" | base64 --decode > /tmp/mac_installer.p12
+          security import /tmp/mac_installer.p12 \
+            -k build.keychain \
+            -P "$MAC_CERT_PASSWORD" \
+            -T /usr/bin/productbuild \
+            -T /usr/bin/security
+
+          # Allow tools to access the keychain
+          security set-key-partition-list \
+            -S apple-tool:,apple: \
+            -s \
+            -k "$KEYCHAIN_PASSWORD" \
+            build.keychain
+
+          # Clean up temp files
+          rm /tmp/mac_app.p12 /tmp/mac_installer.p12
 
       - name: Verify certificates and set signing identities
         run: |
-          # List all available signing identities
-          echo "All certificates in keychain:"
-          security find-identity -v -p codesigning
+          # Verify code-signing certificate (for .app)
+          echo "Code-signing certificates:"
+          security find-identity -v -p codesigning build.keychain
 
           # Extract Mac App Distribution certificate
-          MAC_APP_SIGN_IDENTITY=$(security find-identity -v -p codesigning | grep "3rd Party Mac Developer Application" | head -1 | sed -n 's/.*"\(.*\)"/\1/p')
+          MAC_APP_SIGN_IDENTITY=$(security find-identity -v -p codesigning build.keychain | grep "3rd Party Mac Developer Application" | head -1 | sed -n 's/.*"\(.*\)"/\1/p')
           echo "MAC_APP_SIGN_IDENTITY=$MAC_APP_SIGN_IDENTITY" >> $GITHUB_ENV
           echo "Found app signing identity: $MAC_APP_SIGN_IDENTITY"
 
-          # Extract Mac Installer Distribution certificate
-          MAC_INSTALLER_SIGN_IDENTITY=$(security find-identity -v -p codesigning | grep "3rd Party Mac Developer Installer" | head -1 | sed -n 's/.*"\(.*\)"/\1/p')
+          # Verify installer certificate (for .pkg) - won't show in codesigning, use find-certificate
+          echo "Installer certificates:"
+          security find-certificate -c "Mac Installer Distribution" build.keychain
+
+          # Set installer identity explicitly (full certificate name with Team ID)
+          MAC_INSTALLER_SIGN_IDENTITY="3rd Party Mac Developer Installer: Mykhailo Dorokhin (7XHUV5UUCP)"
           echo "MAC_INSTALLER_SIGN_IDENTITY=$MAC_INSTALLER_SIGN_IDENTITY" >> $GITHUB_ENV
           echo "Found installer signing identity: $MAC_INSTALLER_SIGN_IDENTITY"
 
@@ -107,4 +133,4 @@ jobs:
       - name: Cleanup keychain
         if: always()
         run: |
-          security delete-keychain app-signing.keychain || true
+          security delete-keychain build.keychain || true
