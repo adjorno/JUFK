@@ -82,7 +82,9 @@ compose.desktop {
         nativeDistributions {
             targetFormats(TargetFormat.Dmg, TargetFormat.Pkg, TargetFormat.Msi, TargetFormat.Deb)
             packageName = "JUFK"
-            packageVersion = project.findProperty("appVersion") as? String ?: "1.0.0"
+            // macOS packaging requires MAJOR version > 0, so use 1.0.0 for 0.x.y versions
+            val appVersion = project.findProperty("appVersion") as? String ?: "1.0.0"
+            packageVersion = if (appVersion.startsWith("0.")) "1.0.0" else appVersion
 
             macOS {
                 bundleID = "com.ifochka.jufk"
