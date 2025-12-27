@@ -45,15 +45,17 @@ jobs:
         uses: apple-actions/import-codesign-certs@v3
         with:
           p12-file-base64: ${{ secrets.MAC_APP_CERT_BASE64 }}
-          p12-password: ${{ secrets.MAC_APP_CERT_PASSWORD }}
+          p12-password: ${{ secrets.MAC_CERT_PASSWORD }}
           keychain: app-signing
+          keychain-password: ${{ secrets.MAC_CERT_PASSWORD }}
 
       - name: Import Mac Installer Distribution certificate
         uses: apple-actions/import-codesign-certs@v3
         with:
           p12-file-base64: ${{ secrets.MAC_INSTALLER_CERT_BASE64 }}
-          p12-password: ${{ secrets.MAC_INSTALLER_CERT_PASSWORD }}
+          p12-password: ${{ secrets.MAC_CERT_PASSWORD }}
           keychain: app-signing
+          keychain-password: ${{ secrets.MAC_CERT_PASSWORD }}
           create-keychain: false
 
       - name: Verify certificates and set signing identities
