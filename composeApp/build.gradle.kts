@@ -80,13 +80,29 @@ compose.desktop {
         mainClass = "com.ifochka.jufk.MainKt"
 
         nativeDistributions {
-            targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
+            targetFormats(TargetFormat.Dmg, TargetFormat.Pkg, TargetFormat.Msi, TargetFormat.Deb)
             packageName = "JUFK"
-            packageVersion = "1.0.0"
+            packageVersion = project.findProperty("appVersion") as? String ?: "1.0.0"
 
             macOS {
                 bundleID = "com.ifochka.jufk"
                 iconFile.set(project.file("icons/icon.icns"))
+
+                // Mac App Store configuration
+                val signIdentity = System.getenv("MAC_SIGN_IDENTITY")
+                val isAppStore = System.getenv("MAC_APP_STORE")?.toBoolean() ?: false
+
+                if (!signIdentity.isNullOrBlank()) {
+                    signing {
+                        sign.set(true)
+                        identity.set(signIdentity)
+                    }
+                }
+
+                if (isAppStore) {
+                    appStore = true
+                    entitlementsFile.set(project.file("entitlements.plist"))
+                }
             }
 
             windows {
