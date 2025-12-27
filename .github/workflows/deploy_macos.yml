@@ -41,61 +41,27 @@ jobs:
           ruby-version: '3.2'
           bundler-cache: true
 
-      - name: Install Mac App Store certificates
-        env:
-          MAC_APP_CERT_BASE64: ${{ secrets.MAC_APP_CERT_BASE64 }}
-          MAC_INSTALLER_CERT_BASE64: ${{ secrets.MAC_INSTALLER_CERT_BASE64 }}
-          CERT_PASSWORD: ${{ secrets.MAC_CERT_PASSWORD }}
-          KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASSWORD }}
+      - name: Import Mac App Distribution certificate
+        uses: apple-actions/import-codesign-certs@v3
+        with:
+          p12-file-base64: ${{ secrets.MAC_APP_CERT_BASE64 }}
+          p12-password: ${{ secrets.MAC_CERT_PASSWORD }}
+
+      - name: Import Mac Installer Distribution certificate
+        uses: apple-actions/import-codesign-certs@v3
+        with:
+          p12-file-base64: ${{ secrets.MAC_INSTALLER_CERT_BASE64 }}
+          p12-password: ${{ secrets.MAC_CERT_PASSWORD }}
+
+      - name: Verify certificates and set signing identity
         run: |
-          # Create temporary keychain
-          KEYCHAIN_PATH=$RUNNER_TEMP/app-signing.keychain-db
-          security create-keychain -p "$KEYCHAIN_PASSWORD" $KEYCHAIN_PATH
-          security set-keychain-settings -lut 21600 $KEYCHAIN_PATH
-          security unlock-keychain -p "$KEYCHAIN_PASSWORD" $KEYCHAIN_PATH
-
-          # Decode both P12 certificates
-          APP_CERT_PATH=$RUNNER_TEMP/mac_app.p12
-          INSTALLER_CERT_PATH=$RUNNER_TEMP/mac_installer.p12
-          echo "$MAC_APP_CERT_BASE64" | base64 --decode > $APP_CERT_PATH
-          echo "$MAC_INSTALLER_CERT_BASE64" | base64 --decode > $INSTALLER_CERT_PATH
-
-          # Combine certificates into single P12 file
-          echo "Combining Mac App Distribution and Installer Distribution certificates..."
-
-          # Extract to PEM format
-          openssl pkcs12 -in $APP_CERT_PATH -out $RUNNER_TEMP/mac_app.pem -nodes -passin pass:"$CERT_PASSWORD"
-          openssl pkcs12 -in $INSTALLER_CERT_PATH -out $RUNNER_TEMP/mac_installer.pem -nodes -passin pass:"$CERT_PASSWORD"
-
-          # Combine PEM files
-          cat $RUNNER_TEMP/mac_app.pem $RUNNER_TEMP/mac_installer.pem > $RUNNER_TEMP/combined.pem
-
-          # Create combined P12
-          COMBINED_CERT_PATH=$RUNNER_TEMP/mac_combined.p12
-          openssl pkcs12 -export -in $RUNNER_TEMP/combined.pem -out $COMBINED_CERT_PATH \
-            -passout pass:"$CERT_PASSWORD" -keypbe AES-256-CBC -certpbe AES-256-CBC
-
-          echo "✓ Certificates combined successfully"
-
-          # Import combined certificate
-          echo "Importing combined certificate..."
-          if security import $COMBINED_CERT_PATH -P "$CERT_PASSWORD" -A -t cert -f pkcs12 -k $KEYCHAIN_PATH; then
-            echo "✓ Combined certificate imported successfully"
-          else
-            echo "✗ Failed to import combined certificate"
-            exit 1
-          fi
-
-          security set-key-partition-list -S apple-tool:,apple: -k "$KEYCHAIN_PASSWORD" $KEYCHAIN_PATH
-          security list-keychain -d user -s $KEYCHAIN_PATH
-
-          # Verify both certificates are present
+          # List all available signing identities
           echo "All certificates in keychain:"
-          security find-identity -v -p codesigning $KEYCHAIN_PATH
+          security find-identity -v -p codesigning
 
           # Count certificates
-          APP_CERT_COUNT=$(security find-identity -v -p codesigning $KEYCHAIN_PATH | grep -c "3rd Party Mac Developer Application" || true)
-          INSTALLER_CERT_COUNT=$(security find-identity -v -p codesigning $KEYCHAIN_PATH | grep -c "3rd Party Mac Developer Installer" || true)
+          APP_CERT_COUNT=$(security find-identity -v -p codesigning | grep -c "3rd Party Mac Developer Application" || true)
+          INSTALLER_CERT_COUNT=$(security find-identity -v -p codesigning | grep -c "3rd Party Mac Developer Installer" || true)
 
           echo "Mac App Distribution certificates found: $APP_CERT_COUNT"
           echo "Mac Installer Distribution certificates found: $INSTALLER_CERT_COUNT"
@@ -111,7 +77,7 @@ jobs:
           fi
 
           # Dynamically find and export the Mac App Distribution certificate name
-          MAC_SIGN_IDENTITY=$(security find-identity -v -p codesigning $KEYCHAIN_PATH | grep "3rd Party Mac Developer Application" | head -1 | sed -n 's/.*"\(.*\)"/\1/p')
+          MAC_SIGN_IDENTITY=$(security find-identity -v -p codesigning | grep "3rd Party Mac Developer Application" | head -1 | sed -n 's/.*"\(.*\)"/\1/p')
           echo "MAC_SIGN_IDENTITY=$MAC_SIGN_IDENTITY" >> $GITHUB_ENV
           echo "Found signing identity: $MAC_SIGN_IDENTITY"
 
