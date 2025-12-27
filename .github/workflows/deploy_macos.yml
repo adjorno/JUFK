@@ -47,10 +47,9 @@ jobs:
           p12-file-base64: ${{ secrets.MAC_COMBINED_CERT_BASE64 }}
           p12-password: ${{ secrets.MAC_CERT_PASSWORD }}
 
-      - name: Show certificates info
+      - name: List signing identities
         run: |
-            security find-certificate -a -c "Apple Distribution" -p | openssl x509 -noout -subject -issuer -dates
-            security find-certificate -a -c "Apple Installer" -p | openssl x509 -noout -subject -issuer -dates
+            security find-identity -v -p codesigning
 
 #      - name: Verify certificates and set signing identity
 #        run: |
