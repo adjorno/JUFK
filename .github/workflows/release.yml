@@ -6,7 +6,68 @@ on:
       - 'release/*'
 
 jobs:
-  build-macos:
+  # =============================================================================
+  # MOBILE STAGE - Closed Testing (Not ready for public releases)
+  # =============================================================================
+  # Future: Uncomment these jobs when ready for public mobile releases
+  #
+  # mobile-build-android:
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Checkout
+  #       uses: actions/checkout@v4
+  #     # TODO: Add Android build steps
+  #
+  # mobile-build-ios:
+  #   runs-on: macos-latest
+  #   steps:
+  #     - name: Checkout
+  #       uses: actions/checkout@v4
+  #     # TODO: Add iOS build steps
+
+  # =============================================================================
+  # DESKTOP STAGE - Desktop App Installer
+  # =============================================================================
+
+  desktop-build-dmg:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Extract version from branch name
+        id: version
+        run: |
+          VERSION="${GITHUB_REF_NAME#release/}"
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+
+      - name: Build DMG
+        run: ./gradlew :composeApp:packageDmg -PappVersion=${{ steps.version.outputs.version }}
+
+      - name: Find and rename DMG
+        run: |
+          DMG_PATH=$(find composeApp/build/compose/binaries/main/dmg -name "*.dmg" | head -1)
+          mv "$DMG_PATH" JUFK-${{ steps.version.outputs.version }}.dmg
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: JUFK-${{ steps.version.outputs.version }}.dmg
+          path: JUFK-${{ steps.version.outputs.version }}.dmg
+
+  # =============================================================================
+  # HOMEBREW STAGE - CLI Binaries & Formula Update
+  # =============================================================================
+
+  homebrew-build-macos:
     runs-on: macos-latest
     strategy:
       matrix:
@@ -43,7 +104,7 @@ jobs:
           name: ${{ matrix.artifact }}
           path: ${{ matrix.artifact }}
 
-  build-linux:
+  homebrew-build-linux:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -71,7 +132,7 @@ jobs:
           name: jufk-linux-x64
           path: jufk-linux-x64
 
-  build-windows:
+  homebrew-build-windows:
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v4
@@ -98,42 +159,8 @@ jobs:
           name: jufk-windows-x64.exe
           path: jufk-windows-x64.exe
 
-  build-desktop-dmg:
-    runs-on: macos-latest
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Set up JDK 17
-        uses: actions/setup-java@v4
-        with:
-          java-version: '17'
-          distribution: 'temurin'
-
-      - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v4
-
-      - name: Extract version from branch name
-        id: version
-        run: |
-          VERSION="${GITHUB_REF_NAME#release/}"
-          echo "version=$VERSION" >> $GITHUB_OUTPUT
-
-      - name: Build DMG
-        run: ./gradlew :composeApp:packageDmg -PappVersion=${{ steps.version.outputs.version }}
-
-      - name: Find and rename DMG
-        run: |
-          DMG_PATH=$(find composeApp/build/compose/binaries/main/dmg -name "*.dmg" | head -1)
-          mv "$DMG_PATH" JUFK-${{ steps.version.outputs.version }}.dmg
-
-      - name: Upload artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: JUFK-${{ steps.version.outputs.version }}.dmg
-          path: JUFK-${{ steps.version.outputs.version }}.dmg
-
-  update-formula-and-release:
-    needs: [build-macos, build-linux, build-windows, build-desktop-dmg]
+  homebrew-release:
+    needs: [homebrew-build-macos, homebrew-build-linux, homebrew-build-windows, desktop-build-dmg]
     runs-on: ubuntu-latest
     permissions:
       contents: write
