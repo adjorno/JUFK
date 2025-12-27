@@ -98,8 +98,42 @@ jobs:
           name: jufk-windows-x64.exe
           path: jufk-windows-x64.exe
 
+  build-desktop-dmg:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Extract version from branch name
+        id: version
+        run: |
+          VERSION="${GITHUB_REF_NAME#release/}"
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+
+      - name: Build DMG
+        run: ./gradlew :composeApp:packageDmg -PappVersion=${{ steps.version.outputs.version }}
+
+      - name: Find and rename DMG
+        run: |
+          DMG_PATH=$(find composeApp/build/compose/binaries/main/dmg -name "*.dmg" | head -1)
+          mv "$DMG_PATH" JUFK-${{ steps.version.outputs.version }}.dmg
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: JUFK-${{ steps.version.outputs.version }}.dmg
+          path: JUFK-${{ steps.version.outputs.version }}.dmg
+
   update-formula-and-release:
-    needs: [build-macos, build-linux, build-windows]
+    needs: [build-macos, build-linux, build-windows, build-desktop-dmg]
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -152,10 +186,12 @@ jobs:
       - name: Prepare release files
         run: |
           mkdir release
-          find artifacts -type f -name 'jufk-*' -exec cp {} release/ \;
+          find artifacts -type f \( -name 'jufk-*' -o -name 'JUFK-*.dmg' \) -exec cp {} release/ \;
           cd release
-          for f in jufk-*; do
-            sha256sum "$f" > "$f.sha256"
+          for f in jufk-* JUFK-*.dmg; do
+            if [ -f "$f" ]; then
+              sha256sum "$f" > "$f.sha256"
+            fi
           done
 
       - name: Create Release
