@@ -1,0 +1,38 @@
+name: Build Desktop Windows
+
+on:
+  workflow_call:
+    inputs:
+      version:
+        description: 'App version (e.g., 1.0.0)'
+        required: true
+        type: string
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Build Windows distributable
+        run: ./gradlew :composeApp:createDistributable -PappVersion=${{ inputs.version }}
+
+      - name: Create zip archive
+        run: |
+          Compress-Archive -Path "composeApp/build/compose/binaries/main/app/JUFK/*" -DestinationPath "JUFK-${{ inputs.version }}-windows.zip"
+        shell: powershell
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: JUFK-${{ inputs.version }}-windows.zip
+          path: JUFK-${{ inputs.version }}-windows.zip

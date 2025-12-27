@@ -47,6 +47,12 @@ jobs:
     with:
       version: ${{ needs.extract-version.outputs.version }}
 
+  desktop-build-windows:
+    needs: extract-version
+    uses: ./.github/workflows/template-build-desktop-windows.yml
+    with:
+      version: ${{ needs.extract-version.outputs.version }}
+
   # =============================================================================
   # HOMEBREW STAGE - CLI Binaries & Formula Update
   # =============================================================================
@@ -85,7 +91,7 @@ jobs:
       executable_extension: .exe
 
   homebrew-release:
-    needs: [homebrew-build-macos-arm64, homebrew-build-macos-x64, homebrew-build-linux, homebrew-build-windows, desktop-build-dmg, extract-version]
+    needs: [homebrew-build-macos-arm64, homebrew-build-macos-x64, homebrew-build-linux, homebrew-build-windows, desktop-build-dmg, desktop-build-windows, extract-version]
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -131,9 +137,9 @@ jobs:
       - name: Prepare release files
         run: |
           mkdir release
-          find artifacts -type f \( -name 'jufk-*' -o -name 'JUFK-*.dmg' \) -exec cp {} release/ \;
+          find artifacts -type f \( -name 'jufk-*' -o -name 'JUFK-*.dmg' -o -name 'JUFK-*-windows.zip' \) -exec cp {} release/ \;
           cd release
-          for f in jufk-* JUFK-*.dmg; do
+          for f in jufk-* JUFK-*.dmg JUFK-*-windows.zip; do
             if [ -f "$f" ]; then
               sha256sum "$f" > "$f.sha256"
             fi
