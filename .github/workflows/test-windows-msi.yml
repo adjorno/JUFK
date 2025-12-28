@@ -1,0 +1,13 @@
+name: Test Windows MSI Build
+
+on:
+  push:
+    branches:
+      - fix/windows-use-package-msi
+  workflow_dispatch:
+
+jobs:
+  test-windows-build:
+    uses: ./.github/workflows/template-build-desktop-windows.yml
+    with:
+      version: 1.0.0
