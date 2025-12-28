@@ -1,211 +1,235 @@
 # JUFK Content & Design Overhaul Plan
 
-## Goal
-Transform the minimal JUFK app into an impactful, educational, shareable experience that:
-1. **Screams** "Just Use Fucking Kotlin" as a snarky answer to framework debates
-2. **Educates** developers about Kotlin Multiplatform capabilities
-3. **Promotes** the creator subtly but persistently (fixed footer)
-4. **Builds credibility** for Homebrew core inclusion
+## Objective Function
+
+**Old:** Correctness, completeness, symmetry
+**New:** Inevitability, obviousness, confidence
+
+The site should feel like the debate already happened and Kotlin won. Not marketing. Not explaining. Stating reality.
 
 ---
 
-## Key Decisions
+## Core Principles
 
-| Aspect | Decision |
-|--------|----------|
-| Visual Style | Brutalist/Minimal first, architecture supports future theme switching |
-| Layout | Single scroll page with fixed footer |
-| Architecture | MVVM with Compose ViewModels, Nav3-ready if needed |
-| Content Sections | All 6 equal: Web, Backend, Android, iOS, CLI, Bots |
-| Section Content | 3-5 key benefits bullet list + external docs link |
-| Code Examples | Only homebrew command, everything else links |
-| Limitations | Brutally honest, dedicated section at end |
-| Copy Feedback | Toast message on clipboard copy |
-| Personal Links | Fixed footer (always visible, doesn't scroll) |
-| Hero Message | Keep current: "Just Use Fucking Kotlin" |
-| Share Feature | Prominent button, message: "One Kotlin codebase. Web, Android, iOS, Desktop." |
-| External Links | Open in system browser |
+1. **Asymmetry over symmetry** - Backend/Android dominate. Web/iOS acknowledge tradeoffs. CLI surprises. Bots are trivial.
+2. **Declarative claims over lists** - Short, confident sentences. Not documentation.
+3. **Authority lives here** - Links are footnotes, not the main event.
+4. **Confidence without extra profanity** - Tone says "this is settled."
+5. **Show code immediately** - One snippet proves it's real, not theory.
+6. **Limitations = gatekeeping** - "If these bother you, leave."
+7. **Incomplete by design** - Confidence fills gaps.
 
 ---
 
-## Screen Layout
+## Screen Layout (Top to Bottom)
 
 ```
-+-------------------------------------+
-|          HERO SECTION               |
-|   "Just Use Fucking Kotlin"         |
-|   One language. One codebase.       |
-|        [SHARE BUTTON]               |
-+-------------------------------------+
-|         SCROLLABLE CONTENT          |
-|                                     |
-|  +- WEB (WASM) -------------------+ |
-|  | * Compose renders to Canvas    | |
-|  | * Same UI code as mobile       | |
-|  | * No JavaScript required       | |
-|  | [Learn more ->]                | |
-|  +--------------------------------+ |
-|                                     |
-|  +- BACKEND ----------------------+ |
-|  | * Ktor: lightweight, coroutines| |
-|  | * Spring: enterprise-grade     | |
-|  | * Share models with frontend   | |
-|  | [Learn more ->]                | |
-|  +--------------------------------+ |
-|                                     |
-|  +- ANDROID ----------------------+ |
-|  | * First-class Compose support  | |
-|  | * Google's recommended stack   | |
-|  | * 100% Kotlin, no Java needed  | |
-|  | [Learn more ->]                | |
-|  +--------------------------------+ |
-|                                     |
-|  +- iOS --------------------------+ |
-|  | * Compose UI works out-of-box  | |
-|  | * Or share business logic only | |
-|  | * Native performance           | |
-|  | [Learn more ->]                | |
-|  +--------------------------------+ |
-|                                     |
-|  +- CLI TOOLS --------------------+ |
-|  | * Native binaries, no JVM      | |
-|  | * Homebrew distribution        | |
-|  |                                | |
-|  | +------------------------+     | |
-|  | | brew install ...       | [C] | |
-|  | +------------------------+     | |
-|  | [Learn more ->]                | |
-|  +--------------------------------+ |
-|                                     |
-|  +- BOTS -------------------------+ |
-|  | * Slack, Telegram, Discord     | |
-|  | * Kotlin DSLs for bot logic    | |
-|  | * Ktor for webhooks            | |
-|  | [Learn more ->]                | |
-|  +--------------------------------+ |
-|                                     |
-|  +- LIMITATIONS (Expandable) -----+ |
-|  | v Let's be honest...           | |
-|  |                                | |
-|  | * Initial setup complexity     | |
-|  | * Web: content not indexable   | |
-|  | * iOS: +10-15MB from Skia      | |
-|  | * macOS: no App Store publish  | |
-|  | * Desktop: larger bundle size  | |
-|  | * Learning curve for iOS devs  | |
-|  +--------------------------------+ |
-|                                     |
-|        [Star on GitHub]             |
-|   Help get jufk into Homebrew core  |
-|                                     |
-+-------------------------------------+
-|        FIXED FOOTER                 |
-|  GitHub * X * LinkedIn   @adjorno   |
-+-------------------------------------+
+Just Use Fucking Kotlin
+One language. Everything.
+
+@Composable
+fun Message() {
+    Text("Just Use Fucking Kotlin")
+}
+// This works on Android, iOS, web, backend, desktop, CLI.
+
+─────────────────────────────────────
+
+BACKEND
+Ktor and Spring run half the internet. Your backend is already Kotlin or
+switching to it. Share models with your frontend. Done.
+→
+
+ANDROID
+Kotlin IS Android. Google killed Java. Jetpack Compose is the default.
+If you're writing Android, you're writing Kotlin.
+→
+
+WEB
+Yes. Compose renders to Canvas. Same UI code as mobile. No DOM, no
+JavaScript. Not for content sites.
+→
+
+iOS
+Share all your logic or share all your UI. Your call. Skia adds 10MB.
+Native performance. SwiftUI works if you want it.
+→
+
+CLI
+Native binaries. No JVM at runtime. Homebrew, apt, whatever. Faster than you think.
+[brew install adjorno/jufk/jufk] [Copy]
+→
+
+BOTS
+Discord, Slack, Telegram. Ktor webhooks. Coroutines. Done.
+→
+
+─────────────────────────────────────
+
+▸ You shouldn't use Kotlin if...
+  (collapsed by default, gatekeeping tone)
+
+  - Gradle scares you
+  - SEO matters more than everything else
+  - 10MB is unacceptable
+  - You refuse to learn anything new
+
+─────────────────────────────────────
+
+Star on GitHub
+justusefuckingkotlin.com
+
+─────────────────────────────────────
+
+FIXED FOOTER
+GitHub · X · LinkedIn        @adjorno
 ```
 
 ---
 
-## Implementation Phases
+## Content Strategy
 
-### Phase 1: Architecture Foundation (Current)
-- [x] Create `data/PlatformContent.kt` with content data classes
-- [x] Create `viewmodel/HomeViewModel.kt`
-- [x] Create `ui/screens/HomeScreen.kt`
-- [x] Create `ui/components/` (HeroSection, FixedFooter, PlatformSectionCard, LimitationsCard)
-- [x] Update `App.kt` to use Scaffold with fixed footer
+### Code Snippet (Early, After Hero)
+```kotlin
+@Composable
+fun Message() {
+    Text("Just Use Fucking Kotlin")
+}
+// This works on Android, iOS, web, backend, desktop, CLI.
+```
 
-### Phase 2: Core Components
-- [ ] `ShareButton.kt` - Share functionality
-- [ ] Enhanced `CodeBlock.kt` with better styling
-
-### Phase 3: Content & Data
-- [ ] Define content for all 6 platform sections
-- [ ] Create external links mapping
-- [ ] Write limitations content
-
-### Phase 4: Interactivity
-- [ ] Cross-platform clipboard
-- [ ] Platform-aware sharing (Intent, UIActivityViewController, navigator.share)
-- [ ] Toast notifications
-
-### Phase 5: Polish & Ship
-- [ ] Consistent spacing and typography
-- [ ] Test on all platforms
-- [ ] Update screenshots
-
----
-
-## Content Details
+**Purpose:** Ground the argument immediately. Not theory.
 
 ### Platform Sections
 
-#### Web (WASM)
-- Compose renders directly to Canvas - no DOM manipulation
-- Same exact UI code runs on mobile and desktop
-- No JavaScript frameworks needed - pure Kotlin
-- Full access to Kotlin coroutines and flows
-- Link: https://kotlinlang.org/docs/wasm-overview.html
+**Platform Ordering (by dominance, not alphabetical):**
+1. Backend → Android → Web → iOS → CLI → Bots
 
-#### Backend (Ktor/Spring)
-- Ktor: Lightweight, coroutines-first, JetBrains-backed
-- Spring: Enterprise-grade with Kotlin-first features
-- Share data models between frontend and backend
-- Full ecosystem of Kotlin libraries available
-- Link: https://ktor.io/
+**Content Format:**
+- 2-3 confident declarative sentences
+- No bullet lists
+- No qualifiers like "can", "might", "possibly"
+- Links demoted to subtle "→" arrow
+
+#### Backend
+**Tone:** Dominant, obvious choice
+```
+Ktor and Spring run half the internet. Your backend is already Kotlin or
+switching to it. Share models with your frontend. Done.
+```
+Link: https://ktor.io/
 
 #### Android
-- Jetpack Compose is Google's recommended UI toolkit
-- First-class Kotlin support - no Java boilerplate
-- 100% of new Android features ship with Kotlin APIs
-- Massive community and library ecosystem
-- Link: https://developer.android.com/kotlin
+**Tone:** Absolute, no alternatives
+```
+Kotlin IS Android. Google killed Java. Jetpack Compose is the default.
+If you're writing Android, you're writing Kotlin.
+```
+Link: https://developer.android.com/kotlin
+
+#### Web
+**Tone:** Direct acknowledgment of tradeoff
+```
+Yes. Compose renders to Canvas. Same UI code as mobile. No DOM, no
+JavaScript. Not for content sites.
+```
+Link: https://kotlinlang.org/docs/wasm-overview.html
 
 #### iOS
-- Compose Multiplatform renders native iOS UI
-- Alternative: share business logic, use SwiftUI for UI
-- Native performance through Kotlin/Native compilation
-- Seamless Xcode integration for debugging
-- Link: https://www.jetbrains.com/kotlin-multiplatform/
+**Tone:** Options presented as power, not compromise
+```
+Share all your logic or share all your UI. Your call. Skia adds 10MB.
+Native performance. SwiftUI works if you want it.
+```
+Link: https://www.jetbrains.com/kotlin-multiplatform/
 
-#### CLI Tools
-- Native binaries - no JVM required at runtime
-- Distribute via Homebrew, apt, or direct download
-- Fast startup, small binary size
-- Full access to system APIs
-- Copyable brew command
-- Link: https://kotlinlang.org/docs/native-overview.html
+#### CLI
+**Tone:** Surprisingly capable, proves the point
+```
+Native binaries. No JVM at runtime. Homebrew, apt, whatever. Faster than you think.
+```
+Link: https://kotlinlang.org/docs/native-overview.html
+Copyable: `brew install adjorno/jufk/jufk`
 
-#### Bots (Slack/Telegram/Discord)
-- Kotlin DSLs make bot logic readable
-- Ktor for webhook endpoints
-- Coroutines for async message handling
-- Share logic across multiple bot platforms
-- Link: https://github.com/kotlin-telegram-bot/kotlin-telegram-bot
+#### Bots
+**Tone:** Trivial, one line, move on
+```
+Discord, Slack, Telegram. Ktor webhooks. Coroutines. Done.
+```
+Link: https://github.com/kotlin-telegram-bot/kotlin-telegram-bot
 
-### Limitations (Brutally Honest)
+### Limitations Section
+**Heading:** "You shouldn't use Kotlin if..."
+**Behavior:** Collapsed by default
+**Tone:** Gatekeeping, not apologizing
 
-1. **Initial Setup Complexity** - Gradle configuration can be overwhelming. Expect 30-60 minutes for first project setup.
+- Gradle scares you
+- SEO matters more than everything else
+- 10MB is unacceptable
+- You refuse to learn anything new
 
-2. **Web: Not SEO Friendly** - Canvas-based rendering means content isn't indexable by search engines.
+**No explanations. If you care, you already know why.**
 
-3. **iOS: Bundle Size Overhead** - Skia graphics library adds 10-15MB to app size.
+### Share Message
+```
+One language. Everything.
+```
 
-4. **macOS: No App Store** - Compose Desktop apps can't be published to Mac App Store yet.
-
-5. **Desktop: Larger Bundle** - Bundled JRE adds ~100-150MB to installers.
-
-6. **Learning Curve for iOS Devs** - Swift developers need to learn Kotlin syntax and Gradle build system.
+**3 words. Ends conversation.**
 
 ---
 
-## Share Message
-```
-One Kotlin codebase. Web, Android, iOS, Desktop.
-justusefuckingkotlin.com
-```
+## Implementation Status
 
-## Footer Content
-```
-GitHub * X * LinkedIn   @adjorno
-```
+### Phase 1: Architecture Foundation ✅ COMPLETE
+- ✅ Create `data/PlatformContent.kt` with content data classes
+- ✅ Create `viewmodel/HomeViewModel.kt`
+- ✅ Create `ui/screens/HomeScreen.kt`
+- ✅ Create `ui/components/` (HeroSection, FixedFooter, PlatformSectionCard, LimitationsCard)
+- ✅ Update `App.kt` to use Scaffold with fixed footer
+
+### Phase 2: Content Rewrite ✅ COMPLETE (commit cf76fb9)
+- ✅ Reorder platforms: Backend → Android → Web → iOS → CLI → Bots
+- ✅ Replace bullet lists with 2-3 sentence paragraphs
+- ✅ Add Composable code snippet after hero
+- ✅ Demote external links (keep them, make them smaller/grayed)
+- ✅ Rewrite limitations as gatekeeping
+- ✅ Update share message to "One language. Everything."
+- ✅ Update hero subtitle to "One language. Everything."
+
+### Phase 3: PR Review Fixes ✅ COMPLETE (commit 27ca975)
+- ✅ Fix onCodeCopy lambda signature type safety
+- ✅ Remove unused icon property from SocialLink
+- ✅ Make onCodeCopy non-nullable in PlatformSectionCard
+- ✅ Remove unused showCopiedToast state from HomeViewModel
+
+---
+
+## Ship Criteria ✅ ALL MET
+
+1. ✅ Backend/Android feel obvious (reordered first, declarative claims)
+2. ✅ Code snippet is visible early (added after hero section)
+3. ✅ No sentence reads like documentation (confident paragraphs, no bullets)
+4. ✅ Limitations sound like filtering, not apologizing ("You shouldn't use Kotlin if...")
+5. ✅ External links are footnotes, not destinations (demoted to "→" with 0.4 opacity)
+6. ✅ Share message is 3 words ("One language. Everything.")
+
+---
+
+## What NOT to do
+
+- Don't add more features
+- Don't add more sections
+- Don't explain more
+- Don't balance the tone
+- Don't make it "nicer"
+
+---
+
+## Notes
+
+- This is v1. Confidence must be maximal.
+- Nuance comes later, not now.
+- If it feels too blunt, it's probably right.
+- The site should not sound like it's trying to convince you.
+- Persuasion is a side effect, not the goal.
