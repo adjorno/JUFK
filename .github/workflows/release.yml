@@ -21,21 +21,24 @@ jobs:
           echo "tag=v$VERSION" >> $GITHUB_OUTPUT
 
   # =============================================================================
-  # MOBILE STAGE - Closed Testing (Not ready for public releases)
+  # MOBILE STAGE - Closed Testing (Alpha) & TestFlight
   # =============================================================================
-  # Future: Uncomment these jobs when ready for public mobile releases
-  #
-  # mobile-build-android:
-  #   uses: ./.github/workflows/template-build-android.yml
-  #   with:
-  #     track: internal
-  #   secrets: inherit
-  #
-  # mobile-build-ios:
-  #   uses: ./.github/workflows/template-build-ios.yml
-  #   with:
-  #     destination: testflight
-  #   secrets: inherit
+
+  mobile-build-android:
+    needs: extract-version
+    uses: ./.github/workflows/template-build-android.yml
+    with:
+      track: alpha
+      version: ${{ needs.extract-version.outputs.version }}
+    secrets: inherit
+
+  mobile-build-ios:
+    needs: extract-version
+    uses: ./.github/workflows/template-build-ios.yml
+    with:
+      destination: testflight
+      version: ${{ needs.extract-version.outputs.version }}
+    secrets: inherit
 
   # =============================================================================
   # DESKTOP STAGE - Desktop App Installer
@@ -91,7 +94,17 @@ jobs:
       executable_extension: .exe
 
   homebrew-release:
-    needs: [homebrew-build-macos-arm64, homebrew-build-macos-x64, homebrew-build-linux, homebrew-build-windows, desktop-build-dmg, desktop-build-windows, extract-version]
+    needs: [
+      homebrew-build-macos-arm64,
+      homebrew-build-macos-x64,
+      homebrew-build-linux,
+      homebrew-build-windows,
+      desktop-build-dmg,
+      desktop-build-windows,
+      mobile-build-android,
+      mobile-build-ios,
+      extract-version
+    ]
     runs-on: ubuntu-latest
     permissions:
       contents: write
