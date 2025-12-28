@@ -23,16 +23,17 @@ jobs:
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v4
 
-      - name: Build Windows distributable
-        run: ./gradlew :composeApp:createDistributable -PappVersion=${{ inputs.version }}
+      - name: Build Windows MSI
+        run: ./gradlew :composeApp:packageMsi -PappVersion=${{ inputs.version }}
 
-      - name: Create zip archive
+      - name: Find and rename MSI
         run: |
-          Compress-Archive -Path "composeApp/build/compose/binaries/main/app/JUFK/*" -DestinationPath "JUFK-${{ inputs.version }}-windows.zip"
+          $MSI_PATH = Get-ChildItem -Path "composeApp/build/compose/binaries/main/msi" -Filter "*.msi" | Select-Object -First 1 -ExpandProperty FullName
+          Move-Item -Path $MSI_PATH -Destination "JUFK-${{ inputs.version }}.msi"
         shell: powershell
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: JUFK-${{ inputs.version }}-windows.zip
-          path: JUFK-${{ inputs.version }}-windows.zip
+          name: JUFK-${{ inputs.version }}.msi
+          path: JUFK-${{ inputs.version }}.msi

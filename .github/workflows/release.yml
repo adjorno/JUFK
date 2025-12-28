@@ -137,9 +137,9 @@ jobs:
       - name: Prepare release files
         run: |
           mkdir release
-          find artifacts -type f \( -name 'jufk-*' -o -name 'JUFK-*.dmg' -o -name 'JUFK-*-windows.zip' \) -exec cp {} release/ \;
+          find artifacts -type f \( -name 'jufk-*' -o -name 'JUFK-*.dmg' -o -name 'JUFK-*.msi' \) -exec cp {} release/ \;
           cd release
-          for f in jufk-* JUFK-*.dmg JUFK-*-windows.zip; do
+          for f in jufk-* JUFK-*.dmg JUFK-*.msi; do
             if [ -f "$f" ]; then
               sha256sum "$f" > "$f.sha256"
             fi
