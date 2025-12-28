@@ -10,4 +10,4 @@ jobs:
   test-windows-build:
     uses: ./.github/workflows/template-build-desktop-windows.yml
     with:
-      version: 1.0.0
+      version: "0.2.5"
