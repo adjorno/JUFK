@@ -107,7 +107,8 @@ fun CodeBlock(
             ).clickable {
                 clipboardManager.setText(AnnotatedString(code))
                 onCopy()
-            }.padding(12.dp),
+            }.semantics { role = Role.Button }
+            .padding(12.dp),
     ) {
         Row(
             modifier = Modifier.fillMaxWidth(),
