@@ -17,7 +17,6 @@ data class PlatformSection(
 data class SocialLink(
     val name: String,
     val url: String,
-    val icon: String,
 )
 
 /**
@@ -44,8 +43,8 @@ fun Message() {
         PlatformSection(
             id = "backend",
             title = "Backend",
-            content = "Ktor and Spring run half the internet. " +
-                "Your backend is already Kotlin or switching to it. Share models with your frontend. Done.",
+            content = "Ktor and Spring run half the internet. Your backend is already Kotlin or " +
+                "switching to it. Share models with your frontend. Done.",
             learnMoreUrl = "https://ktor.io/",
         ),
         PlatformSection(
@@ -58,8 +57,8 @@ fun Message() {
         PlatformSection(
             id = "web",
             title = "Web",
-            content = "Yes. Compose renders to Canvas. Same UI code as mobile. " +
-                "No DOM, no JavaScript. Not for content sites.",
+            content = "Yes. Compose renders to Canvas. Same UI code as mobile. No DOM, no " +
+                "JavaScript. Not for content sites.",
             learnMoreUrl = "https://kotlinlang.org/docs/wasm-overview.html",
         ),
         PlatformSection(
@@ -97,17 +96,14 @@ fun Message() {
         SocialLink(
             name = "GitHub",
             url = "https://github.com/adjorno",
-            icon = "github",
         ),
         SocialLink(
             name = "X",
             url = "https://x.com/adjorno",
-            icon = "x",
         ),
         SocialLink(
             name = "LinkedIn",
             url = "https://linkedin.com/in/adjorno",
-            icon = "linkedin",
         ),
     )
 

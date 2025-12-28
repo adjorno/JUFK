@@ -33,7 +33,7 @@ import com.ifochka.jufk.data.PlatformSection
 @Composable
 fun PlatformSectionCard(
     section: PlatformSection,
-    onCodeCopy: ((String) -> Unit)? = null,
+    onCodeCopy: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val uriHandler = LocalUriHandler.current
@@ -68,7 +68,7 @@ fun PlatformSectionCard(
             Spacer(modifier = Modifier.height(12.dp))
             CodeBlock(
                 code = code,
-                onCopy = { onCodeCopy?.invoke(code) },
+                onCopy = { onCodeCopy(code) },
             )
         }
 

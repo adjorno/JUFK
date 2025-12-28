@@ -56,7 +56,7 @@ fun App() {
                     limitationsHeading = viewModel.uiState.limitationsHeading,
                     limitationsExpanded = viewModel.uiState.limitationsExpanded,
                     onLimitationsToggle = { viewModel.toggleLimitations() },
-                    onCodeCopy = {
+                    onCodeCopy = { _ ->
                         scope.launch {
                             snackbarHostState.showSnackbar("Copied!")
                         }

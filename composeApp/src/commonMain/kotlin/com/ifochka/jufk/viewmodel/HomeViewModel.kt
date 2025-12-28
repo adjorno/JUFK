@@ -20,7 +20,6 @@ data class HomeUiState(
     val socialLinks: List<SocialLink> = Content.socialLinks,
     val footerAuthor: String = Content.FOOTER_AUTHOR,
     val limitationsExpanded: Boolean = false,
-    val showCopiedToast: Boolean = false,
 )
 
 /**
@@ -32,13 +31,5 @@ class HomeViewModel {
 
     fun toggleLimitations() {
         uiState = uiState.copy(limitationsExpanded = !uiState.limitationsExpanded)
-    }
-
-    fun showCopiedToast() {
-        uiState = uiState.copy(showCopiedToast = true)
-    }
-
-    fun dismissCopiedToast() {
-        uiState = uiState.copy(showCopiedToast = false)
     }
 }
