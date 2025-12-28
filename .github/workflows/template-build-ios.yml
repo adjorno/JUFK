@@ -7,6 +7,10 @@ on:
         description: 'Deployment destination (testflight or release)'
         required: true
         type: string
+      version:
+        description: 'Version string (e.g., 1.2.3)'
+        required: true
+        type: string
     secrets:
       IOS_DISTRIBUTION_CERTIFICATE_BASE64:
         required: true
@@ -96,7 +100,7 @@ jobs:
           APP_STORE_CONNECT_API_KEY_PATH: ${{ github.workspace }}/api_key.json
           PROVISIONING_PROFILE_SPECIFIER: ${{ secrets.IOS_PROVISIONING_PROFILE_SPECIFIER }}
           DEVELOPMENT_TEAM: ${{ secrets.APPLE_DEVELOPMENT_TEAM }}
-        run: bundle exec fastlane ios testflight_upload
+        run: bundle exec fastlane ios testflight_upload version:${{ inputs.version }}
 
       - name: Build and Upload to App Store
         if: inputs.destination == 'release'
@@ -104,7 +108,7 @@ jobs:
           APP_STORE_CONNECT_API_KEY_PATH: ${{ github.workspace }}/api_key.json
           PROVISIONING_PROFILE_SPECIFIER: ${{ secrets.IOS_PROVISIONING_PROFILE_SPECIFIER }}
           DEVELOPMENT_TEAM: ${{ secrets.APPLE_DEVELOPMENT_TEAM }}
-        run: bundle exec fastlane ios release
+        run: bundle exec fastlane ios release version:${{ inputs.version }}
 
       - name: Cleanup keychain
         if: always()

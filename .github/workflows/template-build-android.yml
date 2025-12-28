@@ -7,6 +7,10 @@ on:
         description: 'Release track (internal, alpha, beta, or production)'
         required: true
         type: string
+      version:
+        description: 'Version string (e.g., 1.2.3)'
+        required: true
+        type: string
     secrets:
       ANDROID_KEYSTORE_BASE64:
         required: true
@@ -51,4 +55,4 @@ jobs:
           KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
           KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
           PLAY_SERVICE_ACCOUNT_JSON: ${{ secrets.ANDROID_PLAY_SERVICE_ACCOUNT_JSON }}
-        run: bundle exec fastlane android ${{ inputs.track }}
+        run: bundle exec fastlane android ${{ inputs.track }} version:${{ inputs.version }}
