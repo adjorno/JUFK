@@ -104,7 +104,8 @@ fun CodeBlock(
                 width = 1.dp,
                 color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f),
                 shape = RoundedCornerShape(4.dp),
-            ).clickable {
+            ).clip(RoundedCornerShape(4.dp))
+            .clickable {
                 clipboardManager.setText(AnnotatedString(code))
                 onCopy()
             }.semantics { role = Role.Button }
