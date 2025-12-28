@@ -22,11 +22,11 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.ifochka.jufk.data.Limitation
 
 @Composable
 fun LimitationsCard(
-    limitations: List<Limitation>,
+    heading: String,
+    limitations: List<String>,
     expanded: Boolean,
     onToggle: () -> Unit,
     modifier: Modifier = Modifier,
@@ -46,16 +46,15 @@ fun LimitationsCard(
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Text(
-                text = if (expanded) "v" else ">",
-                fontSize = 14.sp,
-                fontWeight = FontWeight.Bold,
+                text = if (expanded) "▼" else "▸",
+                fontSize = 12.sp,
                 color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f),
             )
             Spacer(modifier = Modifier.width(12.dp))
             Text(
-                text = "Let's be honest...",
-                fontSize = 18.sp,
-                fontWeight = FontWeight.Bold,
+                text = heading,
+                fontSize = 16.sp,
+                fontWeight = FontWeight.Medium,
                 color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
             )
         }
@@ -69,43 +68,24 @@ fun LimitationsCard(
                 modifier = Modifier.padding(top = 16.dp),
             ) {
                 limitations.forEach { limitation ->
-                    LimitationItem(limitation)
-                    Spacer(modifier = Modifier.height(12.dp))
+                    Row(
+                        modifier = Modifier.padding(vertical = 4.dp),
+                        verticalAlignment = Alignment.Top,
+                    ) {
+                        Text(
+                            text = "−",
+                            fontSize = 14.sp,
+                            color = MaterialTheme.colorScheme.secondary,
+                        )
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text(
+                            text = limitation,
+                            fontSize = 14.sp,
+                            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.8f),
+                            lineHeight = 20.sp,
+                        )
+                    }
                 }
-            }
-        }
-    }
-}
-
-@Composable
-private fun LimitationItem(
-    limitation: Limitation,
-    modifier: Modifier = Modifier,
-) {
-    Column(modifier = modifier) {
-        Row(
-            verticalAlignment = Alignment.Top,
-        ) {
-            Text(
-                text = "•",
-                fontSize = 14.sp,
-                color = MaterialTheme.colorScheme.secondary,
-            )
-            Spacer(modifier = Modifier.width(8.dp))
-            Column {
-                Text(
-                    text = limitation.title,
-                    fontSize = 14.sp,
-                    fontWeight = FontWeight.Medium,
-                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.8f),
-                )
-                Spacer(modifier = Modifier.height(2.dp))
-                Text(
-                    text = limitation.description,
-                    fontSize = 13.sp,
-                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f),
-                    lineHeight = 18.sp,
-                )
             }
         }
     }

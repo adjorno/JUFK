@@ -50,13 +50,15 @@ fun App() {
                 HomeScreen(
                     heroTitle = viewModel.uiState.heroTitle,
                     heroSubtitle = viewModel.uiState.heroSubtitle,
+                    codeSnippet = viewModel.uiState.codeSnippet,
                     platformSections = viewModel.uiState.platformSections,
                     limitations = viewModel.uiState.limitations,
+                    limitationsHeading = viewModel.uiState.limitationsHeading,
                     limitationsExpanded = viewModel.uiState.limitationsExpanded,
                     onLimitationsToggle = { viewModel.toggleLimitations() },
                     onCodeCopy = {
                         scope.launch {
-                            snackbarHostState.showSnackbar("Copied to clipboard!")
+                            snackbarHostState.showSnackbar("Copied!")
                         }
                     },
                     modifier = Modifier.padding(innerPadding),

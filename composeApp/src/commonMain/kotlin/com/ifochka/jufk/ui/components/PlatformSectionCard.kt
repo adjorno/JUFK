@@ -18,10 +18,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -55,25 +57,12 @@ fun PlatformSectionCard(
 
         Spacer(modifier = Modifier.height(12.dp))
 
-        section.benefits.forEach { benefit ->
-            Row(
-                modifier = Modifier.padding(vertical = 4.dp),
-                verticalAlignment = Alignment.Top,
-            ) {
-                Text(
-                    text = "•",
-                    fontSize = 14.sp,
-                    color = MaterialTheme.colorScheme.secondary,
-                )
-                Spacer(modifier = Modifier.width(8.dp))
-                Text(
-                    text = benefit,
-                    fontSize = 14.sp,
-                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.8f),
-                    lineHeight = 20.sp,
-                )
-            }
-        }
+        Text(
+            text = section.content,
+            fontSize = 14.sp,
+            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.9f),
+            lineHeight = 20.sp,
+        )
 
         section.codeSnippet?.let { code ->
             Spacer(modifier = Modifier.height(12.dp))
@@ -86,10 +75,9 @@ fun PlatformSectionCard(
         Spacer(modifier = Modifier.height(12.dp))
 
         Text(
-            text = "Learn more ->",
-            fontSize = 14.sp,
-            fontWeight = FontWeight.Medium,
-            color = MaterialTheme.colorScheme.primary,
+            text = "→",
+            fontSize = 12.sp,
+            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.4f),
             modifier = Modifier
                 .clickable { uriHandler.openUri(section.learnMoreUrl) }
                 .semantics { role = Role.Button }
@@ -104,6 +92,8 @@ fun CodeBlock(
     onCopy: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val clipboardManager = LocalClipboardManager.current
+
     Box(
         modifier = modifier
             .fillMaxWidth()
@@ -114,8 +104,10 @@ fun CodeBlock(
                 width = 1.dp,
                 color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f),
                 shape = RoundedCornerShape(4.dp),
-            ).clickable(onClick = onCopy)
-            .padding(12.dp),
+            ).clickable {
+                clipboardManager.setText(AnnotatedString(code))
+                onCopy()
+            }.padding(12.dp),
     ) {
         Row(
             modifier = Modifier.fillMaxWidth(),
