@@ -83,10 +83,10 @@ fun PlatformSectionCard(
             contentDescription = "Learn more",
             tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.4f),
             modifier = Modifier
+                .padding(vertical = 4.dp)
                 .size(16.dp)
                 .clickable { uriHandler.openUri(section.learnMoreUrl) }
-                .semantics { role = Role.Button }
-                .padding(vertical = 4.dp),
+                .semantics { role = Role.Button },
         )
     }
 }
