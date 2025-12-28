@@ -1,3 +1,4 @@
+# Deploys to Play Store Internal track on every push to main
 name: Deploy Android to Play Store
 
 on:
@@ -35,8 +36,9 @@ jobs:
       - name: Compute CI version
         id: version
         run: |
-          # Get latest release tag (e.g., v1.2.3 -> 1.2.3)
-          LAST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "v0.0.0")
+          # Get latest release tag by version (e.g., v1.2.3 -> 1.2.3)
+          LAST_TAG=$(git tag --sort=-v:refname | head -1)
+          LAST_TAG=${LAST_TAG:-v0.0.0}
           LAST_VERSION=${LAST_TAG#v}
 
           # Get UTC timestamp (YYYYMMDD.HHmm)

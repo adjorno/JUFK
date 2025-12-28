@@ -62,7 +62,7 @@ platform :android do
 
   desc "Deploy to a specific Play Store track"
   private_lane :deploy_to_track do |options|
-    build
+    build(version: options[:version])
     upload_to_play_store(
       track: options[:track],
       aab: "androidApp/build/outputs/bundle/release/androidApp-release.aab",
@@ -71,23 +71,23 @@ platform :android do
   end
 
   desc "Deploy to Play Store internal track"
-  lane :internal do
-    deploy_to_track(track: "internal")
+  lane :internal do |options|
+    deploy_to_track(track: "internal", version: options[:version])
   end
 
   desc "Deploy to Play Store alpha track"
-  lane :alpha do
-    deploy_to_track(track: "alpha")
+  lane :alpha do |options|
+    deploy_to_track(track: "alpha", version: options[:version])
   end
 
   desc "Deploy to Play Store beta track"
-  lane :beta do
-    deploy_to_track(track: "beta")
+  lane :beta do |options|
+    deploy_to_track(track: "beta", version: options[:version])
   end
 
   desc "Deploy to Play Store production"
-  lane :production do
-    deploy_to_track(track: "production")
+  lane :production do |options|
+    deploy_to_track(track: "production", version: options[:version])
   end
 end
 
@@ -149,8 +149,8 @@ platform :ios do
   end
 
   desc "Deploy to TestFlight"
-  lane :testflight_upload do
-    build
+  lane :testflight_upload do |options|
+    build(version: options[:version])
     upload_to_testflight(
       api_key_path: ENV["APP_STORE_CONNECT_API_KEY_PATH"],
       skip_waiting_for_build_processing: true
@@ -158,8 +158,8 @@ platform :ios do
   end
 
   desc "Deploy to App Store"
-  lane :release do
-    build
+  lane :release do |options|
+    build(version: options[:version])
     upload_to_app_store(
       api_key_path: ENV["APP_STORE_CONNECT_API_KEY_PATH"],
       skip_screenshots: true,
