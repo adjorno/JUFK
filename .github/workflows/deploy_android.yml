@@ -23,13 +23,38 @@ on:
           - production
 
 jobs:
+  compute-version:
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Compute CI version
+        id: version
+        run: |
+          # Get latest release tag (e.g., v1.2.3 -> 1.2.3)
+          LAST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "v0.0.0")
+          LAST_VERSION=${LAST_TAG#v}
+
+          # Get UTC timestamp (YYYYMMDD.HHmm)
+          TIMESTAMP=$(date -u +%Y%m%d.%H%M)
+
+          # Get short commit SHA (7 chars)
+          SHORT_SHA=$(git rev-parse --short=7 HEAD)
+
+          # Combine: 1.2.3.20251228.1435.c8bc509
+          VERSION="${LAST_VERSION}.${TIMESTAMP}.${SHORT_SHA}"
+
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "Computed version: $VERSION"
+
   deploy:
+    needs: compute-version
     uses: ./.github/workflows/template-build-android.yml
     with:
       track: ${{ inputs.track || 'internal' }}
-    secrets:
-      ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
-      ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
-      ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
-      ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
-      ANDROID_PLAY_SERVICE_ACCOUNT_JSON: ${{ secrets.ANDROID_PLAY_SERVICE_ACCOUNT_JSON }}
+      version: ${{ needs.compute-version.outputs.version }}
+    secrets: inherit
