@@ -21,15 +21,38 @@ on:
           - release
 
 jobs:
+  compute-version:
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Compute CI version
+        id: version
+        run: |
+          # Get latest release tag (e.g., v1.2.3 -> 1.2.3)
+          LAST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "v0.0.0")
+          LAST_VERSION=${LAST_TAG#v}
+
+          # Get UTC timestamp (YYYYMMDD.HHmm)
+          TIMESTAMP=$(date -u +%Y%m%d.%H%M)
+
+          # Get short commit SHA (7 chars)
+          SHORT_SHA=$(git rev-parse --short=7 HEAD)
+
+          # Combine: 1.2.3.20251228.1435.c8bc509
+          VERSION="${LAST_VERSION}.${TIMESTAMP}.${SHORT_SHA}"
+
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "Computed version: $VERSION"
+
   deploy:
+    needs: compute-version
     uses: ./.github/workflows/template-build-ios.yml
     with:
       destination: ${{ github.event_name == 'push' && 'testflight' || inputs.destination }}
-    secrets:
-      IOS_DISTRIBUTION_CERTIFICATE_BASE64: ${{ secrets.IOS_DISTRIBUTION_CERTIFICATE_BASE64 }}
-      IOS_DISTRIBUTION_CERTIFICATE_PASSWORD: ${{ secrets.IOS_DISTRIBUTION_CERTIFICATE_PASSWORD }}
-      APPLE_KEYCHAIN_PASSWORD: ${{ secrets.APPLE_KEYCHAIN_PASSWORD }}
-      IOS_PROVISIONING_PROFILE_BASE64: ${{ secrets.IOS_PROVISIONING_PROFILE_BASE64 }}
-      APPLE_APP_STORE_CONNECT_API_KEY_BASE64: ${{ secrets.APPLE_APP_STORE_CONNECT_API_KEY_BASE64 }}
-      IOS_PROVISIONING_PROFILE_SPECIFIER: ${{ secrets.IOS_PROVISIONING_PROFILE_SPECIFIER }}
-      APPLE_DEVELOPMENT_TEAM: ${{ secrets.APPLE_DEVELOPMENT_TEAM }}
+      version: ${{ needs.compute-version.outputs.version }}
+    secrets: inherit
