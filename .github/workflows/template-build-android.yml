@@ -55,4 +55,4 @@ jobs:
           KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
           KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
           PLAY_SERVICE_ACCOUNT_JSON: ${{ secrets.ANDROID_PLAY_SERVICE_ACCOUNT_JSON }}
-        run: bundle exec fastlane android ${{ inputs.track }} version:${{ inputs.version }} gradle_properties:{ "version" => "${{ inputs.version }}" }
+        run: bundle exec fastlane android ${{ inputs.track }} version:${{ inputs.version }} gradle_properties:{ "VERSION_NAME" => "${{ inputs.version }}" }

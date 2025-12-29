@@ -41,7 +41,7 @@ jobs:
         uses: gradle/actions/setup-gradle@v4
 
       - name: Build CLI binary
-        run: ./gradlew -Pversion=${{ inputs.version }} :cli:linkReleaseExecutable${{ inputs.target }}
+        run: ./gradlew -PVERSION_NAME=${{ inputs.version }} :cli:linkReleaseExecutable${{ inputs.target }}
 
       - name: Prepare artifact
         run: |
