@@ -20,20 +20,35 @@ end
 
 # Android lanes
 platform :android do
+
+  def fetch_next_play_store_version_code
+    tracks = %w[internal alpha beta production]
+    all_version_codes = []
+
+    tracks.each do |track|
+      begin
+        codes = google_play_track_version_codes(
+          track: track,
+          json_key_data: ENV["PLAY_SERVICE_ACCOUNT_JSON"]
+        )
+        all_version_codes.concat(codes) if codes
+      rescue => e
+        UI.message("Skipping track #{track}: #{e.message}")
+      end
+    end
+
+    (all_version_codes.max || 0) + 1
+  end
+
   desc "Build release AAB"
   lane :build do |options|
     version_name = options[:version] || get_version_name
     gradle_properties = options[:gradle_properties] || {}
 
-    # Get next version code from Play Store
     version_code = options[:version_code]
     unless version_code
       begin
-        version_codes = google_play_track_version_codes(
-          track: "internal",
-          json_key_data: ENV["PLAY_SERVICE_ACCOUNT_JSON"]
-        )
-        version_code = (version_codes.max || 0) + 1
+        version_code = fetch_next_play_store_version_code
       rescue => e
         UI.message("Failed to get version code from Play Store, defaulting to 1. Error: #{e.message}")
         version_code = 1
