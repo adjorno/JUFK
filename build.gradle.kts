@@ -1,3 +1,5 @@
+import com.codingfeline.buildkonfig.compiler.FieldSpec.Type.STRING
+
 plugins {
     alias(libs.plugins.kotlin.multiplatform) apply false
     alias(libs.plugins.kotlin.android) apply false
@@ -8,11 +10,21 @@ plugins {
     alias(libs.plugins.android.kotlin.multiplatform.library) apply false
     alias(libs.plugins.ktlint)
     alias(libs.plugins.detekt)
+    id("com.codingfeline.buildkonfig") version "0.15.1" apply false
 }
 
 subprojects {
     apply(plugin = "org.jlleitschuh.gradle.ktlint")
     apply(plugin = "io.gitlab.arturbosch.detekt")
+
+    plugins.withId("com.codingfeline.buildkonfig") {
+        configure<com.codingfeline.buildkonfig.gradle.BuildKonfigExtension> {
+            packageName = "com.ifochka.jufk"
+            defaultConfigs {
+                buildConfigField(STRING, "VERSION_NAME", "\"${project.version}\"")
+            }
+        }
+    }
 
     configure<org.jlleitschuh.gradle.ktlint.KtlintExtension> {
         version.set("1.7.1")
