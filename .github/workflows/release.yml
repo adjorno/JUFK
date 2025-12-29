@@ -109,11 +109,10 @@ jobs:
           path: artifacts
 
       - name: Checkout homebrew tap
-        uses: actions/checkout@v4
+        uses: webfactory/ssh-agent@v0.5.2
         with:
-          repository: adjorno/homebrew-jufk
-          path: homebrew-jufk
-          token: ${{ secrets.GITHUB_TOKEN }}
+          ssh-private-key: ${{ secrets.HOMEBREW_TAP_PRIVATE_KEY }}
+      - run: git clone --depth 1 git@github.com:adjorno/homebrew-jufk.git homebrew-jufk
 
       - name: Update formula with new hashes
         run: |
