@@ -11,7 +11,7 @@ fun main(args: Array<String>) {
     println("$purple$bold  ║║ ║╠╣ ╠╩╗$reset")
     println("$purple$bold ╚╝╚═╝╚  ╩ ╩$reset")
     println()
-    println("$bold  Version: ${com.ifochka.jufk.BuildKonfig.VERSION_NAME}$reset")
+    println("$bold  Version: ${BuildKonfig.VERSION_NAME}$reset")
     println()
     println("$bold Just Use Fucking Kotlin$reset")
     println()

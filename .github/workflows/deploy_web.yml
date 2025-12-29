@@ -33,8 +33,28 @@ jobs:
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v4
 
+      - name: Compute CI version
+        id: version
+        run: |
+            # Get latest release tag by version (e.g., v1.2.3 -> 1.2.3)
+            LAST_TAG=$(git tag --sort=-v:refname | head -1)
+            LAST_TAG=${LAST_TAG:-v0.0.0}
+            LAST_VERSION=${LAST_TAG#v}
+
+            # Get UTC timestamp (YYYYMMDD.HHmm)
+            TIMESTAMP=$(date -u +%Y%m%d.%H%M)
+
+            # Get short commit SHA (7 chars)
+            SHORT_SHA=$(git rev-parse --short=7 HEAD)
+
+            # Combine: 1.2.3.20251228.1435.c8bc509
+            VERSION="${LAST_VERSION}.${TIMESTAMP}.${SHORT_SHA}"
+
+            echo "version=$VERSION" >> $GITHUB_OUTPUT
+            echo "Computed version: $VERSION"
+
       - name: Build WASM
-        run: ./gradlew :composeApp:wasmJsBrowserDistribution
+        run: ./gradlew :composeApp:wasmJsBrowserDistribution -PVERSION_NAME=${{ steps.version.outputs.version }}
 
       - name: Setup Pages
         uses: actions/configure-pages@v4

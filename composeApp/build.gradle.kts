@@ -7,7 +7,7 @@ plugins {
     alias(libs.plugins.kotlin.compose.compiler)
     alias(libs.plugins.compose.multiplatform)
     alias(libs.plugins.android.kotlin.multiplatform.library)
-    id("com.codingfeline.buildkonfig")
+    alias(libs.plugins.buildkonfig)
 }
 
 kotlin {

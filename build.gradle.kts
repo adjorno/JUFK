@@ -10,7 +10,7 @@ plugins {
     alias(libs.plugins.android.kotlin.multiplatform.library) apply false
     alias(libs.plugins.ktlint)
     alias(libs.plugins.detekt)
-    id("com.codingfeline.buildkonfig") version "0.15.1" apply false
+    alias(libs.plugins.buildkonfig) apply false
 }
 
 subprojects {
@@ -20,8 +20,11 @@ subprojects {
     plugins.withId("com.codingfeline.buildkonfig") {
         configure<com.codingfeline.buildkonfig.gradle.BuildKonfigExtension> {
             packageName = "com.ifochka.jufk"
+
+            val versionName =
+                project.findProperty("VERSION_NAME")?.toString() ?: "0.0.1"
             defaultConfigs {
-                buildConfigField(STRING, "VERSION_NAME", "\"${project.version}\"")
+                buildConfigField(STRING, "VERSION_NAME", versionName)
             }
         }
     }

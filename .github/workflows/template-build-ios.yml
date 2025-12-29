@@ -92,7 +92,7 @@ jobs:
           echo "$APP_STORE_CONNECT_API_KEY_BASE64" | base64 --decode > $GITHUB_WORKSPACE/api_key.json
 
       - name: Build Kotlin Framework
-        run: ./gradlew :composeApp:linkReleaseFrameworkIosArm64
+        run: ./gradlew :composeApp:linkReleaseFrameworkIosArm64 -PVERSION_NAME=${{ inputs.version }}
 
       - name: Sanitize version
         id: sanitize_version
