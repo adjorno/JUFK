@@ -21,7 +21,24 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  extract-version:
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Get base version
+        id: base_version
+        run: echo "BASE_VERSION=$(grep 'version = ' build.gradle.kts | cut -d '\"' -f 2)" >> $GITHUB_OUTPUT
+      - name: Generate version
+        id: version
+        run: |
+          VERSION="${{ steps.base_version.outputs.BASE_VERSION }}.$(date +'%Y%m%d.%H%M').${GITHUB_SHA::7}"
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+
   ktlint:
+    needs: extract-version
     name: Ktlint
     runs-on: ubuntu-latest
     steps:
@@ -38,9 +55,10 @@ jobs:
         uses: gradle/actions/setup-gradle@v4
 
       - name: Run ktlint
-        run: ./gradlew ktlintCheck
+        run: ./gradlew -Pversion=${{ needs.extract-version.outputs.version }} ktlintCheck
 
   detekt:
+    needs: extract-version
     name: Detekt
     runs-on: ubuntu-latest
     steps:
@@ -57,7 +75,7 @@ jobs:
         uses: gradle/actions/setup-gradle@v4
 
       - name: Run detekt
-        run: ./gradlew detekt
+        run: ./gradlew -Pversion=${{ needs.extract-version.outputs.version }} detekt
 
       - name: Upload detekt report
         if: always()
@@ -68,6 +86,7 @@ jobs:
           retention-days: 7
 
   android-lint:
+    needs: extract-version
     name: Android Lint
     runs-on: ubuntu-latest
     steps:
@@ -84,7 +103,7 @@ jobs:
         uses: gradle/actions/setup-gradle@v4
 
       - name: Run Android Lint
-        run: ./gradlew :androidApp:lint
+        run: ./gradlew -Pversion=${{ needs.extract-version.outputs.version }} :androidApp:lint
 
       - name: Upload lint report
         if: always()
@@ -95,6 +114,7 @@ jobs:
           retention-days: 7
 
   test:
+    needs: extract-version
     name: Unit Tests
     runs-on: ubuntu-latest
     steps:
@@ -111,7 +131,7 @@ jobs:
         uses: gradle/actions/setup-gradle@v4
 
       - name: Run tests
-        run: ./gradlew allTests
+        run: ./gradlew -Pversion=${{ needs.extract-version.outputs.version }} allTests
 
       - name: Upload test results
         if: always()
