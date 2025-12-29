@@ -83,6 +83,14 @@ fun FixedFooter(
                 fontSize = 12.sp,
                 color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f),
             )
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            Text(
+                text = "Version: ${com.ifochka.jufk.BuildKonfig.VERSION_NAME}",
+                fontSize = 12.sp,
+                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f),
+            )
         }
     }
 }
