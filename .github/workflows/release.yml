@@ -2,21 +2,21 @@ name: Release CLI
 
 on:
   push:
-    branches:
-      - 'release/*'
+    tags:
+      - 'v*.*.*'
 
 jobs:
-  # Extract version from branch name (e.g., release/1.0.0 -> 1.0.0)
+  # Extract version from tag name (e.g., v1.0.0 -> 1.0.0)
   extract-version:
     runs-on: ubuntu-latest
     outputs:
       version: ${{ steps.version.outputs.version }}
       tag: ${{ steps.version.outputs.tag }}
     steps:
-      - name: Extract version from branch name
+      - name: Extract version from tag name
         id: version
         run: |
-          VERSION="${GITHUB_REF_NAME#release/}"
+          VERSION="${GITHUB_REF_NAME#v}"
           echo "version=$VERSION" >> $GITHUB_OUTPUT
           echo "tag=v$VERSION" >> $GITHUB_OUTPUT
 
@@ -99,6 +99,52 @@ jobs:
       homebrew-build-macos-x64,
       homebrew-build-linux,
       homebrew-build-windows,
+      extract-version
+    ]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+
+      - name: Checkout homebrew tap
+        uses: actions/checkout@v4
+        with:
+          repository: adjorno/homebrew-jufk
+          path: homebrew-jufk
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Update formula with new hashes
+        run: |
+          VERSION="${{ needs.extract-version.outputs.version }}"
+          SHA_MACOS_ARM64=$(sha256sum artifacts/jufk-macos-arm64/jufk-macos-arm64 | cut -d' ' -f1)
+          SHA_MACOS_X64=$(sha256sum artifacts/jufk-macos-x64/jufk-macos-x64 | cut -d' ' -f1)
+          SHA_LINUX_X64=$(sha256sum artifacts/jufk-linux-x64/jufk-linux-x64 | cut -d' ' -f1)
+
+          sed -i "s/version \".*\"/version \"$VERSION\"/" homebrew-jufk/Formula/jufk.rb
+          sed -i "s|url \".*jufk-macos-arm64\"|url \"https://github.com/adjorno/jufk/releases/download/v$VERSION/jufk-macos-arm64\"|" homebrew-jufk/Formula/jufk.rb
+          sed -i "/jufk-macos-arm64/{n;s/sha256 \"[a-f0-9]*\"/sha256 \"$SHA_MACOS_ARM64\"/}" homebrew-jufk/Formula/jufk.rb
+          sed -i "s|url \".*jufk-macos-x64\"|url \"https://github.com/adjorno/jufk/releases/download/v$VERSION/jufk-macos-x64\"|" homebrew-jufk/Formula/jufk.rb
+          sed -i "/jufk-macos-x64/{n;s/sha256 \"[a-f0-9]*\"/sha256 \"$SHA_MACOS_X64\"/}" homebrew-jufk/Formula/jufk.rb
+          sed -i "s|url \".*jufk-linux-x64\"|url \"https://github.com/adjorno/jufk/releases/download/v$VERSION/jufk-linux-x64\"|" homebrew-jufk/Formula/jufk.rb
+          sed -i "/jufk-linux-x64/{n;s/sha256 \"[a-f0-9]*\"/sha256 \"$SHA_LINUX_X64\"/}" homebrew-jufk/Formula/jufk.rb
+
+          echo "Updated formula:"
+          cat homebrew-jufk/Formula/jufk.rb
+
+      - name: Commit formula update
+        run: |
+          cd homebrew-jufk
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add Formula/jufk.rb
+          git commit -m "Update Homebrew formula for ${{ needs.extract-version.outputs.tag }}"
+          git push
+
+  create-release:
+    needs: [
+      homebrew-release,
       desktop-build-dmg,
       desktop-build-windows,
       mobile-build-android,
@@ -119,34 +165,6 @@ jobs:
         with:
           path: artifacts
 
-      - name: Update formula with new hashes
-        run: |
-          VERSION="${{ needs.extract-version.outputs.version }}"
-          SHA_MACOS_ARM64=$(sha256sum artifacts/jufk-macos-arm64/jufk-macos-arm64 | cut -d' ' -f1)
-          SHA_MACOS_X64=$(sha256sum artifacts/jufk-macos-x64/jufk-macos-x64 | cut -d' ' -f1)
-          SHA_LINUX_X64=$(sha256sum artifacts/jufk-linux-x64/jufk-linux-x64 | cut -d' ' -f1)
-
-          sed -i "s/version \".*\"/version \"$VERSION\"/" Formula/jufk.rb
-          sed -i "/jufk-macos-arm64/{n;s/sha256 \"[a-f0-9]*\"/sha256 \"$SHA_MACOS_ARM64\"/}" Formula/jufk.rb
-          sed -i "/jufk-macos-x64/{n;s/sha256 \"[a-f0-9]*\"/sha256 \"$SHA_MACOS_X64\"/}" Formula/jufk.rb
-          sed -i "/jufk-linux-x64/{n;s/sha256 \"[a-f0-9]*\"/sha256 \"$SHA_LINUX_X64\"/}" Formula/jufk.rb
-
-          echo "Updated formula:"
-          cat Formula/jufk.rb
-
-      - name: Commit formula update
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add Formula/jufk.rb
-          git commit -m "Update Homebrew formula for ${{ needs.extract-version.outputs.tag }}"
-          git push
-
-      - name: Create tag
-        run: |
-          git tag ${{ needs.extract-version.outputs.tag }}
-          git push origin ${{ needs.extract-version.outputs.tag }}
-
       - name: Prepare release files
         run: |
           mkdir release
@@ -165,10 +183,3 @@ jobs:
           files: release/*
           generate_release_notes: true
           draft: false
-
-      - name: Merge to main
-        run: |
-          git checkout main
-          git pull origin main
-          git merge ${{ github.ref_name }} -m "Merge ${{ github.ref_name }} into main"
-          git push origin main
