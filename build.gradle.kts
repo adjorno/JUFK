@@ -24,7 +24,7 @@ subprojects {
             val versionName =
                 project.findProperty("VERSION_NAME")?.toString() ?: "0.0.1"
             defaultConfigs {
-                buildConfigField(STRING, "VERSION_NAME", "\"$versionName\"")
+                buildConfigField(STRING, "VERSION_NAME", versionName)
             }
         }
     }
