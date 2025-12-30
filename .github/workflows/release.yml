@@ -123,11 +123,11 @@ jobs:
 
           sed -i "s/version \".*\"/version \"$VERSION\"/" homebrew-jufk/Formula/jufk.rb
           sed -i "s|url \".*jufk-macos-arm64\"|url \"https://github.com/adjorno/jufk/releases/download/v$VERSION/jufk-macos-arm64\"|" homebrew-jufk/Formula/jufk.rb
-          sed -i "/jufk-macos-arm64/{n;s/sha256 \"[a-f0-9]*\"/sha256 \"$SHA_MACOS_ARM64\"/}" homebrew-jufk/Formula/jufk.rb
+          sed -i "/jufk-macos-arm64/{n;s/sha256 \".*\"/sha256 \"$SHA_MACOS_ARM64\"/}" homebrew-jufk/Formula/jufk.rb
           sed -i "s|url \".*jufk-macos-x64\"|url \"https://github.com/adjorno/jufk/releases/download/v$VERSION/jufk-macos-x64\"|" homebrew-jufk/Formula/jufk.rb
-          sed -i "/jufk-macos-x64/{n;s/sha256 \"[a-f0-9]*\"/sha256 \"$SHA_MACOS_X64\"/}" homebrew-jufk/Formula/jufk.rb
+          sed -i "/jufk-macos-x64/{n;s/sha256 \".*\"/sha256 \"$SHA_MACOS_X64\"/}" homebrew-jufk/Formula/jufk.rb
           sed -i "s|url \".*jufk-linux-x64\"|url \"https://github.com/adjorno/jufk/releases/download/v$VERSION/jufk-linux-x64\"|" homebrew-jufk/Formula/jufk.rb
-          sed -i "/jufk-linux-x64/{n;s/sha256 \"[a-f0-9]*\"/sha256 \"$SHA_LINUX_X64\"/}" homebrew-jufk/Formula/jufk.rb
+          sed -i "/jufk-linux-x64/{n;s/sha256 \".*\"/sha256 \"$SHA_LINUX_X64\"/}" homebrew-jufk/Formula/jufk.rb
 
           echo "Updated formula:"
           cat homebrew-jufk/Formula/jufk.rb
