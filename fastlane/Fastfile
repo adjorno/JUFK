@@ -112,7 +112,8 @@ platform :ios do
   desc "Build iOS app"
   lane :build do |options|
     version_name = options[:version] || get_version_name
-    sanitized_version = version_name.split('.').first(3).join('.')
+    match = version_name.match(/(\d+\.\d+\.\d+)/)
+    sanitized_version = match ? match[1] : "1.0.0"
 
     # Get next build number from TestFlight
     build_number = options[:build_number]
