@@ -91,20 +91,13 @@ jobs:
           mkdir -p ~/.appstoreconnect/private_keys
           echo "$APP_STORE_CONNECT_API_KEY_BASE64" | base64 --decode > $GITHUB_WORKSPACE/api_key.json
 
-      - name: Build Kotlin Framework
-        run: ./gradlew :composeApp:linkReleaseFrameworkIosArm64 -PVERSION_NAME=${{ inputs.version }}
-
-      - name: Sanitize version
-        id: sanitize_version
-        run: echo "SANITIZED_VERSION=$(echo ${{ inputs.version }} | cut -d. -f1,2,3)" >> $GITHUB_ENV
-
       - name: Build and Upload to TestFlight
         if: inputs.destination == 'testflight'
         env:
           APP_STORE_CONNECT_API_KEY_PATH: ${{ github.workspace }}/api_key.json
           PROVISIONING_PROFILE_SPECIFIER: ${{ secrets.IOS_PROVISIONING_PROFILE_SPECIFIER }}
           DEVELOPMENT_TEAM: ${{ secrets.APPLE_DEVELOPMENT_TEAM }}
-        run: bundle exec fastlane ios testflight_upload version:${{ env.SANITIZED_VERSION }}
+        run: bundle exec fastlane ios testflight_upload version:${{ inputs.version }}
 
       - name: Build and Upload to App Store
         if: inputs.destination == 'release'
@@ -112,7 +105,7 @@ jobs:
           APP_STORE_CONNECT_API_KEY_PATH: ${{ github.workspace }}/api_key.json
           PROVISIONING_PROFILE_SPECIFIER: ${{ secrets.IOS_PROVISIONING_PROFILE_SPECIFIER }}
           DEVELOPMENT_TEAM: ${{ secrets.APPLE_DEVELOPMENT_TEAM }}
-        run: bundle exec fastlane ios release version:${{ env.SANITIZED_VERSION }}
+        run: bundle exec fastlane ios release version:${{ inputs.version }}
 
       - name: Cleanup keychain
         if: always()
