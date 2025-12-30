@@ -112,6 +112,7 @@ platform :ios do
   desc "Build iOS app"
   lane :build do |options|
     version_name = options[:version] || get_version_name
+    sanitized_version = version_name.split('.').first(3).join('.')
 
     # Get next build number from TestFlight
     build_number = options[:build_number]
@@ -129,7 +130,7 @@ platform :ios do
     UI.message("Building version #{version_name} (#{build_number})")
 
     increment_version_number(
-      version_number: version_name,
+      version_number: sanitized_version,
       xcodeproj: "iosApp/iosApp.xcodeproj"
     )
 
@@ -139,6 +140,8 @@ platform :ios do
     )
 
     provisioning_profile = ENV.fetch("PROVISIONING_PROFILE_SPECIFIER")
+
+    ENV["VERSION_NAME"] = version_name
 
     build_app(
       project: "iosApp/iosApp.xcodeproj",
