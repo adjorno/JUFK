@@ -7,14 +7,15 @@ on:
         description: 'Version string (e.g., 1.2.3 or 1.2.3.20260101.1430.abc1234)'
         required: true
         type: string
-      publish_branch:
-        description: 'Target branch for GitHub Pages (gh-pages or gh-pages-dev)'
+      cloudflare_project_name:
+        description: 'Name of the Cloudflare Pages project'
         required: true
         type: string
-      cname:
-        description: 'Custom domain for CNAME file'
+    secrets:
+      CLOUDFLARE_API_TOKEN:
         required: true
-        type: string
+      CLOUDFLARE_ACCOUNT_ID:
+        required: true
 
 jobs:
   build-and-deploy:
@@ -35,10 +36,11 @@ jobs:
       - name: Build WASM
         run: ./gradlew :composeApp:wasmJsBrowserDistribution -PVERSION_NAME=${{ inputs.version }}
 
-      - name: Deploy to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v4
+      - name: Deploy to Cloudflare Pages
+        uses: cloudflare/pages-action@v1
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./composeApp/build/dist/wasmJs/productionExecutable
-          publish_branch: ${{ inputs.publish_branch }}
-          cname: ${{ inputs.cname }}
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          projectName: ${{ inputs.cloudflare_project_name }}
+          directory: ./composeApp/build/dist/wasmJs/productionExecutable
+          branch: main
