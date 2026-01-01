@@ -57,6 +57,19 @@ jobs:
       version: ${{ needs.extract-version.outputs.version }}
 
   # =============================================================================
+  # WEB STAGE - Production Deployment
+  # =============================================================================
+
+  web-build-and-deploy:
+    needs: extract-version
+    uses: ./.github/workflows/template-build-web.yml
+    with:
+      version: ${{ needs.extract-version.outputs.version }}
+      publish_branch: gh-pages
+      cname: justusefuckingkotlin.com
+    secrets: inherit
+
+  # =============================================================================
   # HOMEBREW STAGE - CLI Binaries & Formula Update
   # =============================================================================
 
