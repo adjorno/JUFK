@@ -18,9 +18,15 @@ jobs:
     outputs:
       version: ${{ steps.version.outputs.version }}
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout (full history for CI)
+        if: inputs.type == 'ci'
+        uses: actions/checkout@v4
         with:
-          fetch-depth: ${{ inputs.type == 'ci' && 0 || 1 }}
+          fetch-depth: 0
+
+      - name: Checkout (shallow for release)
+        if: inputs.type == 'release'
+        uses: actions/checkout@v4
 
       - name: Compute CI version
         if: inputs.type == 'ci'
