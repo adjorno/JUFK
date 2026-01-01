@@ -28,6 +28,7 @@ jobs:
     uses: ./.github/workflows/template-build-web.yml
     with:
       version: ${{ needs.compute-version.outputs.version }}
-      publish_branch: gh-pages-dev
-      cname: dev.justusefuckingkotlin.com
-    secrets: inherit
+      cloudflare_project_name: justusefuckingkotlin-dev
+    secrets:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
