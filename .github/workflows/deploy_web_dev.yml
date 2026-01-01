@@ -1,30 +1,33 @@
-# Deploys to PROD (justusefuckingkotlin.com) on version tags
-name: Deploy Web to PROD
+# Deploys to DEV (dev.justusefuckingkotlin.com) on every push to main
+name: Deploy Web to DEV
 
 on:
   push:
-    tags:
-      - 'v*.*.*'
+    branches: [main]
+    paths:
+      - 'composeApp/**'
+      - '.github/workflows/deploy_web_dev.yml'
+      - '.github/workflows/template-build-web.yml'
   workflow_dispatch:
 
 permissions:
   contents: write
 
 concurrency:
-  group: "pages-prod"
+  group: "pages-dev"
   cancel-in-progress: true
 
 jobs:
   compute-version:
     uses: ./.github/workflows/template-compute-version.yml
     with:
-      type: release
+      type: ci
 
   deploy:
     needs: compute-version
     uses: ./.github/workflows/template-build-web.yml
     with:
       version: ${{ needs.compute-version.outputs.version }}
-      publish_branch: gh-pages
-      cname: justusefuckingkotlin.com
+      publish_branch: gh-pages-dev
+      cname: dev.justusefuckingkotlin.com
     secrets: inherit

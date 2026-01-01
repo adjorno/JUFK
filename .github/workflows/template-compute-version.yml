@@ -1,0 +1,68 @@
+name: Compute Version
+
+on:
+  workflow_call:
+    inputs:
+      type:
+        description: 'Version type: "ci" (timestamp+SHA) or "release" (from tag)'
+        required: true
+        type: string
+    outputs:
+      version:
+        description: 'Computed version string'
+        value: ${{ jobs.compute.outputs.version }}
+
+jobs:
+  compute:
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: ${{ inputs.type == 'ci' && 0 || 1 }}
+
+      - name: Compute CI version
+        if: inputs.type == 'ci'
+        id: ci-version
+        run: |
+          # Get latest release tag by version (e.g., v1.2.3 -> 1.2.3)
+          LAST_TAG=$(git tag --sort=-v:refname | head -1)
+          LAST_TAG=${LAST_TAG:-v0.0.0}
+          LAST_VERSION=${LAST_TAG#v}
+
+          # Get UTC timestamp (YYYYMMDD.HHmm)
+          TIMESTAMP=$(date -u +%Y%m%d.%H%M)
+
+          # Get short commit SHA (7 chars)
+          SHORT_SHA=$(git rev-parse --short=7 HEAD)
+
+          # Combine: 1.2.3.20251228.1435.c8bc509
+          VERSION="${LAST_VERSION}.${TIMESTAMP}.${SHORT_SHA}"
+
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "Computed CI version: $VERSION"
+
+      - name: Extract release version from tag
+        if: inputs.type == 'release'
+        id: release-version
+        run: |
+          # Extract version from tag (e.g., v1.2.3 -> 1.2.3)
+          if [[ "$GITHUB_REF" == refs/tags/* ]]; then
+            VERSION=${GITHUB_REF#refs/tags/v}
+          else
+            # Fallback for manual dispatch
+            VERSION=$(git describe --tags --abbrev=0 2>/dev/null | sed 's/^v//' || echo "0.0.0")
+          fi
+
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "Computed release version: $VERSION"
+
+      - name: Set output
+        id: version
+        run: |
+          if [ "${{ inputs.type }}" == "ci" ]; then
+            echo "version=${{ steps.ci-version.outputs.version }}" >> $GITHUB_OUTPUT
+          else
+            echo "version=${{ steps.release-version.outputs.version }}" >> $GITHUB_OUTPUT
+          fi
