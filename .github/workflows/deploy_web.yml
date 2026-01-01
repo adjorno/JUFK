@@ -1,10 +1,8 @@
-# Deploys to PROD (justusefuckingkotlin.com) on version tags
+# Deploys to PROD (justusefuckingkotlin.com) - manual only
+# Automatic PROD deployment happens via release.yml on tag push
 name: Deploy Web to PROD
 
 on:
-  push:
-    tags:
-      - 'v*.*.*'
   workflow_dispatch:
 
 permissions:
