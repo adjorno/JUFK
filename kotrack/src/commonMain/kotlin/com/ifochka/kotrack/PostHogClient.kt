@@ -15,6 +15,8 @@ import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
+import kotlin.uuid.ExperimentalUuidApi
+import kotlin.uuid.Uuid
 
 internal expect fun createHttpClient(): HttpClient
 
@@ -63,14 +65,14 @@ internal class PostHogClient : Analytics {
         }
     private val scope = CoroutineScope(Dispatchers.Default)
     private var campaign: String? = null
+
+    @OptIn(ExperimentalUuidApi::class)
     private val distinctId: String by lazy {
         val stored = getDistinctId()
-        if (stored.isNotEmpty()) {
-            stored
-        } else {
-            val newId = generateUUID()
-            saveDistinctId(newId)
-            newId
+        stored.ifEmpty {
+            Uuid.random().toString().also {
+                saveDistinctId(it)
+            }
         }
     }
 
