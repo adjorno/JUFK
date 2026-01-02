@@ -24,6 +24,14 @@ on:
         required: false
         type: string
         default: ''
+      version:
+        description: 'Version string (e.g., 1.2.3)'
+        required: false
+        type: string
+        default: 'dev'
+    secrets:
+      POSTHOG_API_KEY:
+        required: false
 
 jobs:
   build:
@@ -41,6 +49,8 @@ jobs:
         uses: gradle/actions/setup-gradle@v4
 
       - name: Build CLI binary
+        env:
+          POSTHOG_API_KEY: ${{ secrets.POSTHOG_API_KEY }}
         run: ./gradlew -PVERSION_NAME=${{ inputs.version }} :cli:linkReleaseExecutable${{ inputs.target }}
 
       - name: Prepare artifact

@@ -9,18 +9,34 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
-import com.ifochka.jufk.data.Content
 import com.ifochka.jufk.theme.JUFKTheme
 import com.ifochka.jufk.ui.components.FixedFooter
 import com.ifochka.jufk.ui.screens.HomeScreen
 import com.ifochka.jufk.viewmodel.HomeViewModel
+import com.ifochka.kotrack.AnalyticsManager
+import com.ifochka.kotrack.createAnalytics
 import kotlinx.coroutines.launch
 
 @Composable
 fun App() {
+    val scope = rememberCoroutineScope()
+    val analytics = remember {
+        AnalyticsManager(
+            analytics = createAnalytics(
+                apiKey = BuildKonfig.POSTHOG_API_KEY,
+                coroutineScope = scope,
+            ),
+        )
+    }
+
+    LaunchedEffect(Unit) {
+        analytics.trackAppStart()
+    }
+
     JUFKTheme {
         val viewModel = remember { HomeViewModel() }
         val snackbarHostState = remember { SnackbarHostState() }
