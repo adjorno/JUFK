@@ -11,6 +11,14 @@ internal actual fun getPlatformName(): String = "DESKTOP"
 
 internal actual fun getPostHogApiKey(): String? = null // Not needed - SDK initialized separately
 
+internal actual fun getDistinctId(): String {
+    error("Not used on Desktop")
+}
+
+internal actual fun saveDistinctId(id: String) {
+    error("Not used on Desktop")
+}
+
 actual fun createAnalytics(): Analytics = PostHogDesktopAnalytics()
 
 class PostHogDesktopAnalytics : Analytics {
