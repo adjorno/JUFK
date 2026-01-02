@@ -51,7 +51,7 @@ jobs:
       - name: Build CLI binary
         env:
           POSTHOG_API_KEY: ${{ secrets.POSTHOG_API_KEY }}
-        run: ./gradlew -PVERSION_NAME=${{ inputs.version }} :cli:linkReleaseExecutable${{ inputs.target }}
+        run: ./gradlew :cli:linkReleaseExecutable${{ inputs.target }} "-PVERSION_NAME=${{ inputs.version }}"
 
       - name: Prepare artifact
         run: |
