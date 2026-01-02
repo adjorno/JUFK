@@ -7,6 +7,9 @@ on:
         description: 'App version (e.g., 1.0.0)'
         required: true
         type: string
+    secrets:
+      POSTHOG_API_KEY:
+        required: true
 
 jobs:
   build:
@@ -24,7 +27,9 @@ jobs:
         uses: gradle/actions/setup-gradle@v4
 
       - name: Build DMG
-        run: ./gradlew :composeApp:packageDmg -PVERSION_NAME=${{ inputs.version }}
+        env:
+          POSTHOG_API_KEY: ${{ secrets.POSTHOG_API_KEY }}
+        run: ./gradlew :composeApp:packageDmg -PVERSION_NAME=${{ inputs.version }} -PPOSTHOG_API_KEY=${{ secrets.POSTHOG_API_KEY }}
 
       - name: Find and rename DMG
         run: |

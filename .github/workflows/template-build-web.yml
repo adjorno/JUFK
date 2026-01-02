@@ -16,6 +16,8 @@ on:
         required: true
       CLOUDFLARE_ACCOUNT_ID:
         required: true
+      POSTHOG_API_KEY:
+        required: true
 
 jobs:
   build-and-deploy:
@@ -34,7 +36,9 @@ jobs:
         uses: gradle/actions/setup-gradle@v4
 
       - name: Build WASM
-        run: ./gradlew :composeApp:wasmJsBrowserDistribution -PVERSION_NAME=${{ inputs.version }}
+        env:
+          POSTHOG_API_KEY: ${{ secrets.POSTHOG_API_KEY }}
+        run: ./gradlew :composeApp:wasmJsBrowserDistribution -PVERSION_NAME=${{ inputs.version }} -PPOSTHOG_API_KEY=${{ secrets.POSTHOG_API_KEY }}
 
       - name: Deploy to Cloudflare Pages
         uses: cloudflare/pages-action@v1
