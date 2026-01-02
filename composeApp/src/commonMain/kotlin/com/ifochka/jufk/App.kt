@@ -23,7 +23,15 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun App() {
-    val analytics = remember { AnalyticsManager(createAnalytics(BuildKonfig.POSTHOG_API_KEY)) }
+    val scope = rememberCoroutineScope()
+    val analytics = remember {
+        AnalyticsManager(
+            analytics = createAnalytics(
+                apiKey = BuildKonfig.POSTHOG_API_KEY,
+                coroutineScope = scope,
+            ),
+        )
+    }
 
     LaunchedEffect(Unit) {
         analytics.trackAppStart()

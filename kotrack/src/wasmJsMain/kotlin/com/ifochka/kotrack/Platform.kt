@@ -2,6 +2,7 @@ package com.ifochka.kotrack
 
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.js.Js
+import kotlinx.coroutines.CoroutineScope
 
 internal actual fun createHttpClient(): HttpClient = HttpClient(Js)
 
@@ -36,8 +37,11 @@ internal actual fun saveDistinctId(id: String) {
     window.localStorage.setItem("kotrack_distinct_id", id)
 }
 
-actual fun createAnalytics(apiKey: String): Analytics {
-    val analytics = PostHogClient(apiKey)
+actual fun createAnalytics(
+    apiKey: String,
+    coroutineScope: CoroutineScope,
+): Analytics {
+    val analytics = PostHogClient(apiKey, coroutineScope)
 
     // Check for campaign in cookie
     getCookie("campaign")?.let { analytics.setCampaign(it) }

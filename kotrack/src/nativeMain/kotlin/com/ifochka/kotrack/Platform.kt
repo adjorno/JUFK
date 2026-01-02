@@ -1,12 +1,9 @@
 package com.ifochka.kotrack
 
-import io.ktor.client.HttpClient
-import io.ktor.client.engine.cio.CIO
+import kotlinx.coroutines.CoroutineScope
 
 // Simple in-memory storage for distinct_id (persists for app lifetime)
 private var storedDistinctId: String = ""
-
-internal actual fun createHttpClient(): HttpClient = HttpClient(CIO)
 
 @OptIn(kotlin.experimental.ExperimentalNativeApi::class)
 internal actual fun getPlatformName(): String =
@@ -24,4 +21,7 @@ internal actual fun saveDistinctId(id: String) {
     storedDistinctId = id
 }
 
-actual fun createAnalytics(apiKey: String): Analytics = PostHogClient(apiKey)
+actual fun createAnalytics(
+    apiKey: String,
+    coroutineScope: CoroutineScope,
+): Analytics = PostHogClient(apiKey, coroutineScope)

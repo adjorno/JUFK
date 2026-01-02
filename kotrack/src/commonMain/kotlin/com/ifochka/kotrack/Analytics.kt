@@ -1,5 +1,7 @@
 package com.ifochka.kotrack
 
+import kotlinx.coroutines.CoroutineScope
+
 enum class AnalyticsEvent(
     val eventName: String,
 ) {
@@ -18,4 +20,7 @@ interface Analytics {
 
 internal expect fun getPlatformName(): String
 
-expect fun createAnalytics(apiKey: String): Analytics
+expect fun createAnalytics(
+    apiKey: String,
+    coroutineScope: CoroutineScope,
+): Analytics

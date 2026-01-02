@@ -4,6 +4,7 @@ import com.posthog.PostHog
 import com.posthog.android.PostHogAndroid
 import com.posthog.android.PostHogAndroidConfig
 import io.ktor.client.HttpClient
+import kotlinx.coroutines.CoroutineScope
 
 internal actual fun createHttpClient(): HttpClient {
     error("Not used on Android - uses PostHog SDK")
@@ -19,11 +20,16 @@ internal actual fun saveDistinctId(id: String) {
     error("Not used on Android")
 }
 
-actual fun createAnalytics(apiKey: String): Analytics = PostHogAndroidAnalytics(apiKey)
+actual fun createAnalytics(
+    apiKey: String,
+    coroutineScope: CoroutineScope,
+): Analytics = PostHogAndroidAnalytics(apiKey, coroutineScope)
 
 class PostHogAndroidAnalytics(
     apiKey: String,
-) : Analytics {
+    coroutineScope: CoroutineScope,
+) : CoroutineScope by coroutineScope,
+    Analytics {
     init {
         val config = PostHogAndroidConfig(
             apiKey = apiKey,

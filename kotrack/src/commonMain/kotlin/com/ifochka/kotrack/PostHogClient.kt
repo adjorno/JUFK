@@ -39,7 +39,9 @@ private data class PostHogEvent(
 
 internal class PostHogClient(
     private val apiKey: String,
-) : Analytics {
+    private val coroutineScope: CoroutineScope,
+) : CoroutineScope by coroutineScope,
+    Analytics {
     private val client =
         createHttpClient().config {
             install(ContentNegotiation) {
@@ -51,7 +53,7 @@ internal class PostHogClient(
                 )
             }
         }
-    private val scope = CoroutineScope(Dispatchers.Default)
+
     private var campaign: String? = null
 
     @OptIn(ExperimentalUuidApi::class)
@@ -68,7 +70,7 @@ internal class PostHogClient(
         event: AnalyticsEvent,
         properties: Map<String, Any>,
     ) {
-        scope.launch {
+        launch {
             try {
                 val propsMap = mutableMapOf<String, JsonElement>()
                 propsMap["platform"] = JsonPrimitive(getPlatformName())

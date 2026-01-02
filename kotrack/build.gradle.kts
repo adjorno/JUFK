@@ -58,6 +58,8 @@ kotlin {
     applyDefaultHierarchyTemplate()
 
     sourceSets {
+        val desktopMain by getting
+
         commonMain.dependencies {
             implementation(libs.kotlinx.coroutines.core)
             implementation(libs.kotlinx.serialization.json)
@@ -71,18 +73,31 @@ kotlin {
             implementation(libs.posthog.android)
         }
 
-        val desktopMain by getting {
-            dependencies {
-                implementation(libs.posthog.jvm)
-            }
+        desktopMain.dependencies {
+            implementation(libs.posthog.jvm)
+            implementation(libs.ktor.client.cio)
         }
 
         wasmJsMain.dependencies {
             implementation(libs.ktor.client.js)
         }
 
-        nativeMain.dependencies {
-            implementation(libs.ktor.client.cio)
+        listOf(
+            iosMain,
+            macosMain,
+        ).forEach { appleSourceSet ->
+            appleSourceSet.dependencies {
+                implementation(libs.ktor.client.darwin)
+            }
+        }
+
+        listOf(
+            mingwMain,
+            linuxMain,
+        ).forEach { nonAppleSourceSet ->
+            nonAppleSourceSet.dependencies {
+                implementation(libs.ktor.client.cio)
+            }
         }
     }
 }

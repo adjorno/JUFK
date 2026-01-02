@@ -2,29 +2,33 @@ package com.ifochka.kotrack
 
 import com.posthog.PostHog
 import com.posthog.PostHogConfig
+import com.posthog.PostHogConfig.Companion.DEFAULT_EU_HOST
 import io.ktor.client.HttpClient
+import io.ktor.client.engine.cio.CIO
+import kotlinx.coroutines.CoroutineScope
 
-internal actual fun createHttpClient(): HttpClient {
-    error("Not used on Desktop - uses PostHog JVM SDK")
-}
+internal actual fun createHttpClient(): HttpClient = HttpClient(CIO)
 
 internal actual fun getPlatformName(): String = "DESKTOP"
 
-internal actual fun getDistinctId(): String {
-    error("Not used on Desktop")
-}
+private var storedDistinctId: String = ""
+
+internal actual fun getDistinctId(): String = storedDistinctId
 
 internal actual fun saveDistinctId(id: String) {
-    error("Not used on Desktop")
+    storedDistinctId = id
 }
 
-actual fun createAnalytics(apiKey: String): Analytics = PostHogDesktopAnalytics(apiKey)
+actual fun createAnalytics(
+    apiKey: String,
+    coroutineScope: CoroutineScope,
+): Analytics = PostHogClient(apiKey, coroutineScope)
 
 class PostHogDesktopAnalytics(
     apiKey: String,
 ) : Analytics {
     init {
-        val config = PostHogConfig(apiKey)
+        val config = PostHogConfig(apiKey, DEFAULT_EU_HOST)
         PostHog.setup(config)
     }
 
