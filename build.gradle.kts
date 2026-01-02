@@ -25,8 +25,14 @@ subprojects {
                 System.getenv("VERSION_NAME")
                     ?: project.findProperty("VERSION_NAME")?.toString()
                     ?: "0.0.1"
+
+            val postHogApiKey = System.getenv("POSTHOG_API_KEY")
+                ?: project.findProperty("POSTHOG_API_KEY")?.toString()
+                ?: "POSTHOG_API_KEY_PLACEHOLDER"
+
             defaultConfigs {
                 buildConfigField(STRING, "VERSION_NAME", versionName)
+                buildConfigField(STRING, "POSTHOG_API_KEY", postHogApiKey)
             }
         }
     }

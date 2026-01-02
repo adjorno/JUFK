@@ -10,6 +10,7 @@ import io.ktor.serialization.kotlinx.json.json
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonElement
@@ -24,34 +25,21 @@ internal expect fun getDistinctId(): String
 
 internal expect fun saveDistinctId(id: String)
 
-private const val POSTHOG_HOST = "https://us.i.posthog.com"
-
-private fun generateUUID(): String {
-    val chars = "0123456789abcdef"
-    return buildString {
-        repeat(8) { append(chars.random()) }
-        append('-')
-        repeat(4) { append(chars.random()) }
-        append('-')
-        append('4') // UUID v4
-        repeat(3) { append(chars.random()) }
-        append('-')
-        append(chars[(8..11).random()]) // 8, 9, a, or b
-        repeat(3) { append(chars.random()) }
-        append('-')
-        repeat(12) { append(chars.random()) }
-    }
-}
+internal const val POSTHOG_HOST = "https://eu.i.posthog.com"
 
 @Serializable
 private data class PostHogEvent(
-    val api_key: String,
+    @SerialName("api_key")
+    val apiKey: String,
     val event: String,
     val properties: JsonObject,
-    val distinct_id: String = "anonymous",
+    @SerialName("distinct_id")
+    val distinctId: String,
 )
 
-internal class PostHogClient : Analytics {
+internal class PostHogClient(
+    private val apiKey: String,
+) : Analytics {
     private val client =
         createHttpClient().config {
             install(ContentNegotiation) {
@@ -80,8 +68,6 @@ internal class PostHogClient : Analytics {
         event: AnalyticsEvent,
         properties: Map<String, Any>,
     ) {
-        val apiKey = getPostHogApiKey() ?: return
-
         scope.launch {
             try {
                 val propsMap = mutableMapOf<String, JsonElement>()
@@ -99,17 +85,19 @@ internal class PostHogClient : Analytics {
 
                 val payload =
                     PostHogEvent(
-                        api_key = apiKey,
+                        apiKey = apiKey,
                         event = event.eventName,
                         properties = JsonObject(propsMap),
-                        distinct_id = distinctId,
+                        distinctId = distinctId,
                     )
 
                 client.post("$POSTHOG_HOST/capture/") {
                     contentType(ContentType.Application.Json)
                     setBody(payload)
                 }
-            } catch (_: Exception) {
+                println("Analytics: Just sent and event: $payload")
+            } catch (e: Exception) {
+                println("Analytics: Error ($e)")
                 // Silently ignore analytics errors
             }
         }

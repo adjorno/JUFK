@@ -18,6 +18,4 @@ interface Analytics {
 
 internal expect fun getPlatformName(): String
 
-internal expect fun getPostHogApiKey(): String?
-
-expect fun createAnalytics(): Analytics
+expect fun createAnalytics(apiKey: String): Analytics

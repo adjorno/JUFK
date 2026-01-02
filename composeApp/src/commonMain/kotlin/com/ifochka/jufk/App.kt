@@ -18,12 +18,15 @@ import com.ifochka.jufk.ui.components.FixedFooter
 import com.ifochka.jufk.ui.screens.HomeScreen
 import com.ifochka.jufk.viewmodel.HomeViewModel
 import com.ifochka.kotrack.AnalyticsManager
+import com.ifochka.kotrack.createAnalytics
 import kotlinx.coroutines.launch
 
 @Composable
 fun App() {
+    val analytics = remember { AnalyticsManager(createAnalytics(BuildKonfig.POSTHOG_API_KEY)) }
+
     LaunchedEffect(Unit) {
-        AnalyticsManager.trackAppStart()
+        analytics.trackAppStart()
     }
 
     JUFKTheme {

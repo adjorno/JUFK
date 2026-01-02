@@ -67,6 +67,7 @@ kotlin {
         }
 
         androidMain.dependencies {
+            implementation(libs.androidx.startup.runtime)
             implementation(libs.posthog.android)
         }
 

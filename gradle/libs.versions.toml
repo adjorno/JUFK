@@ -2,6 +2,7 @@
 kotlin = "2.3.0"
 compose-multiplatform = "1.9.3"
 agp = "8.13.2"
+androidx-startupRuntime = "1.2.0"
 androidx-activityCompose = "1.12.2"
 androidx-lifecycle = "2.10.0"
 ktlint = "14.0.1"
@@ -14,6 +15,7 @@ ktor = "3.3.3"
 kotlinx-serialization = "1.10.0-RC"
 
 [libraries]
+androidx-startup-runtime = { module = "androidx.startup:startup-runtime", version.ref = "androidx-startupRuntime" }
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "androidx-activityCompose" }
 androidx-lifecycle-runtime-compose = { group = "androidx.lifecycle", name = "lifecycle-runtime-compose", version.ref = "androidx-lifecycle" }
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }

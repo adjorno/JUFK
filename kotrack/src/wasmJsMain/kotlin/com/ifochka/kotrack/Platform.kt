@@ -6,9 +6,6 @@ import io.ktor.client.engine.js.Js
 internal actual fun createHttpClient(): HttpClient = HttpClient(Js)
 
 private external interface Window {
-    @JsName("POSTHOG_API_KEY")
-    val posthogApiKey: String?
-
     val localStorage: Storage
 }
 
@@ -33,16 +30,14 @@ private external val document: Document
 
 internal actual fun getPlatformName(): String = "WEB"
 
-internal actual fun getPostHogApiKey(): String? = window.posthogApiKey
-
 internal actual fun getDistinctId(): String = window.localStorage.getItem("kotrack_distinct_id") ?: ""
 
 internal actual fun saveDistinctId(id: String) {
     window.localStorage.setItem("kotrack_distinct_id", id)
 }
 
-actual fun createAnalytics(): Analytics {
-    val analytics = PostHogClient()
+actual fun createAnalytics(apiKey: String): Analytics {
+    val analytics = PostHogClient(apiKey)
 
     // Check for campaign in cookie
     getCookie("campaign")?.let { analytics.setCampaign(it) }
