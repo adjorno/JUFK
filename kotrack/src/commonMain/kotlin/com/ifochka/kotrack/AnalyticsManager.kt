@@ -12,11 +12,9 @@ class AnalyticsManager(
     suspend fun trackAppStart() {
         mutex.withLock {
             if (hasLaunched) {
-                println("Analytics: App Return")
                 analytics.trackEvent(AnalyticsEvent.APP_RETURN)
             } else {
                 hasLaunched = true
-                println("Analytics: App Launch")
                 analytics.trackEvent(AnalyticsEvent.APP_LAUNCH)
             }
         }

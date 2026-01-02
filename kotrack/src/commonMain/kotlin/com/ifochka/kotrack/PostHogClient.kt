@@ -97,9 +97,7 @@ internal class PostHogClient(
                     contentType(ContentType.Application.Json)
                     setBody(payload)
                 }
-                println("Analytics: Just sent and event: $payload")
             } catch (e: Exception) {
-                println("Analytics: Error ($e)")
                 // Silently ignore analytics errors
             }
         }

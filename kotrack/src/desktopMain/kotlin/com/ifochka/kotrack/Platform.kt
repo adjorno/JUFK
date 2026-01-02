@@ -41,13 +41,7 @@ class PostHogDesktopAnalytics(
         val props = properties.toMutableMap()
         props["platform"] = "DESKTOP"
         campaign?.let { props["campaign"] = it }
-        try {
-            println("Desktop Analytics: event $event")
-            PostHog.capture(event.eventName, properties = props)
-        } catch (e: Exception) {
-            println("Desktop Analytics: error $e")
-            throw e
-        }
+        PostHog.capture(event.eventName, properties = props)
     }
 
     override fun setCampaign(campaign: String?) {

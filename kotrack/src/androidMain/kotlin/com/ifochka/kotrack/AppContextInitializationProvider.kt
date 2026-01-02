@@ -8,11 +8,11 @@ object AppContext {
     private lateinit var application: Application
 
     internal fun setUp(context: Context) {
-        application = context as Application
+        application = context.applicationContext as Application
     }
 
-    public fun get(): Context {
-        if (::application.isInitialized.not()) throw Exception("App context isn't initialised.")
+    fun get(): Context {
+        if (!::application.isInitialized) throw IllegalStateException("App context isn't initialised.")
         return application.applicationContext
     }
 }
