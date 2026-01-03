@@ -12,6 +12,7 @@ enum class AnalyticsEvent(
 interface Analytics {
     fun trackEvent(
         event: AnalyticsEvent,
+        distinctId: String,
         properties: Map<String, Any> = emptyMap(),
     )
 

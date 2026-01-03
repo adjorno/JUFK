@@ -14,7 +14,7 @@ fun main() =
         val reset = "\u001B[0m"
 
         try {
-            AnalyticsManager(createAnalytics(BuildKonfig.POSTHOG_API_KEY, this@runBlocking)).trackAppStart()
+            AnalyticsManager(createAnalytics(BuildKonfig.POSTHOG_API_KEY, this@runBlocking)).initialize()
         } catch (_: Throwable) {
             // do nothing
         }
