@@ -31,7 +31,7 @@ on:
         default: 'dev'
     secrets:
       POSTHOG_API_KEY:
-        required: false
+        required: true
 
 jobs:
   build:
