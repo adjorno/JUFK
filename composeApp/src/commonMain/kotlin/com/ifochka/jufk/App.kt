@@ -24,7 +24,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun App() {
     val scope = rememberCoroutineScope()
-    val analytics = remember {
+    val analyticsManager = remember {
         AnalyticsManager(
             analytics = createAnalytics(
                 apiKey = BuildKonfig.POSTHOG_API_KEY,
@@ -33,8 +33,8 @@ fun App() {
         )
     }
 
-    LaunchedEffect(Unit) {
-        analytics.trackAppStart()
+    LaunchedEffect(analyticsManager) {
+        analyticsManager.initialize(BuildKonfig.VERSION_NAME)
     }
 
     JUFKTheme {

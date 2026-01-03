@@ -12,14 +12,6 @@ internal actual fun createHttpClient(): HttpClient {
 
 internal actual fun getPlatformName(): String = "ANDROID"
 
-internal actual fun getDistinctId(): String {
-    error("Not used on Android")
-}
-
-internal actual fun saveDistinctId(id: String) {
-    error("Not used on Android")
-}
-
 actual fun createAnalytics(
     apiKey: String,
     coroutineScope: CoroutineScope,
@@ -42,8 +34,10 @@ class PostHogAndroidAnalytics(
 
     override fun trackEvent(
         event: AnalyticsEvent,
+        distinctId: String,
         properties: Map<String, Any>,
     ) {
+        PostHog.identify(distinctId)
         val props = properties.toMutableMap()
         props["platform"] = "ANDROID"
         campaign?.let { props["campaign"] = it }

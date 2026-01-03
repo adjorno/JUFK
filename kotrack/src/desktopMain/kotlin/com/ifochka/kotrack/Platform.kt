@@ -11,14 +11,6 @@ internal actual fun createHttpClient(): HttpClient = HttpClient(CIO)
 
 internal actual fun getPlatformName(): String = "DESKTOP"
 
-private var storedDistinctId: String = ""
-
-internal actual fun getDistinctId(): String = storedDistinctId
-
-internal actual fun saveDistinctId(id: String) {
-    storedDistinctId = id
-}
-
 actual fun createAnalytics(
     apiKey: String,
     coroutineScope: CoroutineScope,
@@ -36,12 +28,17 @@ class PostHogDesktopAnalytics(
 
     override fun trackEvent(
         event: AnalyticsEvent,
+        distinctId: String,
         properties: Map<String, Any>,
     ) {
         val props = properties.toMutableMap()
         props["platform"] = "DESKTOP"
         campaign?.let { props["campaign"] = it }
-        PostHog.capture(event.eventName, properties = props)
+        PostHog.capture(
+            event = event.eventName,
+            distinctId = distinctId,
+            properties = props,
+        )
     }
 
     override fun setCampaign(campaign: String?) {

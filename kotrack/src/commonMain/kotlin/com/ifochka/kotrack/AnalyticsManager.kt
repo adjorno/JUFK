@@ -1,23 +1,25 @@
 package com.ifochka.kotrack
 
-import kotlinx.coroutines.sync.Mutex
-import kotlinx.coroutines.sync.withLock
+import kotlin.uuid.ExperimentalUuidApi
+import kotlin.uuid.Uuid
 
 class AnalyticsManager(
     private val analytics: Analytics,
 ) {
-    private val mutex = Mutex()
-    private var hasLaunched = false
+    private var distinctId: String? = null
 
-    suspend fun trackAppStart() {
-        mutex.withLock {
-            if (hasLaunched) {
-                analytics.trackEvent(AnalyticsEvent.APP_RETURN)
-            } else {
-                hasLaunched = true
-                analytics.trackEvent(AnalyticsEvent.APP_LAUNCH)
-            }
+    @OptIn(ExperimentalUuidApi::class)
+    suspend fun initialize(appVersion: String) {
+        var id = loadDistinctId()
+        val props = mapOf("app_version" to appVersion)
+        if (id == null) {
+            id = Uuid.random().toString()
+            saveDistinctId(id)
+            analytics.trackEvent(AnalyticsEvent.APP_WELCOME, id, props)
+        } else {
+            analytics.trackEvent(AnalyticsEvent.APP_RETURN, id, props)
         }
+        this.distinctId = id
     }
 
     fun setCampaign(campaign: String?) {

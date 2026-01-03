@@ -13,6 +13,8 @@ posthog-android = "3.28.0"
 posthog-jvm = "6.0.0"
 ktor = "3.3.3"
 kotlinx-serialization = "1.10.0-RC"
+kotlinx-io = "0.8.2"
+kotlinx-browser = "0.5.0"
 
 [libraries]
 androidx-startup-runtime = { module = "androidx.startup:startup-runtime", version.ref = "androidx-startupRuntime" }
@@ -21,6 +23,8 @@ androidx-lifecycle-runtime-compose = { group = "androidx.lifecycle", name = "lif
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
 kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "coroutines" }
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinx-serialization" }
+kotlinx-io-core = { module = "org.jetbrains.kotlinx:kotlinx-io-core", version.ref = "kotlinx-io" }
+kotlinx-browser = { module = "org.jetbrains.kotlinx:kotlinx-browser", version.ref = "kotlinx-browser" }
 posthog-android = { module = "com.posthog:posthog-android", version.ref = "posthog-android" }
 posthog-jvm = { module = "com.posthog:posthog", version.ref = "posthog-jvm" }
 ktor-client-core = { module = "io.ktor:ktor-client-core", version.ref = "ktor" }

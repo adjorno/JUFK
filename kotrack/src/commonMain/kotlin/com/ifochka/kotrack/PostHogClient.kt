@@ -8,7 +8,6 @@ import io.ktor.http.ContentType
 import io.ktor.http.contentType
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -16,14 +15,8 @@ import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
-import kotlin.uuid.ExperimentalUuidApi
-import kotlin.uuid.Uuid
 
 internal expect fun createHttpClient(): HttpClient
-
-internal expect fun getDistinctId(): String
-
-internal expect fun saveDistinctId(id: String)
 
 internal const val POSTHOG_HOST = "https://eu.i.posthog.com"
 
@@ -56,18 +49,9 @@ internal class PostHogClient(
 
     private var campaign: String? = null
 
-    @OptIn(ExperimentalUuidApi::class)
-    private val distinctId: String by lazy {
-        val stored = getDistinctId()
-        stored.ifEmpty {
-            Uuid.random().toString().also {
-                saveDistinctId(it)
-            }
-        }
-    }
-
     override fun trackEvent(
         event: AnalyticsEvent,
+        distinctId: String,
         properties: Map<String, Any>,
     ) {
         launch {
