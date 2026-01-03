@@ -5,7 +5,7 @@ import kotlinx.coroutines.CoroutineScope
 enum class AnalyticsEvent(
     val eventName: String,
 ) {
-    APP_LAUNCH("app_launch"),
+    APP_WELCOME("app_welcome"),
     APP_RETURN("app_return"),
 }
 
@@ -13,7 +13,7 @@ interface Analytics {
     fun trackEvent(
         event: AnalyticsEvent,
         distinctId: String,
-        properties: Map<String, Any> = emptyMap(),
+        properties: Map<String, Any>,
     )
 
     fun setCampaign(campaign: String?)

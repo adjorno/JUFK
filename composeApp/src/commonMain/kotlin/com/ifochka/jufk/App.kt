@@ -34,7 +34,7 @@ fun App() {
     }
 
     LaunchedEffect(analyticsManager) {
-        analyticsManager.initialize()
+        analyticsManager.initialize(BuildKonfig.VERSION_NAME)
     }
 
     JUFKTheme {

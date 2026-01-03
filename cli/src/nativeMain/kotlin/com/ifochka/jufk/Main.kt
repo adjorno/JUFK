@@ -14,7 +14,12 @@ fun main() =
         val reset = "\u001B[0m"
 
         try {
-            AnalyticsManager(createAnalytics(BuildKonfig.POSTHOG_API_KEY, this@runBlocking)).initialize()
+            AnalyticsManager(
+                createAnalytics(
+                    apiKey = BuildKonfig.POSTHOG_API_KEY,
+                    coroutineScope = this@runBlocking,
+                ),
+            ).initialize(appVersion = BuildKonfig.VERSION_NAME)
         } catch (_: Throwable) {
             // do nothing
         }
