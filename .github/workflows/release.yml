@@ -87,6 +87,8 @@ jobs:
       artifact_name: jufk-macos-arm64
       runner: macos-latest
       version: ${{ needs.extract-version.outputs.version }}
+    secrets:
+      POSTHOG_API_KEY: ${{ secrets.POSTHOG_API_KEY }}
 
   homebrew-build-macos-x64:
     needs: extract-version
@@ -97,6 +99,8 @@ jobs:
       artifact_name: jufk-macos-x64
       runner: macos-latest
       version: ${{ needs.extract-version.outputs.version }}
+    secrets:
+      POSTHOG_API_KEY: ${{ secrets.POSTHOG_API_KEY }}
 
   homebrew-build-linux:
     needs: extract-version
@@ -107,6 +111,8 @@ jobs:
       artifact_name: jufk-linux-x64
       runner: ubuntu-latest
       version: ${{ needs.extract-version.outputs.version }}
+    secrets:
+      POSTHOG_API_KEY: ${{ secrets.POSTHOG_API_KEY }}
 
   homebrew-build-windows:
     needs: extract-version
@@ -118,6 +124,8 @@ jobs:
       runner: windows-latest
       executable_extension: .exe
       version: ${{ needs.extract-version.outputs.version }}
+    secrets:
+      POSTHOG_API_KEY: ${{ secrets.POSTHOG_API_KEY }}
 
   homebrew-release:
     needs: [
