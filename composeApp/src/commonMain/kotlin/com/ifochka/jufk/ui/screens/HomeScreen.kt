@@ -1,6 +1,8 @@
 package com.ifochka.jufk.ui.screens
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -8,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -80,12 +83,41 @@ fun HomeScreen(
 
         Spacer(modifier = Modifier.height(48.dp))
 
-        platformSections.forEach { section ->
-            PlatformSectionCard(
-                section = section,
-                onCodeCopy = onCodeCopy,
-            )
-            Spacer(modifier = Modifier.height(16.dp))
+        BoxWithConstraints(
+            modifier = Modifier.widthIn(max = 1100.dp), // Constrain max width for the grid
+        ) {
+            val twoColumns = this.maxWidth > 800.dp // Our breakpoint
+
+            if (twoColumns) {
+                Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
+                    platformSections.chunked(2).forEach { rowItems ->
+                        Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
+                            rowItems.forEach { section ->
+                                Box(modifier = Modifier.weight(1f)) {
+                                    PlatformSectionCard(
+                                        section = section,
+                                        onCodeCopy = onCodeCopy,
+                                    )
+                                }
+                            }
+                            // Add a spacer to the row if there is only one item, to keep it left-aligned
+                            if (rowItems.size == 1) {
+                                Spacer(modifier = Modifier.weight(1f))
+                            }
+                        }
+                    }
+                }
+            } else {
+                // 1-column layout for narrow screens
+                Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
+                    platformSections.forEach { section ->
+                        PlatformSectionCard(
+                            section = section,
+                            onCodeCopy = onCodeCopy,
+                        )
+                    }
+                }
+            }
         }
 
         Spacer(modifier = Modifier.height(32.dp))
