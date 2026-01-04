@@ -14,6 +14,7 @@ The primary audience is software developers, landing first on **Mobile Web**. Th
 *   **Authoritative:** Despite the humor, it should feel credible.
 
 **4. General Design Notes & Link Strategy:**
+*   **Mobile-First, Desktop-Awesome:** The design must be mobile-first but scale beautifully to wide desktop screens. It should feel intentional on both viewports, not like a stretched mobile app on desktop. Pay special attention to typography scaling, line lengths, and component layout across breakpoints.
 *   **Primary vs. Secondary Links:** We need a clear hierarchy.
     *   **Primary CTAs** (app downloads, GitHub repo) should be prominent buttons.
     *   **Secondary links** (references to official docs, external articles) should be styled as clean, in-text hyperlinks, not buttons. This avoids clutter.
