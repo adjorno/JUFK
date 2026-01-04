@@ -66,7 +66,6 @@ fun App() {
                 HomeScreen(
                     heroTitle = viewModel.uiState.heroTitle,
                     heroSubtitle = viewModel.uiState.heroSubtitle,
-                    codeSnippet = viewModel.uiState.codeSnippet,
                     platformSections = viewModel.uiState.platformSections,
                     limitations = viewModel.uiState.limitations,
                     limitationsHeading = viewModel.uiState.limitationsHeading,
