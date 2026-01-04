@@ -17,6 +17,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.ifochka.jufk.ui.theme.Dimensions
 
 @Composable
 fun HeroSection(
@@ -25,7 +26,7 @@ fun HeroSection(
     modifier: Modifier = Modifier,
 ) {
     BoxWithConstraints(modifier = modifier.fillMaxWidth()) {
-        val isDesktop = maxWidth > 600.dp
+        val isDesktop = maxWidth > Dimensions.DESKTOP_BREAKPOINT
         val horizontalPadding = if (isDesktop) 16.dp else 8.dp
 
         Column(
@@ -39,10 +40,11 @@ fun HeroSection(
 
             Text(
                 text = buildAnnotatedString {
-                    append("Just Use F*cking\n")
+                    append("Just Use Fucking ")
                     withStyle(
                         style = MaterialTheme.typography.displayLarge.toSpanStyle().copy(
                             color = MaterialTheme.colorScheme.primary,
+                            fontSize = titleSize,
                         ),
                     ) {
                         append("Kotlin") // Apply color only to the word

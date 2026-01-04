@@ -35,6 +35,7 @@ import com.ifochka.jufk.ui.components.HeroSection
 import com.ifochka.jufk.ui.components.LimitationsCard
 import com.ifochka.jufk.ui.components.LinkCard
 import com.ifochka.jufk.ui.components.PlatformSectionCard
+import com.ifochka.jufk.ui.theme.Dimensions
 import com.ifochka.kotrack.getPlatformName
 
 @Composable
@@ -74,15 +75,15 @@ fun HomeScreen(
         )
 
         BoxWithConstraints {
-            val isDesktop = maxWidth > 600.dp
+            val isDesktop = maxWidth > Dimensions.DESKTOP_BREAKPOINT
             val textModifier = if (isDesktop) {
                 Modifier.fillMaxWidth(0.6f)
             } else {
                 Modifier.fillMaxWidth()
             }
             Text(
-                text = "See for yourself. This entire app—Web, iOS, Android, Desktop, " +
-                    "and even a CLI tool—is built from a single Kotlin codebase. No magic. Just code.",
+                text = "See for yourself. This entire app - Web, iOS, Android, Desktop, " +
+                    "and even a CLI tool - is built from a single Kotlin codebase. No magic. Just code.",
                 style = MaterialTheme.typography.bodyLarge,
                 textAlign = TextAlign.Center,
                 color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f),
@@ -93,7 +94,7 @@ fun HomeScreen(
         Spacer(modifier = Modifier.height(48.dp))
 
         BoxWithConstraints(
-            modifier = Modifier.widthIn(max = 1100.dp).padding(horizontal = 24.dp), // Constrain max width for the grid
+            modifier = Modifier.fillMaxWidth().padding(horizontal = Dimensions.CONTENT_PADDING),
         ) {
             val twoColumns = this.maxWidth > 800.dp // Our breakpoint
 
@@ -153,7 +154,10 @@ fun HomeScreen(
         Spacer(modifier = Modifier.height(64.dp))
 
         Column(
-            modifier = Modifier.widthIn(max = 800.dp).padding(horizontal = 24.dp),
+            modifier = Modifier
+                .widthIn(
+                    max = Dimensions.MAX_NARROW_CONTENT_WIDTH,
+                ).padding(horizontal = Dimensions.CONTENT_PADDING),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             LimitationsCard(

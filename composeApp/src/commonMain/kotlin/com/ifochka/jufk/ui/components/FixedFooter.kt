@@ -23,6 +23,7 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.ifochka.jufk.data.SocialLink
+import com.ifochka.jufk.ui.theme.Dimensions
 
 @Composable
 fun FixedFooter(
@@ -34,7 +35,9 @@ fun FixedFooter(
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .background(MaterialTheme.colorScheme.background),
+            .background(MaterialTheme.colorScheme.background)
+            .padding(horizontal = Dimensions.CONTENT_PADDING),
+        horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         HorizontalDivider(
             modifier = Modifier.fillMaxWidth(),
@@ -44,19 +47,18 @@ fun FixedFooter(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 32.dp, vertical = 24.dp), // Increased padding
+                .padding(vertical = 24.dp),
             horizontalArrangement = Arrangement.Start,
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Row(horizontalArrangement = Arrangement.spacedBy(32.dp)) {
-                // Increased spacing
                 socialLinks.forEach { link ->
                     Icon(
                         imageVector = link.icon,
                         contentDescription = link.name,
                         tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
                         modifier = Modifier
-                            .size(24.dp) // Increased icon size
+                            .size(24.dp)
                             .clickable { uriHandler.openUri(link.url) }
                             .semantics { role = Role.Button },
                     )
