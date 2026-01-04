@@ -13,7 +13,7 @@ private external interface Document {
 @JsName("document")
 private external val document: Document
 
-internal actual fun getPlatformName(): String = "WEB"
+public actual fun getPlatformName(): String = "WEB"
 
 actual fun createAnalytics(
     apiKey: String,

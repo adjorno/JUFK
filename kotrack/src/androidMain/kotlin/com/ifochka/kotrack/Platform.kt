@@ -10,7 +10,7 @@ internal actual fun createHttpClient(): HttpClient {
     error("Not used on Android - uses PostHog SDK")
 }
 
-internal actual fun getPlatformName(): String = "ANDROID"
+public actual fun getPlatformName(): String = "ANDROID"
 
 actual fun createAnalytics(
     apiKey: String,

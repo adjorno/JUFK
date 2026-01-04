@@ -9,7 +9,7 @@ import kotlinx.coroutines.CoroutineScope
 
 internal actual fun createHttpClient(): HttpClient = HttpClient(CIO)
 
-internal actual fun getPlatformName(): String = "DESKTOP"
+public actual fun getPlatformName(): String = "DESKTOP"
 
 actual fun createAnalytics(
     apiKey: String,

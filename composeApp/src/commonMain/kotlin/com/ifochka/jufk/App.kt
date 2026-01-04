@@ -59,19 +59,19 @@ fun App() {
                 bottomBar = {
                     FixedFooter(
                         socialLinks = viewModel.uiState.socialLinks,
-                        author = viewModel.uiState.footerAuthor,
                     )
                 },
             ) { innerPadding ->
                 HomeScreen(
                     heroTitle = viewModel.uiState.heroTitle,
                     heroSubtitle = viewModel.uiState.heroSubtitle,
-                    codeSnippet = viewModel.uiState.codeSnippet,
                     platformSections = viewModel.uiState.platformSections,
                     limitations = viewModel.uiState.limitations,
                     limitationsHeading = viewModel.uiState.limitationsHeading,
-                    limitationsExpanded = viewModel.uiState.limitationsExpanded,
-                    onLimitationsToggle = { viewModel.toggleLimitations() },
+                    makingOfHeading = viewModel.uiState.makingOfHeading,
+                    videos = viewModel.uiState.videos,
+                    goodnessHeading = viewModel.uiState.goodnessHeading,
+                    goodnessLinks = viewModel.uiState.goodnessLinks,
                     onCodeCopy = { _ ->
                         scope.launch {
                             snackbarHostState.showSnackbar("Copied!")
