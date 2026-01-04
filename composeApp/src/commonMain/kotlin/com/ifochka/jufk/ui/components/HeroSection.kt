@@ -20,7 +20,7 @@ import androidx.compose.ui.unit.sp
 
 @Composable
 fun HeroSection(
-    title: String, // Note: The title string is now used for the parts of the hero text
+    title: String,
     subtitle: String,
     modifier: Modifier = Modifier,
 ) {
@@ -57,13 +57,17 @@ fun HeroSection(
 
         Spacer(modifier = Modifier.height(24.dp))
 
-        Text(
-            text = subtitle,
-            fontSize = 22.sp,
-            textAlign = TextAlign.Center,
-            lineHeight = 32.sp,
-            color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f),
-            modifier = Modifier.padding(horizontal = 16.dp),
-        )
+        Column(
+            modifier = Modifier.fillMaxWidth(0.6f),
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
+            Text(
+                text = subtitle,
+                fontSize = 22.sp,
+                textAlign = TextAlign.Center,
+                lineHeight = 32.sp,
+                color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f),
+            )
+        }
     }
 }

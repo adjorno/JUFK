@@ -65,7 +65,8 @@ fun PlatformSectionCard(
         else -> MaterialTheme.colorScheme.onSurface.copy(alpha = 0.8f)
     }
 
-    Box(contentAlignment = Alignment.TopCenter) {
+    Box(contentAlignment = Alignment.TopEnd) {
+        // Position child at the top right
         Column(
             modifier = modifier
                 .fillMaxWidth()
@@ -138,7 +139,7 @@ fun PlatformSectionCard(
         }
 
         if (isCurrentPlatform) {
-            YouAreHereBadge(modifier = Modifier.offset(y = (-10).dp))
+            YouAreHereBadge(modifier = Modifier.offset(x = (-12).dp, y = (-10).dp)) // Offset from the corner
         }
     }
 }
@@ -150,7 +151,7 @@ private fun YouAreHereBadge(modifier: Modifier = Modifier) {
         fontSize = 10.sp,
         color = Color.White,
         modifier = modifier
-            .background(MaterialTheme.colorScheme.secondary, RoundedCornerShape(4.dp))
+            .background(MaterialTheme.colorScheme.primary, RoundedCornerShape(50)) // 50% makes a pill shape
             .padding(horizontal = 8.dp, vertical = 4.dp),
     )
 }

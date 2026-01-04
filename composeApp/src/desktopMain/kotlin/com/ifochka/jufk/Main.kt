@@ -10,7 +10,7 @@ fun main() =
         Window(
             onCloseRequest = ::exitApplication,
             title = "Just Use Fucking Kotlin",
-            state = rememberWindowState(width = 800.dp, height = 600.dp),
+            state = rememberWindowState(width = 1200.dp, height = 900.dp), // Increased default size
         ) {
             App()
         }

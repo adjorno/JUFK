@@ -35,7 +35,6 @@ import com.ifochka.jufk.ui.components.HeroSection
 import com.ifochka.jufk.ui.components.LimitationsCard
 import com.ifochka.jufk.ui.components.LinkCard
 import com.ifochka.jufk.ui.components.PlatformSectionCard
-import com.ifochka.jufk.ui.components.VideoCard
 import com.ifochka.kotrack.getPlatformName
 
 @Composable
@@ -81,7 +80,9 @@ fun HomeScreen(
             style = MaterialTheme.typography.bodyLarge,
             textAlign = TextAlign.Center,
             color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f),
-            modifier = Modifier.padding(horizontal = 16.dp),
+            modifier = Modifier
+                .fillMaxWidth(0.6f)
+                .padding(horizontal = 16.dp),
         )
 
         Spacer(modifier = Modifier.height(48.dp))
@@ -146,21 +147,17 @@ fun HomeScreen(
 
         Spacer(modifier = Modifier.height(64.dp))
 
-        Box(modifier = Modifier.fillMaxWidth(0.8f)) {
-            LimitationsCard(
-                heading = limitationsHeading,
-                limitations = limitations,
-            )
-        }
-
-        // TODO: Video section is temporarily hidden until videos are ready
-
-        Spacer(modifier = Modifier.height(64.dp))
-
         Column(
             modifier = Modifier.widthIn(max = 800.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
+            LimitationsCard(
+                heading = limitationsHeading,
+                limitations = limitations,
+            )
+
+            Spacer(modifier = Modifier.height(64.dp))
+
             Text(
                 text = goodnessHeading,
                 style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.Bold),
