@@ -1,5 +1,6 @@
 package com.ifochka.jufk.ui.components
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -10,7 +11,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -24,6 +24,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.ifochka.jufk.data.SocialLink
 import com.ifochka.jufk.ui.theme.Dimensions
+import jufk.composeapp.generated.resources.Res
+import jufk.composeapp.generated.resources.github_mark_white
+import jufk.composeapp.generated.resources.linkedin
+import jufk.composeapp.generated.resources.x_logo
+import org.jetbrains.compose.resources.painterResource
 
 @Composable
 fun FixedFooter(
@@ -53,15 +58,22 @@ fun FixedFooter(
         ) {
             Row(horizontalArrangement = Arrangement.spacedBy(32.dp)) {
                 socialLinks.forEach { link ->
-                    Icon(
-                        imageVector = link.icon,
-                        contentDescription = link.name,
-                        tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
-                        modifier = Modifier
-                            .size(24.dp)
-                            .clickable { uriHandler.openUri(link.url) }
-                            .semantics { role = Role.Button },
-                    )
+                    val iconPainter = when (link.name) {
+                        "GitHub" -> painterResource(Res.drawable.github_mark_white)
+                        "X" -> painterResource(Res.drawable.x_logo)
+                        "LinkedIn" -> painterResource(Res.drawable.linkedin)
+                        else -> null
+                    }
+                    iconPainter?.let {
+                        Image(
+                            painter = it,
+                            contentDescription = link.name,
+                            modifier = Modifier
+                                .size(24.dp)
+                                .clickable { uriHandler.openUri(link.url) }
+                                .semantics { role = Role.Button },
+                        )
+                    }
                 }
             }
 

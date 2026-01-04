@@ -1,5 +1,6 @@
 package com.ifochka.jufk.ui.screens
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -10,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
@@ -37,6 +39,9 @@ import com.ifochka.jufk.ui.components.LinkCard
 import com.ifochka.jufk.ui.components.PlatformSectionCard
 import com.ifochka.jufk.ui.theme.Dimensions
 import com.ifochka.kotrack.getPlatformName
+import jufk.composeapp.generated.resources.Res
+import jufk.composeapp.generated.resources.github_mark_white
+import org.jetbrains.compose.resources.painterResource
 
 @Composable
 fun HomeScreen(
@@ -91,6 +96,32 @@ fun HomeScreen(
             )
         }
 
+        Spacer(modifier = Modifier.height(32.dp))
+
+        Button(
+            onClick = { uriHandler.openUri(Content.GITHUB_URL) },
+            colors = ButtonDefaults.buttonColors(
+                containerColor = MaterialTheme.colorScheme.surface,
+                contentColor = MaterialTheme.colorScheme.onSurface,
+            ),
+            shape = RoundedCornerShape(8.dp),
+        ) {
+            Image(
+                painter = painterResource(Res.drawable.github_mark_white),
+                contentDescription = "GitHub",
+                modifier = Modifier.size(20.dp),
+            )
+            Spacer(modifier = Modifier.width(8.dp))
+            Text("View on GitHub")
+        }
+
+        Text(
+            text = "Check out the code, and don\'t forget to star the repo!",
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f),
+            modifier = Modifier.padding(top = 8.dp),
+        )
+
         Spacer(modifier = Modifier.height(48.dp))
 
         BoxWithConstraints(
@@ -131,28 +162,10 @@ fun HomeScreen(
             }
         }
 
-        Spacer(modifier = Modifier.height(32.dp))
+        Spacer(modifier = Modifier.height(48.dp))
 
-        Button(
-            onClick = { uriHandler.openUri(Content.GITHUB_URL) },
-            colors = ButtonDefaults.buttonColors(
-                containerColor = MaterialTheme.colorScheme.surface,
-                contentColor = MaterialTheme.colorScheme.onSurface,
-            ),
-            shape = RoundedCornerShape(8.dp),
-        ) {
-            Text("View on GitHub")
-        }
-
-        Text(
-            text = "Check out the code, and don\'t forget to star the repo!",
-            style = MaterialTheme.typography.bodySmall,
-            color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f),
-            modifier = Modifier.padding(top = 8.dp),
-        )
-
-        Spacer(modifier = Modifier.height(64.dp))
-
+        /*
+        // Commented out for YouTube tutorial simplification LimitationsCard section
         Column(
             modifier = Modifier
                 .widthIn(
@@ -184,7 +197,6 @@ fun HomeScreen(
                 Spacer(modifier = Modifier.height(16.dp))
             }
         }
-
-        Spacer(modifier = Modifier.height(24.dp))
+         */
     }
 }
