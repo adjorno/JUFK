@@ -36,6 +36,7 @@ import com.ifochka.jufk.ui.components.LimitationsCard
 import com.ifochka.jufk.ui.components.LinkCard
 import com.ifochka.jufk.ui.components.PlatformSectionCard
 import com.ifochka.jufk.ui.components.VideoCard
+import com.ifochka.kotrack.getPlatformName
 
 @Composable
 fun HomeScreen(
@@ -52,6 +53,7 @@ fun HomeScreen(
     modifier: Modifier = Modifier,
 ) {
     val uriHandler = LocalUriHandler.current
+    val currentPlatform = getPlatformName()
 
     Column(
         modifier = modifier
@@ -98,10 +100,10 @@ fun HomeScreen(
                                     PlatformSectionCard(
                                         section = section,
                                         onCodeCopy = onCodeCopy,
+                                        isCurrentPlatform = section.id.equals(currentPlatform, ignoreCase = true),
                                     )
                                 }
                             }
-                            // Add a spacer to the row if there is only one item, to keep it left-aligned
                             if (rowItems.size == 1) {
                                 Spacer(modifier = Modifier.weight(1f))
                             }
@@ -115,6 +117,7 @@ fun HomeScreen(
                         PlatformSectionCard(
                             section = section,
                             onCodeCopy = onCodeCopy,
+                            isCurrentPlatform = section.id.equals(currentPlatform, ignoreCase = true),
                         )
                     }
                 }
@@ -151,23 +154,6 @@ fun HomeScreen(
         }
 
         // TODO: Video section is temporarily hidden until videos are ready
-        // Spacer(modifier = Modifier.height(64.dp))
-        //
-        // Text(
-        //     text = makingOfHeading,
-        //     style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.Bold),
-        //     textAlign = TextAlign.Center,
-        //     modifier = Modifier.padding(bottom = 24.dp)
-        // )
-        //
-        // Row {
-        //     videos.forEachIndexed { index, video ->
-        //         VideoCard(title = video.title, onClick = { uriHandler.openUri(video.url) }, modifier = Modifier.weight(1f))
-        //         if (index < videos.size - 1) {
-        //             Spacer(modifier = Modifier.width(16.dp))
-        //         }
-        //     }
-        // }
 
         Spacer(modifier = Modifier.height(64.dp))
 

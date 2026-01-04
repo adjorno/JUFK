@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -41,12 +42,13 @@ import com.ifochka.jufk.data.PlatformSection
 fun PlatformSectionCard(
     section: PlatformSection,
     onCodeCopy: (String) -> Unit,
+    isCurrentPlatform: Boolean,
     modifier: Modifier = Modifier,
 ) {
     val uriHandler = LocalUriHandler.current
     val clipboardManager = LocalClipboardManager.current
 
-    val borderBrush = if (section.isHighlighted) {
+    val borderBrush = if (section.isHighlighted || isCurrentPlatform) {
         Brush.verticalGradient(
             colors = listOf(MaterialTheme.colorScheme.primary, MaterialTheme.colorScheme.secondary),
         )
@@ -63,76 +65,94 @@ fun PlatformSectionCard(
         else -> MaterialTheme.colorScheme.onSurface.copy(alpha = 0.8f)
     }
 
-    Column(
-        modifier = modifier
-            .fillMaxWidth()
-            .border(
-                width = 1.dp,
-                brush = borderBrush,
-                shape = RoundedCornerShape(12.dp),
-            ).background(
-                color = MaterialTheme.colorScheme.surface.copy(alpha = 0.5f),
-                shape = RoundedCornerShape(12.dp),
-            ).clip(RoundedCornerShape(12.dp))
-            .padding(24.dp),
-    ) {
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            Icon(
-                imageVector = section.icon,
-                contentDescription = section.title,
-                tint = iconTint,
-                modifier = Modifier.size(24.dp),
-            )
-            Text(
-                text = section.title,
-                style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
-                modifier = Modifier.padding(start = 12.dp),
-            )
-        }
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        Text(
-            text = section.content,
-            style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
-            lineHeight = 22.sp,
-        )
-
-        Spacer(modifier = Modifier.height(24.dp))
-
-        when (val cta = section.cta) {
-            is Cta.Link -> {
+    Box(contentAlignment = Alignment.TopCenter) {
+        Column(
+            modifier = modifier
+                .fillMaxWidth()
+                .border(
+                    width = 1.dp,
+                    brush = borderBrush,
+                    shape = RoundedCornerShape(12.dp),
+                ).background(
+                    color = MaterialTheme.colorScheme.surface.copy(alpha = 0.5f),
+                    shape = RoundedCornerShape(12.dp),
+                ).clip(RoundedCornerShape(12.dp))
+                .padding(24.dp),
+        ) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Icon(
+                    imageVector = section.icon,
+                    contentDescription = section.title,
+                    tint = iconTint,
+                    modifier = Modifier.size(24.dp),
+                )
                 Text(
-                    text = cta.text,
-                    style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold),
-                    color = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier.clickable { uriHandler.openUri(cta.url) },
+                    text = section.title,
+                    style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
+                    modifier = Modifier.padding(start = 12.dp),
                 )
             }
-            is Cta.Button -> {
-                Button(
-                    onClick = { uriHandler.openUri(cta.url) },
-                    shape = RoundedCornerShape(8.dp),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = MaterialTheme.colorScheme.surfaceVariant,
-                        contentColor = MaterialTheme.colorScheme.onSurface,
-                    ),
-                ) {
-                    cta.icon?.let { icon ->
-                        Icon(imageVector = icon, contentDescription = null, modifier = Modifier.size(18.dp))
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            Text(
+                text = section.content,
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
+                lineHeight = 22.sp,
+            )
+
+            Spacer(modifier = Modifier.height(24.dp))
+
+            when (val cta = section.cta) {
+                is Cta.Link -> {
+                    Text(
+                        text = cta.text,
+                        style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold),
+                        color = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier.clickable { uriHandler.openUri(cta.url) },
+                    )
+                }
+                is Cta.Button -> {
+                    Button(
+                        onClick = { uriHandler.openUri(cta.url) },
+                        shape = RoundedCornerShape(8.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = MaterialTheme.colorScheme.surfaceVariant,
+                            contentColor = MaterialTheme.colorScheme.onSurface,
+                        ),
+                    ) {
+                        cta.icon?.let { icon ->
+                            Icon(imageVector = icon, contentDescription = null, modifier = Modifier.size(18.dp))
+                        }
+                        Text(cta.text, modifier = Modifier.padding(start = 8.dp))
                     }
-                    Text(cta.text, modifier = Modifier.padding(start = 8.dp))
+                }
+                is Cta.Code -> {
+                    CodeBlock(code = cta.code, onCopy = {
+                        clipboardManager.setText(AnnotatedString(it))
+                        onCodeCopy(it)
+                    })
                 }
             }
-            is Cta.Code -> {
-                CodeBlock(code = cta.code, onCopy = {
-                    clipboardManager.setText(AnnotatedString(it))
-                    onCodeCopy(it)
-                })
-            }
+        }
+
+        if (isCurrentPlatform) {
+            YouAreHereBadge(modifier = Modifier.offset(y = (-10).dp))
         }
     }
+}
+
+@Composable
+private fun YouAreHereBadge(modifier: Modifier = Modifier) {
+    Text(
+        text = "You are here",
+        fontSize = 10.sp,
+        color = Color.White,
+        modifier = modifier
+            .background(MaterialTheme.colorScheme.secondary, RoundedCornerShape(4.dp))
+            .padding(horizontal = 8.dp, vertical = 4.dp),
+    )
 }
 
 @Composable

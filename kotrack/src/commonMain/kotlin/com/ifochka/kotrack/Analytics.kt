@@ -19,7 +19,7 @@ interface Analytics {
     fun setCampaign(campaign: String?)
 }
 
-internal expect fun getPlatformName(): String
+public expect fun getPlatformName(): String
 
 expect fun createAnalytics(
     apiKey: String,

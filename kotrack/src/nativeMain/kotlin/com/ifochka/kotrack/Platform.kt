@@ -3,7 +3,7 @@ package com.ifochka.kotrack
 import kotlinx.coroutines.CoroutineScope
 
 @OptIn(kotlin.experimental.ExperimentalNativeApi::class)
-internal actual fun getPlatformName(): String =
+public actual fun getPlatformName(): String =
     when (Platform.osFamily) {
         OsFamily.IOS -> "IOS"
         OsFamily.LINUX -> "CLI_LINUX"
