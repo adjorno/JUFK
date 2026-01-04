@@ -66,10 +66,9 @@ data class Limitation(
 )
 
 object Content {
-    const val HERO_TITLE = "Just Use F*cking Kotlin. Period."
-    const val HERO_SUBTITLE = "You\'re tired of maintaining three codebases. " +
-        "You\'re tired of \"it works on my machine\" but not on iOS. Stop overthinking it. " +
-        "It\'s time to build everything in one language and go touch grass."
+    const val HERO_TITLE = "Just Use Fucking Kotlin. Period."
+    const val HERO_SUBTITLE =
+        "Too many platforms. Too many rewrites. The same logic, drifting apart over time. One language keeps it together."
 
     const val BREW_COMMAND = "brew install adjorno/jufk/jufk"
 
