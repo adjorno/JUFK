@@ -99,18 +99,86 @@ Recreate "Just Use Fucking Kotlin" - a Kotlin Multiplatform project demonstratin
 
 ---
 
-# YOUTUBE SESSION 2: Android to Play Store
+# YOUTUBE SESSION 2: CI Pipeline & First Release
+
+**Session Goal**: Set up CI with code quality checks, dev/prod environments, and first production release
+
+## Iteration 2.1: CI Workflow with Code Quality
+**Time Estimate**: 4-5 min
+
+**Steps**:
+1. Add ktlint plugin to `build.gradle.kts`
+2. Add detekt plugin to `build.gradle.kts`
+3. Create `.editorconfig` with Kotlin style rules
+4. Create `config/detekt/detekt.yml`
+5. Create `.github/workflows/ci.yml`:
+   - Trigger: push to main, pull requests
+   - Jobs: ktlint, detekt, Android Lint (with Compose checks), unit tests
+6. Run `./gradlew ktlintFormat` to fix existing code
+7. Commit + push, verify CI passes
+
+**Delivered**: CI pipeline with full code quality checks
+
+**Key Files**:
+- `build.gradle.kts` (ktlint + detekt plugins)
+- `.editorconfig`
+- `config/detekt/detekt.yml`
+- `.github/workflows/ci.yml`
+
+---
+
+## Iteration 2.2: Dev/Prod Environment Split
+**Time Estimate**: 2-3 min
+
+**Steps**:
+1. Create second Cloudflare Pages project for dev: `wrangler pages project create jufk-dev`
+2. Create `.github/workflows/deploy_web_dev.yml`:
+   - Trigger: push to main
+   - Deploy to dev project (auto on every push)
+3. Update original `deploy_web.yml`:
+   - Trigger: on release tags only (`v*.*.*`)
+   - Deploy to prod project
+4. Commit + push
+
+**Delivered**: Dev deploys on push, prod deploys on release tags
+
+**Key Files**:
+- `.github/workflows/deploy_web_dev.yml`
+- `.github/workflows/deploy_web.yml` (updated)
+
+---
+
+## Iteration 2.3: First Release (v1.0.0)
+**Time Estimate**: 2-3 min
+
+**Steps**:
+1. Create release tag: `git tag v1.0.0`
+2. Push tag: `git push --tags`
+3. Watch release workflow deploy to prod
+4. Verify prod site is live on production URL
+5. Show dev vs prod URLs side by side
+
+**Delivered**: Production website live with proper release workflow
+
+---
+
+**Session 2 Total Time Estimate**: 8-11 min
+
+---
+
+# YOUTUBE SESSION 3: Android to Play Store
 
 **Session Goal**: Deploy Android app to Play Store internal track
 
-## Iteration 2.1: Android Signing Configuration
+## Iteration 3.1: Android Signing Configuration
 **Time Estimate**: 3-4 min
 
 **Steps**:
 1. Generate release keystore: `keytool -genkey -v -keystore release.jks ...`
 2. Add signing config to `androidApp/build.gradle.kts`
-3. Add GitHub secrets for keystore (base64 encoded) + passwords
-4. Test release build locally: `./gradlew :androidApp:assembleRelease`
+3. **Show in browser**: Where to add GitHub secrets
+4. Add GitHub secrets for keystore (base64 encoded) + passwords
+5. Test release build locally: `./gradlew :androidApp:assembleRelease`
 
 **Delivered**: Signed release APK/AAB
 
@@ -119,15 +187,14 @@ Recreate "Just Use Fucking Kotlin" - a Kotlin Multiplatform project demonstratin
 
 ---
 
-## Iteration 2.2: Play Store Assets
+## Iteration 3.2: Play Store Assets
 **Time Estimate**: 2-3 min
 
 **Steps**:
 1. Create `play-store-assets/` directory
 2. Add app icon (512x512)
 3. Add feature graphic (1024x500)
-4. Add screenshots (optional for internal)
-5. Commit + push
+4. Commit + push
 
 **Delivered**: Play Store listing assets ready
 
@@ -137,17 +204,18 @@ Recreate "Just Use Fucking Kotlin" - a Kotlin Multiplatform project demonstratin
 
 ---
 
-## Iteration 2.3: Fastlane Android Setup
+## Iteration 3.3: Fastlane Android Setup
 **Time Estimate**: 4-5 min
 
 **Steps**:
 1. Initialize Fastlane: `fastlane init`
 2. Create `Gemfile` with fastlane + plugins
-3. Create `fastlane/Fastfile` with lanes:
-   - `internal` - deploy to internal track
-   - Auto-increment version code from Play Store
-4. Add `PLAY_STORE_SERVICE_ACCOUNT_JSON` secret
-5. Test locally: `bundle exec fastlane internal`
+3. Create `fastlane/Fastfile` with `internal` lane
+4. **Show in browser**: Where to get Play Store service account JSON
+   - Google Cloud Console > Create service account
+   - Play Console > Setup > API access > Link service account
+5. Add `PLAY_STORE_SERVICE_ACCOUNT_JSON` secret
+6. Test locally: `bundle exec fastlane internal`
 
 **Delivered**: Fastlane configured for Android
 
@@ -158,12 +226,12 @@ Recreate "Just Use Fucking Kotlin" - a Kotlin Multiplatform project demonstratin
 
 ---
 
-## Iteration 2.4: GitHub Actions Android Deployment
+## Iteration 3.4: GitHub Actions Android Deployment
 **Time Estimate**: 2-3 min
 
 **Steps**:
 1. Create `.github/workflows/deploy_android.yml`
-2. Trigger: push to main (with path filter for relevant files)
+2. Trigger: push to main (with path filter)
 3. Use Fastlane internal lane
 4. Commit + push
 5. Verify app appears in Play Store internal testing
@@ -175,67 +243,7 @@ Recreate "Just Use Fucking Kotlin" - a Kotlin Multiplatform project demonstratin
 
 ---
 
-**Session 2 Total Time Estimate**: 11-15 min (might need to split or speed up)
-
----
-
-# YOUTUBE SESSION 3: CI Pipeline & Code Quality
-
-**Session Goal**: Add CI checks with ktlint and detekt
-
-## Iteration 3.1: Basic CI Workflow
-**Time Estimate**: 2-3 min
-
-**Steps**:
-1. Create `.github/workflows/ci.yml`
-2. Trigger: push to main, pull requests
-3. Jobs: build all targets
-4. Test by creating a PR
-
-**Delivered**: CI runs on every PR
-
-**Key Files**:
-- `.github/workflows/ci.yml`
-
----
-
-## Iteration 3.2: ktlint Integration
-**Time Estimate**: 3-4 min
-
-**Steps**:
-1. Add ktlint plugin to `build.gradle.kts`
-2. Create `.editorconfig` with Kotlin style rules
-3. Run `./gradlew ktlintFormat` to fix existing code
-4. Add ktlint check to CI workflow
-5. Commit + push
-
-**Delivered**: Code formatting enforced
-
-**Key Files**:
-- `build.gradle.kts` (ktlint plugin)
-- `.editorconfig`
-
----
-
-## Iteration 3.3: detekt Integration
-**Time Estimate**: 2-3 min
-
-**Steps**:
-1. Add detekt plugin to `build.gradle.kts`
-2. Create `config/detekt/detekt.yml` with custom rules
-3. Add detekt to CI workflow
-4. Commit + push
-5. Verify CI passes
-
-**Delivered**: Static analysis in CI
-
-**Key Files**:
-- `build.gradle.kts` (detekt plugin)
-- `config/detekt/detekt.yml`
-
----
-
-**Session 3 Total Time Estimate**: 7-10 min
+**Session 3 Total Time Estimate**: 11-15 min
 
 ---
 
@@ -553,36 +561,11 @@ Recreate "Just Use Fucking Kotlin" - a Kotlin Multiplatform project demonstratin
 
 ---
 
-# YOUTUBE SESSION 9: Cloudflare Migration
-
-**Session Goal**: Move web hosting from GitHub Pages to Cloudflare Pages (if started on GH Pages) or set up dev/prod environments
-
-## Iteration 9.1: Dev/Prod Environment Split
-**Time Estimate**: 3-4 min
-
-**Steps**:
-1. Create second Cloudflare Pages project for dev
-2. Create `.github/workflows/deploy_web_dev.yml` (auto on push to main)
-3. Update `deploy_web.yml` for production (manual trigger or release tag)
-4. Configure custom domains
-
-**Delivered**: Separate dev and prod web deployments
-
-**Key Files**:
-- `.github/workflows/deploy_web.yml`
-- `.github/workflows/deploy_web_dev.yml`
-
----
-
-**Session 9 Total Time Estimate**: 3-4 min (short session, can combine with Session 8 or 10)
-
----
-
-# YOUTUBE SESSION 10: Analytics
+# YOUTUBE SESSION 9: Analytics
 
 **Session Goal**: Cross-platform analytics with PostHog
 
-## Iteration 10.1: kotrack Module Setup
+## Iteration 9.1: kotrack Module Setup
 **Time Estimate**: 4-5 min
 
 **Steps**:
@@ -601,7 +584,7 @@ Recreate "Just Use Fucking Kotlin" - a Kotlin Multiplatform project demonstratin
 
 ---
 
-## Iteration 10.2: Platform-Specific Implementations
+## Iteration 9.2: Platform-Specific Implementations
 **Time Estimate**: 4-5 min
 
 **Steps**:
@@ -621,7 +604,7 @@ Recreate "Just Use Fucking Kotlin" - a Kotlin Multiplatform project demonstratin
 
 ---
 
-## Iteration 10.3: Identity Storage & Events
+## Iteration 9.3: Identity Storage & Events
 **Time Estimate**: 3-4 min
 
 **Steps**:
@@ -642,15 +625,15 @@ Recreate "Just Use Fucking Kotlin" - a Kotlin Multiplatform project demonstratin
 
 ---
 
-**Session 10 Total Time Estimate**: 11-14 min
+**Session 9 Total Time Estimate**: 11-14 min
 
 ---
 
-# YOUTUBE SESSION 11: Final Polish & Release
+# YOUTUBE SESSION 10: Final Polish & Full Release
 
-**Session Goal**: Complete v1.0.0 release
+**Session Goal**: Complete multi-platform release with documentation
 
-## Iteration 11.1: README & Documentation
+## Iteration 10.1: README & Documentation
 **Time Estimate**: 2-3 min
 
 **Steps**:
@@ -668,7 +651,7 @@ Recreate "Just Use Fucking Kotlin" - a Kotlin Multiplatform project demonstratin
 
 ---
 
-## Iteration 11.2: Final Review & Release
+## Iteration 10.2: Final Review & Full Platform Release
 **Time Estimate**: 4-5 min
 
 **Steps**:
@@ -687,7 +670,7 @@ Recreate "Just Use Fucking Kotlin" - a Kotlin Multiplatform project demonstratin
 
 ---
 
-**Session 11 Total Time Estimate**: 6-8 min
+**Session 10 Total Time Estimate**: 6-8 min
 
 ---
 
@@ -701,13 +684,13 @@ Recreate "Just Use Fucking Kotlin" - a Kotlin Multiplatform project demonstratin
 | 1.1 | Create KMP Project from IDEA Template | 3-4 min | 1 |
 | 1.2 | Create Cloudflare Pages Project | 2-3 min | 1 |
 | 1.3 | GitHub Actions Web Deployment (+ secrets demo) | 4-5 min | 1 |
-| 2.1 | Android Signing Configuration | 3-4 min | 2 |
-| 2.2 | Play Store Assets | 2-3 min | 2 |
-| 2.3 | Fastlane Android Setup | 4-5 min | 2 |
-| 2.4 | GitHub Actions Android Deployment | 2-3 min | 2 |
-| 3.1 | Basic CI Workflow | 2-3 min | 3 |
-| 3.2 | ktlint Integration | 3-4 min | 3 |
-| 3.3 | detekt Integration | 2-3 min | 3 |
+| 2.1 | CI Workflow (ktlint, detekt, Android Lint, tests) | 4-5 min | 2 |
+| 2.2 | Dev/Prod Environment Split | 2-3 min | 2 |
+| 2.3 | First Release (v1.0.0) | 2-3 min | 2 |
+| 3.1 | Android Signing Configuration | 3-4 min | 3 |
+| 3.2 | Play Store Assets | 2-3 min | 3 |
+| 3.3 | Fastlane Android Setup | 4-5 min | 3 |
+| 3.4 | GitHub Actions Android Deployment | 2-3 min | 3 |
 | 4.1 | iOS Project Setup with XcodeGen | 3-4 min | 4 |
 | 4.2 | iOS App Icons | 2-3 min | 4 |
 | 4.3 | Fastlane iOS Setup | 4-5 min | 4 |
@@ -723,34 +706,31 @@ Recreate "Just Use Fucking Kotlin" - a Kotlin Multiplatform project demonstratin
 | 8.1 | UI Component Structure | 4-5 min | 8 |
 | 8.2 | Content & Theme | 3-4 min | 8 |
 | 8.3 | BuildKonfig for Version Display | 2-3 min | 8 |
-| 9.1 | Dev/Prod Environment Split | 3-4 min | 9 |
-| 10.1 | kotrack Module Setup | 4-5 min | 10 |
-| 10.2 | Platform-Specific Implementations | 4-5 min | 10 |
-| 10.3 | Identity Storage & Events | 3-4 min | 10 |
-| 11.1 | README & Documentation | 2-3 min | 11 |
-| 11.2 | Final Review & Release | 4-5 min | 11 |
+| 9.1 | kotrack Module Setup | 4-5 min | 9 |
+| 9.2 | Platform-Specific Implementations | 4-5 min | 9 |
+| 9.3 | Identity Storage & Events | 3-4 min | 9 |
+| 10.1 | README & Documentation | 2-3 min | 10 |
+| 10.2 | Final Review & Full Platform Release | 4-5 min | 10 |
 
-**Total: 31 iterations across 11 YouTube sessions**
+**Total: 30 iterations across 10 YouTube sessions**
 
 ## Session Time Estimates
 
 | Session | Topic | Est. Time |
 |---------|-------|-----------|
 | 1 | Project Bootstrap & Web | 10-14 min |
-| 2 | Android to Play Store | 11-15 min |
-| 3 | CI & Code Quality | 7-10 min |
+| 2 | CI Pipeline & First Release | 8-11 min |
+| 3 | Android to Play Store | 11-15 min |
 | 4 | iOS to TestFlight | 11-15 min |
 | 5 | Desktop App | 5-7 min |
 | 6 | CLI Tool | 8-11 min |
 | 7 | Release Pipeline | 9-12 min |
 | 8 | UI & Content | 9-12 min |
-| 9 | Cloudflare Migration | 3-4 min |
-| 10 | Analytics | 11-14 min |
-| 11 | Final Release | 6-8 min |
+| 9 | Analytics | 11-14 min |
+| 10 | Final Release | 6-8 min |
 
 **Potential Combinations**:
-- Sessions 5+9 (Desktop + Cloudflare) = 8-11 min
-- Sessions 3+5 (CI + Desktop) = 12-17 min (might be too long)
+- Sessions 5+10 (Desktop + Final) = 11-15 min (if Desktop is quick)
 
 ---
 
@@ -807,22 +787,23 @@ Recreate "Just Use Fucking Kotlin" - a Kotlin Multiplatform project demonstratin
 
 ```
 Session 1: Project Bootstrap
+├── 1.0 Intro
 ├── 1.1 KMP from IDEA
 ├── 1.2 Cloudflare Project
-└── 1.3 Web Deployment
+└── 1.3 Web Deployment (dev)
 
-Session 2: Android (depends on 1)
-├── 2.1 Signing
-├── 2.2 Assets
-├── 2.3 Fastlane
-└── 2.4 Deployment
+Session 2: CI & First Release (depends on 1)
+├── 2.1 CI (ktlint, detekt, Android Lint, tests)
+├── 2.2 Dev/Prod Split
+└── 2.3 First Release v1.0.0 (prod)
 
-Session 3: CI (can happen after 1)
-├── 3.1 Basic CI
-├── 3.2 ktlint
-└── 3.3 detekt
+Session 3: Android (depends on 2)
+├── 3.1 Signing
+├── 3.2 Assets
+├── 3.3 Fastlane
+└── 3.4 Deployment
 
-Session 4: iOS (depends on 2.3 for Fastlane)
+Session 4: iOS (depends on 3.3 for Fastlane setup)
 ├── 4.1 XcodeGen
 ├── 4.2 Icons
 ├── 4.3 Fastlane iOS
@@ -837,7 +818,7 @@ Session 6: CLI (depends on 1)
 ├── 6.2 Homebrew
 └── 6.3 Build Template
 
-Session 7: Release Pipeline (depends on 2, 4, 5, 6)
+Session 7: Release Pipeline (depends on 3, 4, 5, 6)
 ├── 7.1 Version Extraction
 ├── 7.2 Build Templates
 └── 7.3 Main Workflow
@@ -847,17 +828,14 @@ Session 8: UI (can happen after 1)
 ├── 8.2 Content
 └── 8.3 BuildKonfig
 
-Session 9: Cloudflare (can happen after 1.3)
-└── 9.1 Dev/Prod Split
+Session 9: Analytics (can happen after 1)
+├── 9.1 Module
+├── 9.2 Platform Impl
+└── 9.3 Identity
 
-Session 10: Analytics (can happen after 1)
-├── 10.1 Module
-├── 10.2 Platform Impl
-└── 10.3 Identity
-
-Session 11: Final (depends on all)
-├── 11.1 README
-└── 11.2 Release
+Session 10: Final (depends on all)
+├── 10.1 README
+└── 10.2 Full Release
 ```
 
 ---
