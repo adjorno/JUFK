@@ -81,8 +81,8 @@ fun HomeScreen(
                 Modifier.fillMaxWidth()
             }
             Text(
-                text = "See for yourself. This entire app—Web, iOS, Android, Desktop, " +
-                    "and even a CLI tool—is built from a single Kotlin codebase. No magic. Just code.",
+                text = "See for yourself. This entire app - Web, iOS, Android, Desktop, " +
+                    "and even a CLI tool - is built from a single Kotlin codebase. No magic. Just code.",
                 style = MaterialTheme.typography.bodyLarge,
                 textAlign = TextAlign.Center,
                 color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f),

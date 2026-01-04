@@ -39,10 +39,11 @@ fun HeroSection(
 
             Text(
                 text = buildAnnotatedString {
-                    append("Just Use F*cking\n")
+                    append("Just Use Fucking ")
                     withStyle(
                         style = MaterialTheme.typography.displayLarge.toSpanStyle().copy(
                             color = MaterialTheme.colorScheme.primary,
+                            fontSize = titleSize,
                         ),
                     ) {
                         append("Kotlin") // Apply color only to the word

@@ -3,12 +3,14 @@ package com.ifochka.jufk.ui.components
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -35,41 +37,49 @@ fun FixedFooter(
         modifier = modifier
             .fillMaxWidth()
             .background(MaterialTheme.colorScheme.background),
+        horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        HorizontalDivider(
-            modifier = Modifier.fillMaxWidth(),
-            thickness = 1.dp,
-            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f),
-        )
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 32.dp, vertical = 24.dp), // Increased padding
-            horizontalArrangement = Arrangement.Start,
-            verticalAlignment = Alignment.CenterVertically,
+        BoxWithConstraints(
+            modifier = Modifier.widthIn(max = 1100.dp).padding(horizontal = 24.dp),
         ) {
-            Row(horizontalArrangement = Arrangement.spacedBy(32.dp)) {
-                // Increased spacing
-                socialLinks.forEach { link ->
-                    Icon(
-                        imageVector = link.icon,
-                        contentDescription = link.name,
-                        tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
-                        modifier = Modifier
-                            .size(24.dp) // Increased icon size
-                            .clickable { uriHandler.openUri(link.url) }
-                            .semantics { role = Role.Button },
-                    )
-                }
-            }
-
-            Spacer(modifier = Modifier.weight(1f))
-
-            Text(
-                text = "v${com.ifochka.jufk.BuildKonfig.VERSION_NAME}",
-                fontSize = 12.sp,
-                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f),
+            HorizontalDivider(
+                modifier = Modifier.fillMaxWidth(),
+                thickness = 1.dp,
+                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f),
             )
+        }
+        BoxWithConstraints(
+            modifier = Modifier.widthIn(max = 1100.dp).padding(horizontal = 24.dp),
+        ) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 24.dp),
+                horizontalArrangement = Arrangement.Start,
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Row(horizontalArrangement = Arrangement.spacedBy(32.dp)) {
+                    socialLinks.forEach { link ->
+                        Icon(
+                            imageVector = link.icon,
+                            contentDescription = link.name,
+                            tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
+                            modifier = Modifier
+                                .size(24.dp)
+                                .clickable { uriHandler.openUri(link.url) }
+                                .semantics { role = Role.Button },
+                        )
+                    }
+                }
+
+                Spacer(modifier = Modifier.weight(1f))
+
+                Text(
+                    text = "v${com.ifochka.jufk.BuildKonfig.VERSION_NAME}",
+                    fontSize = 12.sp,
+                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f),
+                )
+            }
         }
     }
 }
