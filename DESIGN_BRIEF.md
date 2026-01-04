@@ -14,13 +14,14 @@ The primary audience is software developers, landing first on **Mobile Web**. Th
 *   **Authoritative:** Despite the humor, it should feel credible.
 
 **4. General Design Notes & Link Strategy:**
+*   **Foundation in Material 3:** The design should be based on Google's **Material 3** design system. This provides a solid, modern foundation that works well with Compose Multiplatform. While the design should be unique and opinionated, it should leverage Material 3 components and principles for consistency and usability.
 *   **Mobile-First, Desktop-Awesome:** The design must be mobile-first but scale beautifully to wide desktop screens. It should feel intentional on both viewports, not like a stretched mobile app on desktop. Pay special attention to typography scaling, line lengths, and component layout across breakpoints.
 *   **Primary vs. Secondary Links:** We need a clear hierarchy.
     *   **Primary CTAs** (app downloads, GitHub repo) should be prominent buttons.
     *   **Secondary links** (references to official docs, external articles) should be styled as clean, in-text hyperlinks, not buttons. This avoids clutter.
 
 **5. Color & Typography:**
-*   **Color Palette:** Must be directly inspired by the official **Kotlin branding guidelines** (`https://kotlinlang.org/docs/kotlin-brand-assets.html`). Dark mode is strongly preferred.
+*   **Color Palette:** Must be directly inspired by the official **Kotlin branding guidelines** (`https://kotlinlang.org/docs/kotlin-brand-assets.html`). This should be applied on top of the Material 3 system (e.g., as a custom color scheme). Dark mode is strongly preferred.
 *   **Typography:** Critical for the design. Use a bold, impactful font for headlines and a highly readable font for body text and a monospaced font for code.
 
 **6. Required UI Components & Layout:**
