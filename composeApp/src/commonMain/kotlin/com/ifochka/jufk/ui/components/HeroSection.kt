@@ -1,5 +1,6 @@
 package com.ifochka.jufk.ui.components
 
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -29,24 +30,30 @@ fun HeroSection(
             .padding(vertical = 64.dp, horizontal = 16.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        Text(
-            text = buildAnnotatedString {
-                append("Just Use F*cking\n")
-                withStyle(
-                    style = MaterialTheme.typography.displayLarge.toSpanStyle().copy(
-                        color = MaterialTheme.colorScheme.primary,
-                    ),
-                ) {
-                    append("Kotlin.")
-                }
-                append("\nPeriod.")
-            },
-            fontSize = 88.sp,
-            fontWeight = FontWeight.Bold,
-            textAlign = TextAlign.Center,
-            lineHeight = 96.sp,
-            color = MaterialTheme.colorScheme.onBackground,
-        )
+        BoxWithConstraints {
+            val isDesktop = maxWidth > 600.dp
+            val titleSize = if (isDesktop) 88.sp else 64.sp
+            val titleLineHeight = if (isDesktop) 96.sp else 72.sp
+
+            Text(
+                text = buildAnnotatedString {
+                    append("Just Use F*cking\n")
+                    withStyle(
+                        style = MaterialTheme.typography.displayLarge.toSpanStyle().copy(
+                            color = MaterialTheme.colorScheme.primary,
+                        ),
+                    ) {
+                        append("Kotlin.")
+                    }
+                    append("\nPeriod.")
+                },
+                fontSize = titleSize,
+                fontWeight = FontWeight.Bold,
+                textAlign = TextAlign.Center,
+                lineHeight = titleLineHeight,
+                color = MaterialTheme.colorScheme.onBackground,
+            )
+        }
 
         Spacer(modifier = Modifier.height(24.dp))
 

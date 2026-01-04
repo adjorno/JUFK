@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
@@ -142,50 +143,54 @@ fun HomeScreen(
 
         Spacer(modifier = Modifier.height(64.dp))
 
-        LimitationsCard(
-            heading = limitationsHeading,
-            limitations = limitations,
-        )
-
-        Spacer(modifier = Modifier.height(64.dp))
-
-        Text(
-            text = makingOfHeading,
-            style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.Bold),
-            textAlign = TextAlign.Center,
-            modifier = Modifier.padding(bottom = 24.dp),
-        )
-
-        Row {
-            videos.forEachIndexed { index, video ->
-                VideoCard(
-                    title = video.title,
-                    onClick = { uriHandler.openUri(video.url) },
-                    modifier = Modifier.weight(1f),
-                )
-                if (index < videos.size - 1) {
-                    Spacer(modifier = Modifier.width(16.dp))
-                }
-            }
+        Box(modifier = Modifier.fillMaxWidth(0.8f)) {
+            LimitationsCard(
+                heading = limitationsHeading,
+                limitations = limitations,
+            )
         }
 
+        // TODO: Video section is temporarily hidden until videos are ready
+        // Spacer(modifier = Modifier.height(64.dp))
+        //
+        // Text(
+        //     text = makingOfHeading,
+        //     style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.Bold),
+        //     textAlign = TextAlign.Center,
+        //     modifier = Modifier.padding(bottom = 24.dp)
+        // )
+        //
+        // Row {
+        //     videos.forEachIndexed { index, video ->
+        //         VideoCard(title = video.title, onClick = { uriHandler.openUri(video.url) }, modifier = Modifier.weight(1f))
+        //         if (index < videos.size - 1) {
+        //             Spacer(modifier = Modifier.width(16.dp))
+        //         }
+        //     }
+        // }
+
         Spacer(modifier = Modifier.height(64.dp))
 
-        Text(
-            text = goodnessHeading,
-            style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.Bold),
-            textAlign = TextAlign.Center,
-            modifier = Modifier.padding(bottom = 24.dp),
-        )
-
-        goodnessLinks.forEach { link ->
-            LinkCard(
-                title = link.title,
-                subtitle = link.subtitle,
-                icon = link.icon,
-                onClick = { uriHandler.openUri(link.url) },
+        Column(
+            modifier = Modifier.widthIn(max = 800.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
+            Text(
+                text = goodnessHeading,
+                style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.Bold),
+                textAlign = TextAlign.Center,
+                modifier = Modifier.padding(bottom = 24.dp),
             )
-            Spacer(modifier = Modifier.height(16.dp))
+
+            goodnessLinks.forEach { link ->
+                LinkCard(
+                    title = link.title,
+                    subtitle = link.subtitle,
+                    icon = link.icon,
+                    onClick = { uriHandler.openUri(link.url) },
+                )
+                Spacer(modifier = Modifier.height(16.dp))
+            }
         }
 
         Spacer(modifier = Modifier.height(24.dp))

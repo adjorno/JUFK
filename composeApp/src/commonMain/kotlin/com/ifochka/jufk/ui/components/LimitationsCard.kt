@@ -67,7 +67,7 @@ fun LimitationsCard(
                     Icon(
                         imageVector = limitation.icon,
                         contentDescription = limitation.title,
-                        tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.8f),
+                        tint = Color(0xFF8B0000), // Dark Red
                         modifier = Modifier.size(20.dp),
                     )
                     Text(

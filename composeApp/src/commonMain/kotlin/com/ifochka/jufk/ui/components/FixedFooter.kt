@@ -33,18 +33,19 @@ fun FixedFooter(
         modifier = modifier
             .fillMaxWidth()
             .background(MaterialTheme.colorScheme.background)
-            .padding(horizontal = 24.dp, vertical = 16.dp),
+            .padding(horizontal = 32.dp, vertical = 24.dp), // Increased padding
         horizontalArrangement = Arrangement.Start,
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        Row(horizontalArrangement = Arrangement.spacedBy(24.dp)) {
+        Row(horizontalArrangement = Arrangement.spacedBy(32.dp)) {
+            // Increased spacing
             socialLinks.forEach { link ->
                 Icon(
                     imageVector = link.icon,
                     contentDescription = link.name,
                     tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
                     modifier = Modifier
-                        .size(20.dp)
+                        .size(24.dp) // Increased icon size
                         .clickable { uriHandler.openUri(link.url) }
                         .semantics { role = Role.Button },
                 )
