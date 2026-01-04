@@ -74,16 +74,22 @@ fun HomeScreen(
             modifier = Modifier.padding(top = 64.dp, bottom = 16.dp),
         )
 
-        Text(
-            text = "See for yourself. This entire app—Web, iOS, Android, Desktop, " +
-                "and even a CLI tool—is built from a single Kotlin codebase. No magic. Just code.",
-            style = MaterialTheme.typography.bodyLarge,
-            textAlign = TextAlign.Center,
-            color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f),
-            modifier = Modifier
-                .fillMaxWidth(0.6f)
-                .padding(horizontal = 16.dp),
-        )
+        BoxWithConstraints {
+            val isDesktop = maxWidth > 600.dp
+            val textModifier = if (isDesktop) {
+                Modifier.fillMaxWidth(0.6f)
+            } else {
+                Modifier.fillMaxWidth()
+            }
+            Text(
+                text = "See for yourself. This entire app—Web, iOS, Android, Desktop, " +
+                    "and even a CLI tool—is built from a single Kotlin codebase. No magic. Just code.",
+                style = MaterialTheme.typography.bodyLarge,
+                textAlign = TextAlign.Center,
+                color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f),
+                modifier = textModifier.padding(horizontal = 16.dp),
+            )
+        }
 
         Spacer(modifier = Modifier.height(48.dp))
 

@@ -68,8 +68,8 @@ data class Limitation(
 
 object Content {
     const val HERO_TITLE = "Just Use F*cking Kotlin. Period."
-    const val HERO_SUBTITLE = "You\'re tired of maintaining three codebases." +
-        " You\'re tired of \"it works on my machine\" but not on iOS. Stop overthinking it. " +
+    const val HERO_SUBTITLE = "You\'re tired of maintaining three codebases. " +
+        "You\'re tired of \"it works on my machine\" but not on iOS. Stop overthinking it. " +
         "It\'s time to build everything in one language and go touch grass."
 
     const val BREW_COMMAND = "brew install adjorno/jufk/jufk"
@@ -84,7 +84,6 @@ object Content {
             content = "Build fast Web UIs. Compiled from the same Kotlin codebase. Seriously performant.",
             icon = Icons.Default.Language,
             cta = Cta.Link("justusefuckingkotlin.com", WEBSITE_URL),
-            isHighlighted = true,
         ),
         PlatformSection(
             id = "android",
@@ -120,14 +119,15 @@ object Content {
     val limitations = listOf(
         Limitation(
             title = "What Compile Times?",
-            description = "Compiling Kotlin Multiplatform isn\'t instant (yet). Sure, it\'s not a cup of coffee, " +
-                "but you will have enough time to check a few official docs if you\'re desperate.",
+            description = "Compiling Kotlin Multiplatform isn\'t instant (yet). " +
+                "Sure, it\'s not a cup of coffee, but you will have enough time to " +
+                "check a few official docs if you\'re desperate.",
             icon = Icons.Default.QueryBuilder,
         ),
         Limitation(
             title = "iOS Ecosystem",
-            description = "You still need Xcode installed for your local machine." +
-                " We can\'t do Kotlin a native project, but you can make uniting it a vocation.",
+            description = "You still need Xcode installed for your local machine. " +
+                "We can\'t do Kotlin a native project, but you can make uniting it a vocation.",
             icon = Icons.Default.Devices,
         ),
     )

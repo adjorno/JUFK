@@ -20,18 +20,19 @@ import androidx.compose.ui.unit.sp
 
 @Composable
 fun HeroSection(
-    title: String,
+    title: String, // Note: The title string is now used for the parts of the hero text
     subtitle: String,
     modifier: Modifier = Modifier,
 ) {
-    Column(
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(vertical = 64.dp, horizontal = 16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-    ) {
-        BoxWithConstraints {
-            val isDesktop = maxWidth > 600.dp
+    BoxWithConstraints(modifier = modifier.fillMaxWidth()) {
+        val isDesktop = maxWidth > 600.dp
+
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 64.dp, horizontal = 16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
             val titleSize = if (isDesktop) 88.sp else 64.sp
             val titleLineHeight = if (isDesktop) 96.sp else 72.sp
 
@@ -53,21 +54,27 @@ fun HeroSection(
                 lineHeight = titleLineHeight,
                 color = MaterialTheme.colorScheme.onBackground,
             )
-        }
 
-        Spacer(modifier = Modifier.height(24.dp))
+            Spacer(modifier = Modifier.height(24.dp))
 
-        Column(
-            modifier = Modifier.fillMaxWidth(0.6f),
-            horizontalAlignment = Alignment.CenterHorizontally,
-        ) {
-            Text(
-                text = subtitle,
-                fontSize = 22.sp,
-                textAlign = TextAlign.Center,
-                lineHeight = 32.sp,
-                color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f),
-            )
+            val subtitleModifier = if (isDesktop) {
+                Modifier.fillMaxWidth(0.6f)
+            } else {
+                Modifier.fillMaxWidth()
+            }
+
+            Column(
+                modifier = subtitleModifier,
+                horizontalAlignment = Alignment.CenterHorizontally,
+            ) {
+                Text(
+                    text = subtitle,
+                    fontSize = 22.sp,
+                    textAlign = TextAlign.Center,
+                    lineHeight = 32.sp,
+                    color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f),
+                )
+            }
         }
     }
 }
