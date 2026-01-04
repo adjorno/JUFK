@@ -165,6 +165,10 @@ object Content {
     val socialLinks = listOf(
         SocialLink("GitHub", "https://github.com/adjorno", Icons.Default.Person), // Placeholder
         SocialLink("X", "https://x.com/adjorno", Icons.Default.Person), // Placeholder
-        SocialLink("LinkedIn", "https://linkedin.com/in/adjorno", Icons.Default.Person), // Placeholder
+        SocialLink(
+            name = "LinkedIn",
+            url = "https://www.linkedin.com/in/mykhailo-dorokhin-0b99305a",
+            icon = Icons.Default.Person,
+        ), // Placeholder
     )
 }

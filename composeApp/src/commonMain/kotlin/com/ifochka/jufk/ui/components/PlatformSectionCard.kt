@@ -1,5 +1,6 @@
 package com.ifochka.jufk.ui.components
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -35,6 +36,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.ifochka.jufk.data.Cta
 import com.ifochka.jufk.data.PlatformSection
+import jufk.composeapp.generated.resources.Res
+import jufk.composeapp.generated.resources.apple_white_logo
+import org.jetbrains.compose.resources.painterResource
 
 @Composable
 fun PlatformSectionCard(
@@ -79,12 +83,20 @@ fun PlatformSectionCard(
                 .padding(24.dp),
         ) {
             Row(verticalAlignment = Alignment.CenterVertically) {
-                Icon(
-                    imageVector = section.icon,
-                    contentDescription = section.title,
-                    tint = iconTint,
-                    modifier = Modifier.size(24.dp),
-                )
+                if (section.id == "ios") {
+                    Image(
+                        painter = painterResource(Res.drawable.apple_white_logo),
+                        contentDescription = section.title,
+                        modifier = Modifier.size(24.dp),
+                    )
+                } else {
+                    Icon(
+                        imageVector = section.icon,
+                        contentDescription = section.title,
+                        tint = iconTint,
+                        modifier = Modifier.size(24.dp),
+                    )
+                }
                 Text(
                     text = section.title,
                     style = typography.titleLarge.copy(fontWeight = FontWeight.Bold),
