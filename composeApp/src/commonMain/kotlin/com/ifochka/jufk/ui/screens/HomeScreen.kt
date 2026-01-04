@@ -57,8 +57,7 @@ fun HomeScreen(
     Column(
         modifier = modifier
             .fillMaxSize()
-            .verticalScroll(rememberScrollState())
-            .padding(horizontal = 24.dp),
+            .verticalScroll(rememberScrollState()),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Top,
     ) {
@@ -87,14 +86,14 @@ fun HomeScreen(
                 style = MaterialTheme.typography.bodyLarge,
                 textAlign = TextAlign.Center,
                 color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f),
-                modifier = textModifier.padding(horizontal = 16.dp),
+                modifier = textModifier.padding(horizontal = if (isDesktop) 16.dp else 0.dp),
             )
         }
 
         Spacer(modifier = Modifier.height(48.dp))
 
         BoxWithConstraints(
-            modifier = Modifier.widthIn(max = 1100.dp), // Constrain max width for the grid
+            modifier = Modifier.widthIn(max = 1100.dp).padding(horizontal = 24.dp), // Constrain max width for the grid
         ) {
             val twoColumns = this.maxWidth > 800.dp // Our breakpoint
 
@@ -154,7 +153,7 @@ fun HomeScreen(
         Spacer(modifier = Modifier.height(64.dp))
 
         Column(
-            modifier = Modifier.widthIn(max = 800.dp),
+            modifier = Modifier.widthIn(max = 800.dp).padding(horizontal = 24.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             LimitationsCard(

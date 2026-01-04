@@ -3,7 +3,6 @@ package com.ifochka.jufk.ui.components
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -14,12 +13,11 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowDownward
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.MaterialTheme.colorScheme
+import androidx.compose.material3.MaterialTheme.typography
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -50,10 +48,10 @@ fun PlatformSectionCard(
 
     val borderBrush = if (section.isHighlighted || isCurrentPlatform) {
         Brush.verticalGradient(
-            colors = listOf(MaterialTheme.colorScheme.primary, MaterialTheme.colorScheme.secondary),
+            colors = listOf(colorScheme.primary, colorScheme.secondary),
         )
     } else {
-        SolidColor(MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f))
+        SolidColor(colorScheme.onSurface.copy(alpha = 0.1f))
     }
 
     val iconTint = when (section.id) {
@@ -62,7 +60,7 @@ fun PlatformSectionCard(
         "ios" -> Color.White
         "desktop" -> Color(0xFF2979FF) // Blue
         "cli" -> Color(0xFFBDBDBD) // Grey
-        else -> MaterialTheme.colorScheme.onSurface.copy(alpha = 0.8f)
+        else -> colorScheme.onSurface.copy(alpha = 0.8f)
     }
 
     Box(contentAlignment = Alignment.TopEnd) {
@@ -75,7 +73,7 @@ fun PlatformSectionCard(
                     brush = borderBrush,
                     shape = RoundedCornerShape(12.dp),
                 ).background(
-                    color = MaterialTheme.colorScheme.surface.copy(alpha = 0.5f),
+                    color = colorScheme.surface.copy(alpha = 0.5f),
                     shape = RoundedCornerShape(12.dp),
                 ).clip(RoundedCornerShape(12.dp))
                 .padding(24.dp),
@@ -89,7 +87,7 @@ fun PlatformSectionCard(
                 )
                 Text(
                     text = section.title,
-                    style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
+                    style = typography.titleLarge.copy(fontWeight = FontWeight.Bold),
                     modifier = Modifier.padding(start = 12.dp),
                 )
             }
@@ -98,8 +96,8 @@ fun PlatformSectionCard(
 
             Text(
                 text = section.content,
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
+                style = typography.bodyMedium,
+                color = colorScheme.onSurface.copy(alpha = 0.7f),
                 lineHeight = 22.sp,
             )
 
@@ -109,8 +107,8 @@ fun PlatformSectionCard(
                 is Cta.Link -> {
                     Text(
                         text = cta.text,
-                        style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold),
-                        color = MaterialTheme.colorScheme.primary,
+                        style = typography.bodyMedium.copy(fontWeight = FontWeight.Bold),
+                        color = colorScheme.primary,
                         modifier = Modifier.clickable { uriHandler.openUri(cta.url) },
                     )
                 }
@@ -119,8 +117,8 @@ fun PlatformSectionCard(
                         onClick = { uriHandler.openUri(cta.url) },
                         shape = RoundedCornerShape(8.dp),
                         colors = ButtonDefaults.buttonColors(
-                            containerColor = MaterialTheme.colorScheme.surfaceVariant,
-                            contentColor = MaterialTheme.colorScheme.onSurface,
+                            containerColor = colorScheme.surfaceVariant,
+                            contentColor = colorScheme.onSurface,
                         ),
                     ) {
                         cta.icon?.let { icon ->
@@ -139,7 +137,7 @@ fun PlatformSectionCard(
         }
 
         if (isCurrentPlatform) {
-            YouAreHereBadge(modifier = Modifier.offset(x = (-12).dp, y = (-10).dp)) // Offset from the corner
+            YouAreHereBadge(modifier = Modifier.offset(x = (-12).dp, y = (-12).dp)) // Adjusted badge position
         }
     }
 }
@@ -151,7 +149,7 @@ private fun YouAreHereBadge(modifier: Modifier = Modifier) {
         fontSize = 10.sp,
         color = Color.White,
         modifier = modifier
-            .background(MaterialTheme.colorScheme.primary, RoundedCornerShape(50)) // 50% makes a pill shape
+            .background(colorScheme.primary, RoundedCornerShape(50)) // 50% makes a pill shape
             .padding(horizontal = 8.dp, vertical = 4.dp),
     )
 }
@@ -165,33 +163,31 @@ private fun CodeBlock(
     Box(
         modifier = modifier
             .fillMaxWidth()
-            .background(
-                color = Color.Black,
-                shape = RoundedCornerShape(8.dp),
-            ).border(
+            .background(color = Color.Black, shape = RoundedCornerShape(8.dp))
+            .border(
                 width = 1.dp,
-                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f),
+                color = colorScheme.onSurface.copy(alpha = 0.1f),
                 shape = RoundedCornerShape(8.dp),
             ).clip(RoundedCornerShape(8.dp))
-            .clickable { onCopy(code) }
-            .padding(horizontal = 16.dp, vertical = 12.dp),
+            .clickable { onCopy(code) },
     ) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween,
-        ) {
-            Text(
-                text = code,
-                fontFamily = FontFamily.Monospace,
-                color = MaterialTheme.colorScheme.onSurface,
-                fontSize = 14.sp,
-            )
-            Text(
-                text = "Copy",
-                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
-                fontSize = 12.sp,
-            )
-        }
+        Text(
+            text = code,
+            fontFamily = FontFamily.Monospace,
+            color = colorScheme.onSurface,
+            fontSize = 14.sp,
+            modifier = Modifier
+                .align(Alignment.CenterStart)
+                .padding(horizontal = 16.dp, vertical = 12.dp)
+                .padding(end = 48.dp), // Ensure text doesn't go under the button
+        )
+        Text(
+            text = "Copy",
+            color = colorScheme.onSurface.copy(alpha = 0.6f),
+            fontSize = 12.sp,
+            modifier = Modifier
+                .align(Alignment.CenterEnd) // Aligns vertically to center and horizontally to end
+                .padding(end = 16.dp),
+        )
     }
 }

@@ -3,7 +3,6 @@ package com.ifochka.jufk.data
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Article
 import androidx.compose.material.icons.filled.Android
-import androidx.compose.material.icons.filled.Article
 import androidx.compose.material.icons.filled.Computer
 import androidx.compose.material.icons.filled.Devices
 import androidx.compose.material.icons.filled.Download

@@ -26,11 +26,12 @@ fun HeroSection(
 ) {
     BoxWithConstraints(modifier = modifier.fillMaxWidth()) {
         val isDesktop = maxWidth > 600.dp
+        val horizontalPadding = if (isDesktop) 16.dp else 8.dp
 
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(vertical = 64.dp, horizontal = 16.dp),
+                .padding(vertical = 64.dp, horizontal = horizontalPadding),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             val titleSize = if (isDesktop) 88.sp else 64.sp
@@ -44,9 +45,9 @@ fun HeroSection(
                             color = MaterialTheme.colorScheme.primary,
                         ),
                     ) {
-                        append("Kotlin.")
+                        append("Kotlin") // Apply color only to the word
                     }
-                    append("\nPeriod.")
+                    append(".\nPeriod.") // Append the period and the rest normally
                 },
                 fontSize = titleSize,
                 fontWeight = FontWeight.Bold,
