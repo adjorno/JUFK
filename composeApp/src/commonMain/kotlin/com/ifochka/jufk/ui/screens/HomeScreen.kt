@@ -1,7 +1,6 @@
 package com.ifochka.jufk.ui.screens
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -26,9 +25,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalUriHandler
+import androidx.compose.ui.text.LinkAnnotation
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.text.withLink
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import com.ifochka.jufk.data.Content
 import com.ifochka.jufk.data.GoodnessLink
@@ -206,39 +210,35 @@ fun HomeScreen(
          */
 
         // Inspiration section
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 32.dp),
-            horizontalArrangement = Arrangement.Center,
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            Text(
-                text = "$inspirationText ",
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.5f),
-            )
+        val textColor = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.5f)
+        val linkColor = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f)
+        val inspirationAnnotatedString = buildAnnotatedString {
+            withStyle(SpanStyle(color = textColor)) {
+                append("$inspirationText ")
+            }
             inspirationLinks.forEachIndexed { index, link ->
-                Text(
-                    text = link.name,
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f),
-                    textDecoration = TextDecoration.Underline,
-                    modifier = Modifier.clickable { uriHandler.openUri(link.url) },
-                )
+                withLink(LinkAnnotation.Url(link.url)) {
+                    withStyle(SpanStyle(color = linkColor, textDecoration = TextDecoration.Underline)) {
+                        append(link.name)
+                    }
+                }
                 if (index < inspirationLinks.lastIndex) {
-                    Text(
-                        text = ", ",
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.5f),
-                    )
+                    withStyle(SpanStyle(color = textColor)) {
+                        append(", ")
+                    }
                 }
             }
-            Text(
-                text = " $inspirationSuffix",
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.5f),
-            )
+            withStyle(SpanStyle(color = textColor)) {
+                append(" $inspirationSuffix")
+            }
         }
+        Text(
+            text = inspirationAnnotatedString,
+            style = MaterialTheme.typography.bodySmall,
+            textAlign = TextAlign.Center,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = Dimensions.CONTENT_PADDING, vertical = 32.dp),
+        )
     }
 }
