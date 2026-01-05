@@ -85,6 +85,9 @@ fun App() {
                             videos = viewModel.uiState.videos,
                             goodnessHeading = viewModel.uiState.goodnessHeading,
                             goodnessLinks = viewModel.uiState.goodnessLinks,
+                            inspirationText = viewModel.uiState.inspirationText,
+                            inspirationLinks = viewModel.uiState.inspirationLinks,
+                            inspirationSuffix = viewModel.uiState.inspirationSuffix,
                             onCodeCopy = { _ ->
                                 scope.launch {
                                     snackbarHostState.showSnackbar("Copied!")

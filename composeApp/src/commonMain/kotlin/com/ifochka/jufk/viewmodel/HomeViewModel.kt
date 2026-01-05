@@ -5,6 +5,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import com.ifochka.jufk.data.Content
 import com.ifochka.jufk.data.GoodnessLink
+import com.ifochka.jufk.data.InspirationLink
 import com.ifochka.jufk.data.Limitation
 import com.ifochka.jufk.data.PlatformSection
 import com.ifochka.jufk.data.SocialLink
@@ -25,6 +26,9 @@ data class HomeUiState(
     val videos: List<Video> = Content.videos,
     val goodnessHeading: String = Content.GOODNESS_HEADING,
     val goodnessLinks: List<GoodnessLink> = Content.goodnessLinks,
+    val inspirationText: String = Content.INSPIRATION_TEXT,
+    val inspirationLinks: List<InspirationLink> = Content.inspirationLinks,
+    val inspirationSuffix: String = Content.INSPIRATION_SUFFIX,
 )
 
 /**

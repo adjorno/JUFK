@@ -65,6 +65,11 @@ data class Limitation(
     val icon: ImageVector,
 )
 
+data class InspirationLink(
+    val name: String,
+    val url: String,
+)
+
 object Content {
     const val HERO_TITLE = "Just Use Fucking Kotlin. Period."
     const val HERO_SUBTITLE =
@@ -182,5 +187,12 @@ object Content {
             url = "https://www.linkedin.com/in/mykhailo-dorokhin-0b99305a",
             icon = Icons.Default.Person,
         ), // Placeholder
+    )
+
+    const val INSPIRATION_TEXT = "Inspired by"
+    const val INSPIRATION_SUFFIX = "and other legends."
+    val inspirationLinks = listOf(
+        InspirationLink("justfuckingusetailwind.com", "https://justfuckingusetailwind.com"),
+        InspirationLink("motherfuckingwebsite.com", "https://motherfuckingwebsite.com"),
     )
 }

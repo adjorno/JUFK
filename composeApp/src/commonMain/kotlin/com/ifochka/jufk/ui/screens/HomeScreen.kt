@@ -1,6 +1,7 @@
 package com.ifochka.jufk.ui.screens
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -27,9 +28,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import com.ifochka.jufk.data.Content
 import com.ifochka.jufk.data.GoodnessLink
+import com.ifochka.jufk.data.InspirationLink
 import com.ifochka.jufk.data.Limitation
 import com.ifochka.jufk.data.PlatformSection
 import com.ifochka.jufk.data.Video
@@ -54,6 +57,9 @@ fun HomeScreen(
     videos: List<Video>,
     goodnessHeading: String,
     goodnessLinks: List<GoodnessLink>,
+    inspirationText: String,
+    inspirationLinks: List<InspirationLink>,
+    inspirationSuffix: String,
     onCodeCopy: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -198,5 +204,41 @@ fun HomeScreen(
             }
         }
          */
+
+        // Inspiration section
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 32.dp),
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Text(
+                text = "$inspirationText ",
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.5f),
+            )
+            inspirationLinks.forEachIndexed { index, link ->
+                Text(
+                    text = link.name,
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f),
+                    textDecoration = TextDecoration.Underline,
+                    modifier = Modifier.clickable { uriHandler.openUri(link.url) },
+                )
+                if (index < inspirationLinks.lastIndex) {
+                    Text(
+                        text = ", ",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.5f),
+                    )
+                }
+            }
+            Text(
+                text = " $inspirationSuffix",
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.5f),
+            )
+        }
     }
 }
