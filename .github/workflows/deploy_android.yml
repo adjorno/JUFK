@@ -8,6 +8,7 @@ on:
     paths:
       - 'composeApp/**'
       - 'androidApp/**'
+      - 'kotrack/**'
       - 'fastlane/**'
       - '.github/workflows/deploy_android.yml'
   workflow_dispatch:

@@ -59,7 +59,7 @@ fun PlatformSectionCard(
     }
 
     val iconTint = when (section.id) {
-        "wasm" -> Color(0xFFD500F9) // Pink
+        "web" -> Color(0xFFD500F9) // Pink
         "android" -> Color(0xFF00C853) // Green
         "ios" -> Color.White
         "desktop" -> Color(0xFF2979FF) // Blue

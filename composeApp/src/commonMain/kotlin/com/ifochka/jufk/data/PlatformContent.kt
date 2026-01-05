@@ -78,7 +78,7 @@ object Content {
     val platformSections = listOf(
         PlatformSection(
             id = "web",
-            title = "Kotlin/Wasm",
+            title = "Kotlin/JS",
             content = "Build fast Web UIs. Compiled from the same Kotlin codebase. Seriously performant.",
             icon = Icons.Default.Language,
             cta = Cta.Link("justusefuckingkotlin.com", WEBSITE_URL),
@@ -133,7 +133,7 @@ object Content {
     const val MAKING_OF_HEADING = "The Making Of"
     val videos = listOf(
         Video("1", "Building a Kotlin Multiplatform App", "https://youtube.com/"),
-        Video("2", "Kotlin/Wasm Deep Dive", "https://youtube.com/"),
+        Video("2", "Kotlin/JS Deep Dive", "https://youtube.com/"),
     )
 
     const val GOODNESS_HEADING = "More Kotlin Goodness"
