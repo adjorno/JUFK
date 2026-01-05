@@ -182,6 +182,7 @@ jobs:
       desktop-build-windows,
       mobile-build-android,
       mobile-build-ios,
+      web-build-and-deploy,
       extract-version
     ]
     runs-on: ubuntu-latest
