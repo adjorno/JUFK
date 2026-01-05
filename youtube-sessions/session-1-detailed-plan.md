@@ -378,8 +378,8 @@ jobs:
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v3
 
-      - name: Build WASM
-        run: ./gradlew :composeApp:wasmJsBrowserDistribution
+      - name: Build JS
+        run: ./gradlew :composeApp:jsBrowserDistribution
 
       - name: Deploy to Cloudflare Pages
         uses: cloudflare/wrangler-action@v3
@@ -394,7 +394,7 @@ jobs:
 
 **Explain key parts:**
 - Trigger: `on: push: branches: [ main ]`
-- Build command: `./gradlew :composeApp:wasmJsBrowserDistribution`
+- Build command: `./gradlew :composeApp:jsBrowserDistribution`
 - Build output location: `composeApp/build/dist/wasmJs/productionExecutable`
 - Deployment with secrets
 
