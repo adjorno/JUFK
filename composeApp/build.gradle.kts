@@ -19,6 +19,8 @@ kotlin {
         compilerOptions {
             jvmTarget.set(JvmTarget.JVM_17)
         }
+
+        androidResources.enable = true
     }
 
     listOf(
@@ -51,6 +53,7 @@ kotlin {
         androidMain.dependencies {
             implementation(compose.preview)
             implementation(libs.androidx.activity.compose)
+            implementation(libs.androidx.core.ktx)
         }
 
         commonMain.dependencies {

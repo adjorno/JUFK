@@ -1,8 +1,11 @@
 package com.ifochka.jufk
 
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -68,6 +71,7 @@ fun App() {
                         bottomBar = {
                             FixedFooter(
                                 socialLinks = viewModel.uiState.socialLinks,
+                                modifier = Modifier.navigationBarsPadding(),
                             )
                         },
                     ) { innerPadding ->
