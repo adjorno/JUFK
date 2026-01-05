@@ -35,6 +35,11 @@ kotlin {
 
     jvm("desktop")
 
+    js {
+        browser()
+        binaries.executable()
+    }
+
     @OptIn(ExperimentalWasmDsl::class)
     wasmJs {
         compilerOptions {

@@ -22,6 +22,10 @@ kotlin {
 
     jvm("desktop")
 
+    js {
+        browser()
+    }
+
     @OptIn(ExperimentalWasmDsl::class)
     wasmJs {
         browser()
@@ -77,6 +81,11 @@ kotlin {
         desktopMain.dependencies {
             implementation(libs.posthog.jvm)
             implementation(libs.ktor.client.cio)
+        }
+
+        jsMain.dependencies {
+            implementation(libs.ktor.client.js)
+            implementation(libs.kotlinx.browser)
         }
 
         wasmJsMain.dependencies {
