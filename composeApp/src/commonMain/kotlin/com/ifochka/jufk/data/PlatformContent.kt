@@ -78,7 +78,7 @@ object Content {
     val platformSections = listOf(
         PlatformSection(
             id = "web",
-            title = "Kotlin/JS",
+            title = "Kotlin/WASM",
             content = "Build fast Web UIs. Compiled from the same Kotlin codebase. Seriously performant.",
             icon = Icons.Default.Language,
             cta = Cta.Link("justusefuckingkotlin.com", WEBSITE_URL),

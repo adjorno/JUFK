@@ -82,7 +82,7 @@ Recreate "Just Use Fucking Kotlin" - a Kotlin Multiplatform project demonstratin
 2. Add GitHub secrets: `CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID`
 3. Create `.github/workflows/deploy_web.yml`:
    - Trigger: push to main
-   - Build JS: `./gradlew :composeApp:jsBrowserDistribution`
+   - Build JS: `./gradlew :composeApp:wasmJsBrowserDistribution`
    - Deploy to Cloudflare Pages
 4. Commit + push
 5. Watch workflow run
