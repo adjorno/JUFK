@@ -65,6 +65,11 @@ data class Limitation(
     val icon: ImageVector,
 )
 
+data class InspirationLink(
+    val name: String,
+    val url: String,
+)
+
 object Content {
     const val HERO_TITLE = "Just Use Fucking Kotlin. Period."
     const val HERO_SUBTITLE =
@@ -88,21 +93,33 @@ object Content {
             title = "Android",
             content = "Kotlin\'s native platform. Android Studio loves it. Your users will too.",
             icon = Icons.Default.Android,
-            cta = Cta.Button("Get it on Google Play", "#", null), // Placeholder URL
+            cta = Cta.Button(
+                text = "Get it on Google Play",
+                url = "https://play.google.com/store/apps/details?id=com.ifochka.jufk",
+                icon = null,
+            ), // Placeholder URL
         ),
         PlatformSection(
             id = "ios",
             title = "iOS",
             content = "Yes, a Kotlin app on iOS. Compiles down to native iOS. No joke.",
             icon = Icons.Default.Devices,
-            cta = Cta.Button("App Store", "#", Icons.Default.Download), // Placeholder URL
+            cta = Cta.Button(
+                "App Store",
+                "https://apps.apple.com/us/app/jufk/id6757016615",
+                Icons.Default.Download,
+            ), // Placeholder URL
         ),
         PlatformSection(
             id = "desktop",
             title = "Desktop",
             content = "One codebase. Your desktop app that no one asked for.",
             icon = Icons.Default.Computer,
-            cta = Cta.Button("Download", "#", Icons.Default.Download), // Placeholder URL
+            cta = Cta.Button(
+                "Download",
+                "https://github.com/adjorno/JUFK/releases",
+                Icons.Default.Download,
+            ), // Placeholder URL
         ),
         PlatformSection(
             id = "cli",
@@ -170,5 +187,12 @@ object Content {
             url = "https://www.linkedin.com/in/mykhailo-dorokhin-0b99305a",
             icon = Icons.Default.Person,
         ), // Placeholder
+    )
+
+    const val INSPIRATION_TEXT = "Inspired by"
+    const val INSPIRATION_SUFFIX = "and other legends."
+    val inspirationLinks = listOf(
+        InspirationLink("justfuckingusetailwind.com", "https://justfuckingusetailwind.com"),
+        InspirationLink("motherfuckingwebsite.com", "https://motherfuckingwebsite.com"),
     )
 }
