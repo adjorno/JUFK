@@ -4,6 +4,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -49,41 +50,54 @@ fun FixedFooter(
             thickness = 1.dp,
             color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f),
         )
-        Row(
+        Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(vertical = 24.dp),
-            horizontalArrangement = Arrangement.Start,
-            verticalAlignment = Alignment.CenterVertically,
+                .padding(horizontal = 12.dp),
         ) {
-            Row(horizontalArrangement = Arrangement.spacedBy(32.dp)) {
-                socialLinks.forEach { link ->
-                    val iconPainter = when (link.name) {
-                        "GitHub" -> painterResource(Res.drawable.github_mark_white)
-                        "X" -> painterResource(Res.drawable.x_logo)
-                        "LinkedIn" -> painterResource(Res.drawable.linkedin)
-                        else -> null
-                    }
-                    iconPainter?.let {
-                        Image(
-                            painter = it,
-                            contentDescription = link.name,
-                            modifier = Modifier
-                                .size(24.dp)
-                                .clickable { uriHandler.openUri(link.url) }
-                                .semantics { role = Role.Button },
-                        )
-                    }
-                }
-            }
-
-            Spacer(modifier = Modifier.weight(1f))
-
             Text(
-                text = "v${com.ifochka.jufk.BuildKonfig.VERSION_NAME}",
+                text = "Built by Mykhailo Dorokhin",
                 fontSize = 12.sp,
                 color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f),
+                modifier = Modifier
+                    .align(Alignment.TopEnd),
             )
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 24.dp),
+                horizontalArrangement = Arrangement.Start,
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Row(horizontalArrangement = Arrangement.spacedBy(32.dp)) {
+                    socialLinks.forEach { link ->
+                        val iconPainter = when (link.name) {
+                            "GitHub" -> painterResource(Res.drawable.github_mark_white)
+                            "X" -> painterResource(Res.drawable.x_logo)
+                            "LinkedIn" -> painterResource(Res.drawable.linkedin)
+                            else -> null
+                        }
+                        iconPainter?.let {
+                            Image(
+                                painter = it,
+                                contentDescription = link.name,
+                                modifier = Modifier
+                                    .size(24.dp)
+                                    .clickable { uriHandler.openUri(link.url) }
+                                    .semantics { role = Role.Button },
+                            )
+                        }
+                    }
+                }
+
+                Spacer(modifier = Modifier.weight(1f))
+
+                Text(
+                    text = "v${com.ifochka.jufk.BuildKonfig.VERSION_NAME}",
+                    fontSize = 12.sp,
+                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f),
+                )
+            }
         }
     }
 }
