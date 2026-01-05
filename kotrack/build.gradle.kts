@@ -26,11 +26,6 @@ kotlin {
         browser()
     }
 
-    @OptIn(ExperimentalWasmDsl::class)
-    wasmJs {
-        browser()
-    }
-
     listOf(
         iosX64(),
         iosArm64(),
@@ -84,11 +79,6 @@ kotlin {
         }
 
         jsMain.dependencies {
-            implementation(libs.ktor.client.js)
-            implementation(libs.kotlinx.browser)
-        }
-
-        wasmJsMain.dependencies {
             implementation(libs.ktor.client.js)
             implementation(libs.kotlinx.browser)
         }
