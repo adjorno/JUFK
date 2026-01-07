@@ -171,12 +171,208 @@ git push --set-upstream origin feat/initial-project-setup
 
 ---
 
-## Iteration 1.2: Create Cloudflare Pages Project (2-3 min)
+## Iteration 1.2: Create Cloudflare Pages Project & Get Credentials (2-3 min)
 
-...(Rest of the plan remains the same)...
+### Actions
+
+#### 1. Create Cloudflare Pages Project Using Wrangler
+
+**In Terminal (already logged into wrangler):**
+```bash
+# Create the Cloudflare Pages project for production
+wrangler pages project create justusefuckingkotlin-com
+```
+
+**Voiceover:**
+> "Now let's set up our deployment target. Cloudflare Pages is perfect for hosting static sites and WASM apps. Since I'm already logged into wrangler, I can create the project directly from the command line. We're naming it `justusefuckingkotlin-com` to match our domain. In a future session, we'll also create a `justusefuckingkotlin-dev` project for our development environment—but for now, let's keep it simple and ship to production!"
+
+#### 2. Get Cloudflare Account ID
+
+**In Terminal:**
+```bash
+# List your Cloudflare accounts to get the Account ID
+wrangler whoami
+```
+
+**Voiceover:**
+> "To automate deployments from GitHub Actions, we need two things: our Account ID and an API Token. The `wrangler whoami` command shows us our Account ID. Copy this—we'll need it for our GitHub secrets."
+
+- [ ] Copy the Account ID from the output
+
+#### 3. Create Cloudflare API Token
+
+**In Browser:**
+- [ ] Go to https://dash.cloudflare.com/profile/api-tokens
+- [ ] Click "Create Token"
+- [ ] Click "Use template" next to "Edit Cloudflare Workers"
+- [ ] Under "Account Resources", select your account
+- [ ] Under "Zone Resources", select "All zones" (or specific zone if preferred)
+- [ ] Click "Continue to summary"
+- [ ] Click "Create Token"
+- [ ] **Copy the token immediately** (you won't see it again!)
+
+**Voiceover:**
+> "For the API Token, we go to the Cloudflare dashboard. We'll use the 'Edit Cloudflare Workers' template—this gives us the right permissions for Pages deployments. Make sure to copy this token right away; Cloudflare only shows it once!"
+
+#### 4. Add Secrets to GitHub Repository
+
+**In Browser (GitHub Repo Settings):**
+- [ ] Go to Settings > Secrets and variables > Actions
+- [ ] Click "New repository secret"
+- [ ] Name: `CLOUDFLARE_ACCOUNT_ID`, Value: (paste the Account ID)
+- [ ] Click "Add secret"
+- [ ] Click "New repository secret" again
+- [ ] Name: `CLOUDFLARE_API_TOKEN`, Value: (paste the API Token)
+- [ ] Click "Add secret"
+
+**Voiceover:**
+> "Now we store these credentials securely in GitHub. Repository secrets are encrypted and only exposed to workflows during runtime. This is the professional way—never hardcode credentials in your code!"
+
+### Deliverable Checklist
+
+- [ ] Cloudflare Pages project `justusefuckingkotlin-com` created
+- [ ] Account ID retrieved from `wrangler whoami`
+- [ ] API Token created with "Edit Cloudflare Workers" permissions
+- [ ] Both secrets added to GitHub repository
 
 ---
 
-## Iteration 1.3: GitHub Actions Web Deployment & Debugging (5-7 min)
+## Iteration 1.3: GitHub Actions Web Deployment Workflow (5-7 min)
 
-...(Rest of the plan remains the same)...
+### Actions
+
+#### 1. Create the Deployment Workflow File
+
+**In IntelliJ Terminal:**
+```bash
+# Make sure we're on main and up to date
+git checkout main
+git pull
+
+# Create a new branch for the workflow
+git checkout -b feat/web-deployment-workflow
+
+# Create the workflows directory
+mkdir -p .github/workflows
+```
+
+**In IntelliJ IDEA, create file `.github/workflows/deploy-web.yml`:**
+
+```yaml
+name: Deploy Web to Cloudflare Pages
+
+on:
+  # Trigger on push to main (after PR merge)
+  push:
+    branches:
+      - main
+  # Allow manual trigger for testing
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Build WASM distribution
+        run: ./gradlew :composeApp:wasmJsBrowserDistribution
+
+      - name: Deploy to Cloudflare Pages
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: pages deploy composeApp/build/dist/wasmJs/productionExecutable --project-name=justusefuckingkotlin-com
+```
+
+**Voiceover:**
+> "Here's our deployment workflow. Let me walk you through it. We trigger on two events: `push` to main—which happens after every PR merge—and `workflow_dispatch`, which lets us run it manually. This manual trigger is crucial for testing before our first merge.
+>
+> The job checks out our code, sets up Java and Gradle, builds the WASM distribution, and then uses the official Cloudflare wrangler-action to deploy. Notice how we reference our secrets—GitHub automatically injects them at runtime."
+
+#### 2. Commit and Push the Workflow
+
+**In IntelliJ Terminal:**
+```bash
+# Add the workflow file
+git add .github/workflows/deploy-web.yml
+
+# Commit
+git commit -m "ci: Add web deployment workflow to Cloudflare Pages"
+
+# Push the branch
+git push --set-upstream origin feat/web-deployment-workflow
+```
+
+**Voiceover:**
+> "Let's commit and push this workflow. But here's the thing—we haven't merged to main yet, and we want to make sure it works before we do. That's why we added `workflow_dispatch`."
+
+#### 3. Test the Workflow Manually Before Merging
+
+**In Browser (GitHub):**
+- [ ] Go to the repository's "Actions" tab
+- [ ] You'll see "Deploy Web to Cloudflare Pages" in the workflows list
+- [ ] Click on "Deploy Web to Cloudflare Pages"
+- [ ] Click "Run workflow" dropdown button (top right)
+- [ ] **Select your feature branch**: `feat/web-deployment-workflow`
+- [ ] Click the green "Run workflow" button
+- [ ] Watch the workflow run in real-time
+
+**Voiceover:**
+> "Here's the magic of `workflow_dispatch`. Even though our workflow normally triggers on pushes to main, we can manually run it from any branch. I'll select our feature branch and run it. This lets us validate the entire pipeline—build, deploy, everything—before we commit to merging. If something fails, we fix it on the branch. No broken main, no rollbacks needed."
+
+#### 4. Verify the Deployment
+
+**In Browser:**
+- [ ] Once the workflow completes successfully (green checkmark)
+- [ ] Go to https://justusefuckingkotlin-com.pages.dev (or the URL shown in the workflow output)
+- [ ] Verify the app loads correctly
+
+**Voiceover:**
+> "And there it is—our Kotlin app, running in the browser, deployed to Cloudflare's global edge network. This is what production looks like!"
+
+#### 5. Merge the PR
+
+**In Browser (GitHub):**
+- [ ] Go back to your repository
+- [ ] Click "Compare & pull request" for `feat/web-deployment-workflow`
+- [ ] Title: `ci: Add web deployment workflow to Cloudflare Pages`
+- [ ] Click "Create pull request"
+- [ ] Click "Merge pull request" and "Confirm merge"
+
+**Voiceover:**
+> "Now that we've verified the workflow works, we can confidently merge. From this point on, every merge to main will automatically deploy to production. That's continuous deployment in action!"
+
+### Deliverable Checklist
+
+- [ ] Workflow file created at `.github/workflows/deploy-web.yml`
+- [ ] Workflow includes both `push` trigger and `workflow_dispatch` for manual runs
+- [ ] Workflow tested successfully from feature branch before merging
+- [ ] Site live at https://justusefuckingkotlin-com.pages.dev
+- [ ] PR merged, automated deployments now active
+
+---
+
+## Session 1 Complete!
+
+**What we accomplished:**
+- Created a GitHub repository with branch protection
+- Generated a Kotlin Multiplatform project targeting Web, Android, iOS, and Desktop
+- Set up Cloudflare Pages with secure credential management
+- Created our first CI/CD pipeline with GitHub Actions
+- Deployed our first production release!
+
+**Next Session Preview:**
+> "In the next session, we'll add our first real content to the site and start making it look like our design concept. See you there!"
