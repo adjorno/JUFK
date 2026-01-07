@@ -37,7 +37,7 @@
 > *(transition to show the design concept image)*
 >
 > This is our target. Throughout this series, we’ll try to build a project that looks as close as possible to this.
->
+
 > But with a key difference. Instead of just one website, we're using a single Kotlin codebase to build apps for Android, iOS, Desktop, and even command-line tools—all from scratch.
 >
 > And you might be thinking, *“Grandpa, take your pills! It's 2026, we have LLMs to do this for us.”*
@@ -55,7 +55,7 @@
 
 ---
 
-## Iteration 1.1: Create KMP Project from IDEA Template (5-6 min)
+## Iteration 1.1: Create KMP Project from IDEA Template (6-8 min)
 
 ### Actions
 
@@ -105,21 +105,38 @@ cd just-use-fucking-kotlin
 > "Now we clone the repo. We'll call our local project module `jufk` for simplicity, and generate the project right inside this directory. All targets are selected—we're not leaving anyone behind!"
 > "You might see a warning about the Android project structure. Don't worry about that for now—we're all about getting to a working app fast. We'll refactor it properly in a future session."
 
-#### 3. Build the Project
+#### 3. Update Gradle and Dependencies
+
+**In IntelliJ IDEA:**
+- [ ] Open `gradle/wrapper/gradle-wrapper.properties`
+- [ ] Change the `distributionUrl` to use Gradle 9.0.0: `distributionUrl=https\://services.gradle.org/distributions/gradle-9.0.0-bin.zip`
+
+**Voiceover:**
+> "The template gives us a solid starting point, but the dependencies are often a bit behind. Let's start by updating to the latest version of Gradle. I'll change this to use Gradle 9.0."
+
+- [ ] Open `gradle/libs.versions.toml`
+- [ ] Update versions for AGP, Kotlin, Compose, etc. to their latest stable versions.
+
+**Voiceover:**
+> "Next, we'll update our key dependencies in the `libs.versions.toml` file. This includes the Android Gradle Plugin, Kotlin, and Compose Multiplatform. Keeping dependencies up-to-date is a good habit for security and getting the latest features. After changing build files, the IDE will prompt us to sync the project. Let's do that."
+
+- [ ] Sync the Gradle project in the IDE.
+
+#### 4. Run the Web App Locally
 
 **In IntelliJ Terminal:**
 ```bash
-./gradlew build
+./gradlew :composeApp:wasmJsBrowserDevelopmentRun
 ```
 
-**Voiceover (during build):**
-> "While this is building, let's talk more about the 'why.'
+**Voiceover (during build/run):**
+> "Now that our project is synced, let's run the web app locally using the development server to make sure everything works. While this is building and starting up, let's talk more about the 'why.'
 >
 > I mentioned the "Grandpa vs. AI" thing. I really do use AI assistants every day; they're fantastic. But knowing *what* to ask the AI and understanding the code it generates is a superpower. That's what we're learning here: the fundamentals, so you can be in control of the tools, not the other way around.
 >
 > And that "professional way"? We've already started by protecting our `main` branch. That's step one in our Trunk-Based Development strategy, a concept we'll build on throughout the series."
 
-#### 4. Commit and Push via Pull Request
+#### 5. Commit and Push via Pull Request
 
 **In IntelliJ Terminal:**
 ```bash
