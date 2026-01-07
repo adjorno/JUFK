@@ -12,13 +12,15 @@
 - [ ] Cloudflare account created
 - [ ] `wrangler` CLI installed (`npm install -g wrangler`)
 - [ ] Terminal and browser windows prepared
+- [ ] **Undeploy final site (if live)**
+- [ ] **Prepare an image of the final design concept**
 - [ ] Test run all commands below to ensure they work
 
 ---
 
-## Iteration 1.0: Intro & Context (1-2 min)
+## Iteration 1.0: Intro & Context (1.5 min)
 
-### Full Intro Script
+### Full Intro Script (Final, Lean Version)
 
 *(To be used as a teleprompter)*
 
@@ -26,45 +28,29 @@
 >
 > *(pause for a beat)*
 >
-> ...I'm joking! It means something *great* has happened. It means Kotlin and I were able to pull off my idea, a small project and now its in production.
+> ...I'm joking! It means something *great* is about to happen. It means Kotlin and I are about to build a small project and take it all the way to production.
 >
-> A few days ago I was doom scrolling my X feed and I noticed this post by creator of Tailwind framework:
+> A few days ago, I was doom-scrolling my X feed and saw a post by the creator of Tailwind about `justfuckingusetailwind.com`. Great concept. I checked the inspiration list... But what about Kotlin? What about my lovely little language? My precious?
 >
-> *(transition to Desktop scene showing the post about justfuckingusetailwind.com)*
+> I went to `justfuckingusekotlin.com` and... nothing. So, I knew I had to make it. So to get us started, I asked an LLM for a design concept.
 >
-> He shared a site with the concept that is known for decades...
+> *(transition to show the design concept image)*
 >
-> *(clicking the link showing it and scrolling to the bottom to the inspiration section)*
-> We can see a list of similar sites promoting different languages and frameworks.
+> This is our target. Throughout this series, we’ll try to build a project that looks as close as possible to this.
 >
-> But what about Kotlin? What about my lovely little language? My precious?
+> But with a key difference. Instead of just one website, we're using a single Kotlin codebase to build apps for Android, iOS, Desktop, and even command-line tools—all from scratch.
 >
-> I went to checkout justfuckingusekotlin.com and... nothing. I need to make it. This is where the idea got planted!
+> And you might be thinking, *“Grandpa, take your pills! It's 2026, we have LLMs to do this for us.”*
 >
-> But Kotlin is for Backend and Android, you would ask me? Yes. But not limited to. Kotlin is rapidly evolving, and its multiplatform framework is maturing so we can use a single code base and have backend services, Android apps as well as iOS, Desktop, Web apps with native performance and even CLI tools.
+> And you're right... to a point. In a world of AI assistants, understanding the fundamentals isn't just useful—it's your most valuable asset. That's why we'll do it the "professional way." I'm talking proper Trunk Based development, full CI/CD pipelines with automated tests, and deployments on every single change. We'll set up separate DEV and PROD environments and use different tracks for mobile app promotion, just like you would on a real-world team. These are the skills that land you a high-paying job.
 >
-> Stay with me and we will create a single Kotlin codebase and deploy to production to as many channels as possible from scratch!
+> I'll keep it to short 10-15 minute sessions, and at the end of each one, something new will be in PRODUCTION.
 >
-> And again, you might think “Grandpa, take your pills! It's 2026 outside, no-one builds apps manually, we have LLMs to do it for us.”
->
-> And I would agree and disagree. I do use coding models on a daily basis at work, they are very good. But also my experience tells that it’s way more comfortable and efficient to use an LLM when you are knowledgeable and aware of what the LLM should do and are in control of the process.
->
-> This series of videos will be just about that - I will try to implement the project manually without the help of an LLM. Maybe a little bit :-) I will be explaining every line of code, what and why I am doing every step.
->
-> Yeah, I forgot an important thing. Decades of corporate jobs formed some processes that I follow and that are non-negotiable. So I will implement the project in a “let's call it professional way” - I will show the benefits of the Trunk-Based Git strategy, CI/CD pipelines, tests and code analysis tools, automated deployments on every change, we will set PROD and DEV environments, and we will use different tracks for mobile apps promotion. These things will not help you to earn millions with your apps but they will help you to get a high-paying software development job. At least this is still the case for now.
->
-> I like to do things in short iterations so I can enjoy the result, review it and collect feedback for the next one. I will try to fit every iteration within 10-15 minutes so you don't get bored by me.
->
-> Yes, you heard me right! Every 10-15 minutes something new will be in PRODUCTION.
->
-> Not bad for a grandpa?
->
-> Okay, time is ticking. Lets code!
+> Not bad for a grandpa, huh? Okay, time is ticking. Let's get to the code!
 
 ### Action Items
 
-- [ ] Record intro talking points
-- [ ] Screen record browser showing final site
+- [ ] Record intro talking points, showing the design concept image
 - [ ] Explain what viewers will learn
 
 ---
@@ -84,18 +70,17 @@
 - [ ] Click "Create repository"
 
 **Voiceover while doing this:**
-> "First, let's create a new GitHub repository. For discoverability, we'll call it `just-use-fucking-kotlin`. We'll initialize it with a README so we can immediately set up our branch protection rules."
+> "First, let's create our new GitHub repository. Now, about the name. Logically, it should be 'Just Fucking Use Kotlin'. But that gives us the acronym J-F-U-K... which just sounds... wrong. So, to make it sound better, we're flipping it to **'Just Use Fucking Kotlin.'** The GitHub repo name will be `just-use-fucking-kotlin` so people can find it easily. This makes our project acronym **J-U-F-K**. It's cleaner, and since English is my third language, any grammar mistakes I make from now on... well, it's not a bug, it's a feature! We'll initialize it with a README so we can immediately set up our branch protection rules."
 
 **In Browser (Repo Settings):**
 - [ ] Go to Settings > Branches
 - [ ] Click "Add branch protection rule"
 - [ ] Branch name pattern: `main`
 - [ ] Check "Require a pull request before merging"
-- [ ] (Optional for now) Check "Require status checks to pass before merging"
 - [ ] Click "Create"
 
 **Voiceover:**
-> "This is a key part of our Trunk-Based Development strategy. We're protecting the `main` branch. Now, no one can push directly to main. All changes must go through a pull request. This keeps our trunk clean and ensures every change is reviewed. We'll add status checks to this later when we set up our CI pipeline."
+> "This is a key part of the 'professional way' I mentioned. We're protecting the `main` branch, so no one can push directly to it. All changes must go through a pull request. This keeps our trunk clean and ready for production."
 
 #### 2. Clone Repo and Create Project in IntelliJ IDEA
 
@@ -109,32 +94,18 @@ cd just-use-fucking-kotlin
 ```
 
 **In IntelliJ IDEA:**
-- [ ] File > New > Project
-- [ ] Select "Kotlin Multiplatform" from left sidebar
-- [ ] **Important**: Set the Location to the directory you just cloned (`.../just-use-fucking-kotlin`)
+- [ ] File > New > Project > Kotlin Multiplatform
+- [ ] Location: Set to the cloned directory (`.../just-use-fucking-kotlin`)
 - [ ] Project name: `jufk`
-- [ ] Select targets:
-    - [x] Android
-    - [x] iOS
-    - [x] Desktop
-    - [x] Web (WASM)
+- [ ] Select targets: Android, iOS, Desktop, Web (WASM)
 - [ ] Package name: `com.ifochka.jufk`
 - [ ] Click "Create"
 
 **Voiceover:**
-> "Now we clone the repo. For our IntelliJ project, we need a simple name for the module, so we'll call it `jufk`. This is just a local project name, while our repository will be the full, searchable `just-use-fucking-kotlin`. We'll generate the KMP project directly inside this cloned directory. All the targets are selected—we're not leaving anyone behind!"
-> "Now, IntelliJ has generated our project. You might see a warning here about the Android project structure. Don't worry about that for now—we're all about getting to a working app fast. We'll clean this up and follow the latest best practices in a dedicated episode on project maintenance. For now, let's just prove it works!"
+> "Now we clone the repo. We'll call our local project module `jufk` for simplicity, and generate the project right inside this directory. All targets are selected—we're not leaving anyone behind!"
+> "You might see a warning about the Android project structure. Don't worry about that for now—we're all about getting to a working app fast. We'll refactor it properly in a future session."
 
-#### 3. Review .gitignore
-
-**In IntelliJ:**
-- [ ] Open the generated `.gitignore` file
-- [ ] Briefly scroll through it.
-
-**Voiceover:**
-> "The template also gives us a standard `.gitignore` file to keep our repository clean from build files and local settings, which is great. Let's move on."
-
-#### 4. Build the Project
+#### 3. Build the Project
 
 **In IntelliJ Terminal:**
 ```bash
@@ -142,9 +113,13 @@ cd just-use-fucking-kotlin
 ```
 
 **Voiceover (during build):**
-> "While this is building, let's talk about Gradle and WASM... (same script as before)"
+> "While this is building, let's talk more about the 'why.'
+>
+> I mentioned the "Grandpa vs. AI" thing. I really do use AI assistants every day; they're fantastic. But knowing *what* to ask the AI and understanding the code it generates is a superpower. That's what we're learning here: the fundamentals, so you can be in control of the tools, not the other way around.
+>
+> And that "professional way"? We've already started by protecting our `main` branch. That's step one in our Trunk-Based Development strategy, a concept we'll build on throughout the series."
 
-#### 5. Commit and Push via Pull Request
+#### 4. Commit and Push via Pull Request
 
 **In IntelliJ Terminal:**
 ```bash
@@ -155,37 +130,35 @@ git checkout -b feat/initial-project-setup
 git add .
 
 # Commit the changes
-git commit -m "feat: Initial KMP project generation
-
-- Generate project with Android, iOS, Desktop, and Web targets.
-- Using Compose Multiplatform for the UI."
+git commit -m "feat: Initial KMP project generation"
 
 # Push the new branch
 git push --set-upstream origin feat/initial-project-setup
 ```
 
 **In Browser (GitHub):**
-- [ ] A banner will appear to "Compare & pull request". Click it.
+- [ ] Click "Compare & pull request".
 - [ ] Title: `feat: Initial KMP project generation`
-- [ ] Review the changed files.
 - [ ] Click "Create pull request".
-- [ ] Since we are the only ones here, we can immediately click "Merge pull request" and "Confirm merge".
+- [ ] Click "Merge pull request" and "Confirm merge".
 
 **Voiceover:**
-> "Now that our project is ready, we'll follow our new professional workflow. We create a new branch, commit our changes there, and push it to GitHub. Then, we open a pull request. This is where a team would normally review the code. For now, since it's just us, we can merge it immediately. This completes the cycle: change, PR, merge. Our main branch is updated and remains the single source of truth."
+> "Now we follow our professional workflow. We create a new branch, commit our changes, and open a pull request on GitHub. This is where a team would normally review the code. For now, it's just us, so we can merge it. This completes the cycle: change, PR, merge. Our main branch is updated and remains the single source of truth."
 
 ### Deliverable Checklist
 
-- [ ] GitHub repo created with `README.md` and a protected `main` branch.
+- [ ] GitHub repo created with a protected `main` branch.
 - [ ] KMP project generated inside the cloned repo.
 - [ ] All targets compile successfully.
-- [ ] First feature branch is successfully merged into `main` via a pull request.
+- [ ] First feature branch is merged into `main` via a pull request.
 
 ---
 
 ## Iteration 1.2: Create Cloudflare Pages Project (2-3 min)
 
 ...(Rest of the plan remains the same)...
+
+---
 
 ## Iteration 1.3: GitHub Actions Web Deployment & Debugging (5-7 min)
 

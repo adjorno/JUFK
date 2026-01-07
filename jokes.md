@@ -12,8 +12,13 @@ This file tracks jokes to be used in the YouTube tutorial series to avoid repeti
 *   **Joke**: "But what about Kotlin? What about my lovely little language? My precious?" (Lord of the Rings reference)
 *   **Status**: Used in Session 1 Intro.
 
-*   **Joke**: "Grandpa, take your pills! It's 2026 outside, no-one builds apps manually, we have LLMs to do it for us.”
+*   **Joke**: "Grandpa, take your pills! It's 2026, we have LLMs to do this for us.”
 *   **Status**: Used in Session 1 Intro.
 
-*   **Joke**: "Not bad for a grandpa?"
+*   **Joke**: "Not bad for a grandpa, huh?"
 *   **Status**: Used in Session 1 Intro.
+
+## Session 1: During Repo Creation
+
+*   **Joke**: Explaining the switch from "Just Fucking Use Kotlin" to "Just Use Fucking Kotlin" because of the acronym and to excuse grammar mistakes.
+*   **Status**: Used in Session 1, during repository creation.
