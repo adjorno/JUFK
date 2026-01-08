@@ -68,18 +68,18 @@ This ensures:
 
 **Searchable Title**: "How to Set Up CI Quality Gates for Kotlin Multiplatform"
 
-**Standalone Value**: Any developer can watch this session to learn how to set up professional CI quality gates (ktlint, detekt, unit tests) for a Kotlin Multiplatform project. Works for any KMP project, not just JUFK.
+**Standalone Value**: Any developer can watch this session to learn how to set up professional CI quality gates (ktlint, detekt, Android Lint, unit tests) for a Kotlin Multiplatform project. Works for any KMP project.
 
-**Session Goal**: Set up proper CI gates with code quality checks and unit tests
+**Session Goal**: Set up CI quality gates with ktlint, detekt, Android Lint, and unit tests
 
 ## Primary Topic: CI Quality Gates (80%)
 
 ### Iteration 2.1: Introduction to CI Quality Gates
-**Time Estimate**: 1-2 min
+**Time Estimate**: 1 min
 
 **Script Points**:
 - What are CI quality gates and why they matter
-- Overview: ktlint (formatting), detekt (static analysis), unit tests
+- Overview: ktlint (formatting), detekt (static analysis), Android Lint, unit tests
 - "By the end of this video, every PR will be automatically checked for quality"
 
 ---
@@ -186,7 +186,29 @@ This ensures:
 
 ---
 
-**Session 2 Total Time Estimate**: 12-16 min
+### Iteration 2.9: Migrate to New KMP Plugin DSL
+**Time Estimate**: 4-5 min
+
+**Steps**:
+1. Update `composeApp/build.gradle.kts` to new plugin DSL
+2. Replace `android {}` block with `androidLibrary {}` in kotlin multiplatform block
+3. Enable `androidResources` explicitly
+4. Create new `androidApp` module for app-specific content
+5. Move `MainActivity`, `AndroidManifest.xml`, app resources to `androidApp`
+6. Update `settings.gradle.kts` to include new module
+7. Verify Android app still builds and runs
+
+**Delivered**: Project using modern KMP plugin DSL, ready for future sessions
+
+**Key Files**:
+- `composeApp/build.gradle.kts`
+- `androidApp/build.gradle.kts` (new)
+- `androidApp/src/androidMain/` (new)
+- `settings.gradle.kts`
+
+---
+
+**Session 2 Total Time Estimate**: 16-20 min
 
 **Detailed Plan**: See [/youtube-sessions/session-2-detailed-plan.md](youtube-sessions/session-2-detailed-plan.md)
 

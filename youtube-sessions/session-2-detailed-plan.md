@@ -2,9 +2,9 @@
 
 **Searchable Title**: "How to Set Up CI Quality Gates for Kotlin Multiplatform"
 
-**Standalone Value**: Any developer can watch this session to learn how to set up professional CI quality gates (ktlint, detekt, unit tests) for a Kotlin Multiplatform project. Works for any KMP project, not just JUFK.
+**Standalone Value**: Any developer can watch this session to learn how to set up professional CI quality gates (ktlint, detekt, Android Lint, unit tests) for a Kotlin Multiplatform project. Works for any KMP project, not just JUFK.
 
-**Total Time Estimate**: 12-16 minutes
+**Total Time Estimate**: 16-20 minutes
 
 ---
 
@@ -506,6 +506,124 @@ git push --set-upstream origin feat/hero-text
 
 ---
 
+## Iteration 2.9: Migrate to New KMP Plugin DSL (4-5 min)
+
+### Script Transition
+
+> "One more thing before we wrap up - let's address some tech debt. The new Kotlin Multiplatform plugin has a cleaner DSL, and now's the perfect time to migrate."
+
+### Actions
+
+#### 1. Update composeApp to Library Structure
+
+**In IDE, open `composeApp/build.gradle.kts`:**
+
+Replace the `android {}` block with the new DSL inside the kotlin multiplatform block:
+
+```kotlin
+kotlin {
+    androidLibrary {
+        namespace = "com.ifochka.jufk"
+        compileSdk = 35
+        minSdk = 24
+
+        // Enable Android resources
+        withAndroidResources()
+    }
+
+    // ... rest of targets
+}
+```
+
+**Voiceover:**
+> "The new KMP plugin uses `androidLibrary` inside the kotlin block instead of a separate `android` block. This makes the configuration cleaner and more consistent across platforms."
+
+#### 2. Create androidApp Module
+
+**Create `androidApp/build.gradle.kts`:**
+
+```kotlin
+plugins {
+    alias(libs.plugins.androidApplication)
+    alias(libs.plugins.kotlinAndroid)
+    alias(libs.plugins.composeCompiler)
+}
+
+android {
+    namespace = "com.ifochka.jufk.app"
+    compileSdk = 35
+
+    defaultConfig {
+        applicationId = "com.ifochka.jufk"
+        minSdk = 24
+        targetSdk = 35
+        versionCode = 1
+        versionName = "1.0"
+    }
+
+    buildFeatures {
+        compose = true
+    }
+}
+
+dependencies {
+    implementation(project(":composeApp"))
+    implementation(libs.androidx.activity.compose)
+}
+```
+
+#### 3. Move Android App Content
+
+**Move files to `androidApp/src/main/`:**
+- `MainActivity.kt`
+- `AndroidManifest.xml` (with application-level config)
+
+**In Terminal:**
+```bash
+mkdir -p androidApp/src/main/kotlin/com/ifochka/jufk
+mv composeApp/src/androidMain/kotlin/com/ifochka/jufk/MainActivity.kt androidApp/src/main/kotlin/com/ifochka/jufk/
+```
+
+**Voiceover:**
+> "The app-specific stuff - MainActivity, the application manifest - now lives in the androidApp module. composeApp becomes a pure library that androidApp depends on."
+
+#### 4. Update settings.gradle.kts
+
+**Add to `settings.gradle.kts`:**
+```kotlin
+include(":androidApp")
+```
+
+#### 5. Verify Build
+
+**In Terminal:**
+```bash
+./gradlew :androidApp:assembleDebug
+```
+
+**Voiceover:**
+> "Let's verify everything still works. This separation will make our life easier in future sessions when we add more Android-specific configuration."
+
+#### 6. Commit and Push
+
+**In Terminal:**
+```bash
+git checkout main
+git pull
+git checkout -b refactor/kmp-plugin-migration
+git add .
+git commit -m "refactor: Migrate to new KMP plugin DSL with separate androidApp module"
+git push --set-upstream origin refactor/kmp-plugin-migration
+```
+
+### Deliverable
+
+- Project using modern KMP plugin DSL
+- Clean separation: `composeApp` (library) + `androidApp` (application)
+- Ready for future sessions
+
+---
+
 ## Session 2 Complete!
 
 ### Outro Script
@@ -518,7 +636,9 @@ git push --set-upstream origin feat/hero-text
 >
 > Every PR is automatically checked before it can be merged.
 >
-> If you're new here, this works for any Kotlin Multiplatform project - not just this one. Try it on your own project!
+> We also migrated to the new KMP plugin DSL with a separate androidApp module - this cleaner structure will make future sessions easier.
+>
+> If you're new here, this CI setup works for any Kotlin Multiplatform project - not just this one. Try it on your own project!
 >
 > For those following the series, next time we're taking this app to the Play Store. See you then!"
 
@@ -534,6 +654,7 @@ git push --set-upstream origin feat/hero-text
 **Series Continuity:**
 - Faster builds with Gradle caching
 - New UI deployed to production
+- Migrated to new KMP plugin DSL with separate androidApp module
 
 ---
 
