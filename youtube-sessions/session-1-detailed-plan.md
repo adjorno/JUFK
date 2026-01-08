@@ -376,3 +376,114 @@ git push --set-upstream origin feat/web-deployment-workflow
 
 **Next Session Preview:**
 > "In the next session, we'll add our first real content to the site and start making it look like our design concept. See you there!"
+
+---
+
+# Session 1 Retrospective (Post-Recording)
+
+**Recorded**: Session 1 completed
+**Actual Duration**: ~21 minutes (vs planned 12-16 minutes)
+
+---
+
+## What Went According to Plan
+
+- [x] Created GitHub repository (public, with license)
+- [x] Generated KMP project with all targets (Android, iOS, Desktop, Web WASM)
+- [x] Updated dependencies to latest versions
+- [x] Ran web app locally to verify it works
+- [x] Created GitHub Actions workflow for web deployment
+- [x] Set up Cloudflare Pages project
+- [x] Added secrets to GitHub repository
+- [x] Successfully deployed to production
+- [x] Custom domain configured (justusefuckingkotlin.com)
+
+---
+
+## Deviations from Plan
+
+### 1. IDE Choice
+- **Planned**: IntelliJ IDEA
+- **Actual**: Android Studio
+- **Impact**: None - both work identically for KMP projects
+- **Note**: Mentioned "feel free to use anything else" - good improvisation
+
+### 2. Branch Protection Timing
+- **Planned**: Set up branch protection BEFORE first commit
+- **Actual**: Set up branch protection AFTER merging deployment workflow
+- **Impact**: Minor - could have pushed directly to main before protection was set
+- **Lesson**: Follow the plan order for professional demonstrations
+
+### 3. Workflow File Naming
+- **Planned**: `.github/workflows/deploy-web.yml`
+- **Actual**: `.github/workflows/web-build-and-deploy.yml`
+- **Impact**: None - just different naming convention
+
+### 4. Cloudflare Project Name
+- **Planned**: `justusefuckingkotlin-com`
+- **Actual**: `jufk-prod`
+- **Impact**: None - functionally equivalent
+
+### 5. Testing Workflow Before Merge
+- **Planned**: Use `workflow_dispatch` to test from feature branch before merging
+- **Actual**: Merged first, then watched the workflow run
+- **Impact**: Higher risk - if workflow failed, main would be broken
+- **Lesson**: This is a critical best practice to demonstrate properly
+
+### 6. Intro Script
+- **Planned**: Scripted teleprompter version with specific beats and transitions
+- **Actual**: More casual, improvised delivery
+- **Notable differences**:
+  - Did not show design concept image (or didn't mention it clearly)
+  - "Grandpa, did you peel?" instead of "Grandpa, take your pills!"
+  - Missed the "my precious" Gollum reference
+- **Impact**: Less polished but more authentic
+
+### 7. Gradle Caching
+- **Planned**: Include `gradle/actions/setup-gradle@v4` for caching
+- **Actual**: Not included in workflow
+- **Impact**: Slower CI builds (~5+ minutes vs ~2-3 minutes with cache)
+- **Promise Made**: "We will make it faster" - needs to be addressed in Session 2
+
+### 8. Actions Versions
+- **Planned**: `actions/checkout@v4`
+- **Actual**: `actions/checkout@v3`
+- **Impact**: Minor - v3 still works but v4 is current
+
+### 9. Gradle Version Update
+- **Planned**: Update to Gradle 9.0.0
+- **Actual**: Updated dependencies but unclear if Gradle wrapper was updated
+- **Note**: Transcript mentions "2921" which may be mishearing of version number
+
+### 10. API Token Creation
+- **Planned**: Use "Edit Cloudflare Workers" template
+- **Actual**: Created custom token with "Cloudflare Pages Edit" permission
+- **Impact**: None - both approaches work
+
+---
+
+## Promises Made for Future Sessions
+
+1. **Make pipeline faster** (2-3 minutes) - via Gradle caching
+2. **Deploy something new** each session - need to change the UI
+3. **Refactor Android project structure** - mentioned for future session
+
+---
+
+## Technical Debt Created
+
+1. No Gradle caching in CI workflow
+2. Using older `actions/checkout@v3` instead of v4
+3. No test execution in CI pipeline
+4. No code quality checks (ktlint, detekt)
+
+---
+
+## Session 2 Must Address
+
+Based on promises and technical debt:
+
+1. **Add Gradle caching** - Critical for faster builds
+2. **Update to latest Actions versions** - checkout@v4
+3. **Change UI content** - "Just Use Fucking Kotlin" text at minimum
+4. **Begin CI quality gates** - ktlint, detekt as planned in Session 2

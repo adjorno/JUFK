@@ -3,6 +3,26 @@
 ## Project Overview
 Recreate "Just Use Fucking Kotlin" - a Kotlin Multiplatform project demonstrating one language can target all platforms: Web, Android, iOS, Desktop (macOS/Windows/Linux), and CLI.
 
+## Content Philosophy: Standalone Value
+
+**Each session must have independent value.** A viewer searching YouTube should be able to watch any single session in isolation and learn something complete and actionable.
+
+### Session Title Pattern
+Each session should answer a searchable question:
+- "How to deploy Kotlin Multiplatform to production" (Session 1)
+- "How to set up CI quality gates for Kotlin Multiplatform" (Session 2)
+- "How to deploy Android app to Play Store" (Session 3)
+- etc.
+
+### Session Structure
+1. **Primary Topic** (80% of content): The main searchable topic that provides standalone value
+2. **Series Continuity** (20% of content): Promises from previous sessions, project-specific updates
+
+This ensures:
+- New viewers get complete value from one video
+- Returning viewers see progress on the overall project
+- Each video is SEO-optimized for specific searches
+
 ## Structure
 - **YouTube Sessions**: ~10-15 minute videos, can contain multiple iterations
 - **Dev Iterations**: Granular steps, each ends with merged PR + new functionality
@@ -18,87 +38,158 @@ Recreate "Just Use Fucking Kotlin" - a Kotlin Multiplatform project demonstratin
 
 ---
 
-# YOUTUBE SESSION 1: Project Bootstrap & Web Deployment
+# YOUTUBE SESSION 1: Deploy KMP to Production [COMPLETED]
 
-**Session Goal**: Create a Kotlin Multiplatform project from the IntelliJ IDEA template and deploy the web target to Cloudflare Pages.
+**Searchable Title**: "How to Deploy Kotlin Multiplatform to Production (Web)"
 
-**Key Topics**:
-- KMP project setup
-- Web deployment with GitHub Actions
-- CI/CD debugging
+**Standalone Value**: Any developer can watch this session to learn how to create a KMP project from scratch and deploy it to Cloudflare Pages with GitHub Actions. Complete zero-to-production workflow.
+
+**Status**: COMPLETED
+**Actual Duration**: ~21 minutes (exceeded 12-16 min estimate)
+**Retrospective**: See [session-1-detailed-plan.md](youtube-sessions/session-1-detailed-plan.md#session-1-retrospective-post-recording)
+
+**Primary Topic**: Zero to Production deployment
+- Create KMP project from IDE template
+- Set up GitHub repository with branch protection
+- Configure Cloudflare Pages
+- Create GitHub Actions deployment workflow
+- Deploy to production
 
 **Detailed Plan**: See [/youtube-sessions/session-1-detailed-plan.md](youtube-sessions/session-1-detailed-plan.md)
 
+**Promises Made for Future Sessions**:
+1. Make CI pipeline faster (2-3 min vs current 5+ min)
+2. Deploy something new each session
+3. Refactor Android project structure (future)
+
 ---
 
-# YOUTUBE SESSION 2: CI Pipeline & First Release
+# YOUTUBE SESSION 2: CI Quality Gates for Kotlin Multiplatform
 
-**Session Goal**: Set up CI with code quality checks, dev/prod environments, and first production release
+**Searchable Title**: "How to Set Up CI Quality Gates for Kotlin Multiplatform"
 
-## Iteration 2.1: CI Workflow with Code Quality
-**Time Estimate**: 4-5 min
+**Standalone Value**: Any developer can watch this session to learn how to set up professional CI quality gates (ktlint, detekt, unit tests) for a Kotlin Multiplatform project. Works for any KMP project, not just JUFK.
+
+**Session Goal**: Set up proper CI gates with code quality checks and unit tests
+
+## Primary Topic: CI Quality Gates (80%)
+
+### Iteration 2.1: Introduction to CI Quality Gates
+**Time Estimate**: 1-2 min
+
+**Script Points**:
+- What are CI quality gates and why they matter
+- Overview: ktlint (formatting), detekt (static analysis), unit tests
+- "By the end of this video, every PR will be automatically checked for quality"
+
+---
+
+### Iteration 2.2: ktlint Setup - Code Formatting
+**Time Estimate**: 3-4 min
 
 **Steps**:
-1. Add ktlint plugin to `build.gradle.kts`
-2. Add detekt plugin to `build.gradle.kts`
-3. Create `.editorconfig` with Kotlin style rules
-4. Create `config/detekt/detekt.yml`
-5. Create `.github/workflows/ci.yml`:
-   - Trigger: push to main, pull requests
-   - Jobs: ktlint, detekt, Android Lint (with Compose checks), unit tests
-6. Run `./gradlew ktlintFormat` to fix existing code
-7. Commit + push, verify CI passes
+1. Add ktlint plugin to `gradle/libs.versions.toml` and `build.gradle.kts`
+2. Create `.editorconfig` with Kotlin style rules
+3. Run `./gradlew ktlintFormat` to auto-fix existing code
+4. Explain what ktlint checks (imports, spacing, naming)
+5. Show before/after of formatted code
 
-**Delivered**: CI pipeline with full code quality checks
+**Delivered**: Automatic code formatting enforcement
 
 **Key Files**:
-- `build.gradle.kts` (ktlint + detekt plugins)
+- `gradle/libs.versions.toml` (ktlint version)
+- `build.gradle.kts` (ktlint plugin)
 - `.editorconfig`
+
+---
+
+### Iteration 2.3: detekt Setup - Static Analysis
+**Time Estimate**: 3-4 min
+
+**Steps**:
+1. Add detekt plugin to `gradle/libs.versions.toml` and `build.gradle.kts`
+2. Create `config/detekt/detekt.yml` with sensible defaults
+3. Run `./gradlew detekt` to check existing code
+4. Explain key detekt rules (complexity, style, potential bugs)
+5. Fix any issues found
+
+**Delivered**: Static analysis catching potential bugs
+
+**Key Files**:
+- `gradle/libs.versions.toml` (detekt version)
+- `build.gradle.kts` (detekt plugin)
 - `config/detekt/detekt.yml`
+
+---
+
+### Iteration 2.4: Unit Tests in CI
+**Time Estimate**: 2-3 min
+
+**Steps**:
+1. Show existing test structure (`commonTest`)
+2. Add a meaningful test (or show the existing one)
+3. Run `./gradlew allTests` locally
+4. Explain multiplatform test targets
+
+**Delivered**: Unit tests ready for CI
+
+---
+
+### Iteration 2.5: GitHub Actions CI Workflow
+**Time Estimate**: 3-4 min
+
+**Steps**:
+1. Create `.github/workflows/ci.yml`
+2. Configure triggers: push to main, all pull requests
+3. Add jobs: ktlint, detekt, unit tests (parallel)
+4. Add Gradle caching for fast builds
+5. Commit + push via PR
+6. Watch CI run on the PR itself (meta!)
+
+**Delivered**: Complete CI pipeline with quality gates
+
+**Key Files**:
 - `.github/workflows/ci.yml`
 
 ---
 
-## Iteration 2.2: Dev/Prod Environment Split
-**Time Estimate**: 2-3 min
+## Series Continuity: Session 1 Promises (20%)
+
+### Iteration 2.6: Bonus - Faster Builds with Gradle Caching
+**Time Estimate**: 2 min
 
 **Steps**:
-1. Create second Cloudflare Pages project for dev: `wrangler pages project create jufk-dev`
-2. Create `.github/workflows/deploy_web_dev.yml`:
-   - Trigger: push to main
-   - Deploy to dev project (auto on every push)
-3. Update original `deploy_web.yml`:
-   - Trigger: on release tags only (`v*.*.*`)
-   - Deploy to prod project
-4. Commit + push
+1. Update existing deploy workflow with `gradle/actions/setup-gradle@v4`
+2. Update `actions/checkout@v3` -> `actions/checkout@v4`
+3. Show before/after build times
 
-**Delivered**: Dev deploys on push, prod deploys on release tags
-
-**Key Files**:
-- `.github/workflows/deploy_web_dev.yml`
-- `.github/workflows/deploy_web.yml` (updated)
+**Delivered**: CI builds ~2-3 min instead of 5+
 
 ---
 
-## Iteration 2.3: First Release (v1.0.0)
-**Time Estimate**: 2-3 min
+### Iteration 2.7: Bonus - First UI Update
+**Time Estimate**: 2 min
 
 **Steps**:
-1. Create release tag: `git tag v1.0.0`
-2. Push tag: `git push --tags`
-3. Watch release workflow deploy to prod
-4. Verify prod site is live on production URL
-5. Show dev vs prod URLs side by side
+1. Quick change to `App.kt` - styled "Just Use Fucking Kotlin" text
+2. Merge and deploy
+3. Show new production site
 
-**Delivered**: Production website live with proper release workflow
+**Delivered**: Visible progress on the project
 
 ---
 
-**Session 2 Total Time Estimate**: 8-11 min
+**Session 2 Total Time Estimate**: 12-16 min
+
+**Detailed Plan**: See [/youtube-sessions/session-2-detailed-plan.md](youtube-sessions/session-2-detailed-plan.md)
 
 ---
 
 # YOUTUBE SESSION 3: Android to Play Store
+
+**Searchable Title**: "How to Deploy Kotlin Multiplatform Android App to Play Store"
+
+**Standalone Value**: Learn the complete workflow for deploying a KMP Android app to Play Store internal track - signing, Fastlane setup, and GitHub Actions automation.
 
 **Session Goal**: Deploy Android app to Play Store internal track
 
@@ -181,6 +272,10 @@ Recreate "Just Use Fucking Kotlin" - a Kotlin Multiplatform project demonstratin
 
 # YOUTUBE SESSION 4: iOS to TestFlight
 
+**Searchable Title**: "How to Deploy Kotlin Multiplatform iOS App to TestFlight"
+
+**Standalone Value**: Complete guide to deploying a KMP iOS app to TestFlight - XcodeGen setup, Fastlane configuration, and CI/CD with GitHub Actions.
+
 **Session Goal**: Deploy iOS app to TestFlight
 
 ## Iteration 4.1: iOS Project Setup with XcodeGen
@@ -262,6 +357,10 @@ Recreate "Just Use Fucking Kotlin" - a Kotlin Multiplatform project demonstratin
 
 # YOUTUBE SESSION 5: Desktop App
 
+**Searchable Title**: "How to Build Desktop Apps with Kotlin Multiplatform (Compose Desktop)"
+
+**Standalone Value**: Learn to create cross-platform desktop applications using Compose Desktop - window configuration, icons, and packaging for macOS/Windows/Linux.
+
 **Session Goal**: Desktop app running locally with proper packaging
 
 ## Iteration 5.1: Desktop Entry Point & Icons
@@ -307,6 +406,10 @@ Recreate "Just Use Fucking Kotlin" - a Kotlin Multiplatform project demonstratin
 ---
 
 # YOUTUBE SESSION 6: CLI Tool
+
+**Searchable Title**: "How to Build Native CLI Tools with Kotlin (Kotlin/Native + Homebrew)"
+
+**Standalone Value**: Create native command-line tools using Kotlin/Native that compile to standalone binaries. Distribute via Homebrew tap.
 
 **Session Goal**: Native CLI binary distributed via Homebrew
 
@@ -371,6 +474,10 @@ Recreate "Just Use Fucking Kotlin" - a Kotlin Multiplatform project demonstratin
 
 # YOUTUBE SESSION 7: Release Pipeline
 
+**Searchable Title**: "How to Automate Multi-Platform Releases with GitHub Actions"
+
+**Standalone Value**: Build a unified release pipeline that triggers on git tags and deploys to all platforms automatically. Reusable workflow templates pattern.
+
 **Session Goal**: Unified release workflow triggered by git tags
 
 ## Iteration 7.1: Version Extraction Workflow
@@ -433,6 +540,10 @@ Recreate "Just Use Fucking Kotlin" - a Kotlin Multiplatform project demonstratin
 
 # YOUTUBE SESSION 8: UI & Content
 
+**Searchable Title**: "Compose Multiplatform UI - Building Responsive Cross-Platform Layouts"
+
+**Standalone Value**: Learn to build polished, responsive UIs with Compose Multiplatform that work across all screen sizes and platforms.
+
 **Session Goal**: Polish UI with proper content and styling
 
 ## Iteration 8.1: UI Component Structure
@@ -494,6 +605,10 @@ Recreate "Just Use Fucking Kotlin" - a Kotlin Multiplatform project demonstratin
 ---
 
 # YOUTUBE SESSION 9: Analytics
+
+**Searchable Title**: "Cross-Platform Analytics in Kotlin Multiplatform (PostHog Integration)"
+
+**Standalone Value**: Implement analytics that works across all platforms using a single codebase. expect/actual pattern for platform-specific storage.
 
 **Session Goal**: Cross-platform analytics with PostHog
 
@@ -562,6 +677,10 @@ Recreate "Just Use Fucking Kotlin" - a Kotlin Multiplatform project demonstratin
 ---
 
 # YOUTUBE SESSION 10: Final Polish & Full Release
+
+**Searchable Title**: "Shipping a Kotlin Multiplatform App to All Platforms (Complete Guide)"
+
+**Standalone Value**: Final checklist and process for releasing a KMP app to Web, Android Play Store, iOS TestFlight, Desktop, and CLI simultaneously.
 
 **Session Goal**: Complete multi-platform release with documentation
 
