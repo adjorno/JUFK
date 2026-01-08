@@ -1,7 +1,7 @@
 # Session 1: Project Bootstrap & Web Deployment - Detailed Action Plan
 
 **Session Goal**: Create KMP project from IDEA template, deploy to Cloudflare Pages
-**Total Time Estimate**: 10-14 minutes
+**Total Time Estimate**: 12-16 minutes
 
 ---
 
@@ -12,354 +12,262 @@
 - [ ] Cloudflare account created
 - [ ] `wrangler` CLI installed (`npm install -g wrangler`)
 - [ ] Terminal and browser windows prepared
+- [ ] **Undeploy final site (if live)**
+- [ ] **Prepare an image of the final design concept**
 - [ ] Test run all commands below to ensure they work
 
 ---
 
-## Iteration 1.0: Intro & Context (1-2 min)
+## Iteration 1.0: Intro & Context (1.5 min)
 
-### Script Points
+### Full Intro Script (Final, Lean Version)
 
-1. **Who you are**
-   - Name, background
-   - Why Kotlin Multiplatform
+*(To be used as a teleprompter)*
 
-2. **Project goal**
-   - Prove one language (Kotlin) can target ALL platforms
-   - Same business logic everywhere
-   - Not just "write once, run anywhere" promises - actual working deployments
+> If you're watching this, it means something terrible has happened...
+>
+> *(pause for a beat)*
+>
+> ...I'm joking! It means something *great* is about to happen. It means Kotlin and I are about to build a small project and take it all the way to production.
+>
+> A few days ago, I was doom-scrolling my X feed and saw a post by the creator of Tailwind about `justfuckingusetailwind.com`. Great concept. I checked the inspiration list... But what about Kotlin? What about my lovely little language? My precious?
+>
+> I went to `justfuckingusekotlin.com` and... nothing. So, I knew I had to make it. So to get us started, I asked an LLM for a design concept.
+>
+> *(transition to show the design concept image)*
+>
+> This is our target. Throughout this series, we’ll try to build a project that looks as close as possible to this.
 
-3. **Show final product**
-   - Open browser to https://justusefuckingkotlin.com
-   - Quickly show the site
-   - Mention: "By the end of this series, you'll build this exact site plus Android, iOS, Desktop, and CLI versions"
-
-4. **Series format**
-   - Short videos (~10 minutes each)
-   - Each video ends with deployed, working software
-   - You can follow along and have the same result
-   - GitHub repo will be linked in description
+> But with a key difference. Instead of just one website, we're using a single Kotlin codebase to build apps for Android, iOS, Desktop, and even command-line tools—all from scratch.
+>
+> And you might be thinking, *“Grandpa, take your pills! It's 2026, we have LLMs to do this for us.”*
+>
+> And you're right... to a point. In a world of AI assistants, understanding the fundamentals isn't just useful—it's your most valuable asset. That's why we'll do it the "professional way." I'm talking proper Trunk Based development, full CI/CD pipelines with automated tests, and deployments on every single change. We'll set up separate DEV and PROD environments and use different tracks for mobile app promotion, just like you would on a real-world team. These are the skills that land you a high-paying job.
+>
+> I'll keep it to short 10-15 minute sessions, and at the end of each one, something new will be in PRODUCTION.
+>
+> Not bad for a grandpa, huh? Okay, time is ticking. Let's get to the code!
 
 ### Action Items
 
-- [ ] Record intro talking points
-- [ ] Screen record browser showing final site
+- [ ] Record intro talking points, showing the design concept image
 - [ ] Explain what viewers will learn
 
 ---
 
-## Iteration 1.1: Create KMP Project from IDEA Template (3-4 min)
+## Iteration 1.1: Create KMP Project from IDEA Template (6-8 min)
 
 ### Actions
 
-#### 1. Create GitHub Repository
+#### 1. Create and Configure GitHub Repository
 
 **In Browser:**
 - [ ] Go to https://github.com/new
-- [ ] Repository name: `JUFK`
+- [ ] Repository name: `just-use-fucking-kotlin`
 - [ ] Description: "Just Use Fucking Kotlin - Kotlin Multiplatform demo for all platforms"
 - [ ] Public repository
-- [ ] **DO NOT** initialize with README, .gitignore, or license
+- [ ] **Initialize with a README file**
 - [ ] Click "Create repository"
-- [ ] **Copy the git URL** (e.g., `git@github.com:YOUR_USERNAME/JUFK.git`)
 
 **Voiceover while doing this:**
-> "First, let's create a new GitHub repository called JUFK. We'll keep it empty for now because IntelliJ will generate our initial structure."
+> "First, let's create our new GitHub repository. Now, about the name. Logically, it should be 'Just Fucking Use Kotlin'. But that gives us the acronym J-F-U-K... which just sounds... wrong. So, to make it sound better, we're flipping it to **'Just Use Fucking Kotlin.'** The GitHub repo name will be `just-use-fucking-kotlin` so people can find it easily. This makes our project acronym **J-U-F-K**. It's cleaner, and since English is my third language, any grammar mistakes I make from now on... well, it's not a bug, it's a feature! We'll initialize it with a README so we can immediately set up our branch protection rules."
 
-#### 2. Create Project in IntelliJ IDEA
+**In Browser (Repo Settings):**
+- [ ] Go to Settings > Branches
+- [ ] Click "Add branch protection rule"
+- [ ] Branch name pattern: `main`
+- [ ] Check "Require a pull request before merging"
+- [ ] Click "Create"
+
+**Voiceover:**
+> "This is a key part of the 'professional way' I mentioned. We're protecting the `main` branch, so no one can push directly to it. All changes must go through a pull request. This keeps our trunk clean and ready for production."
+
+#### 2. Clone Repo and Create Project in IntelliJ IDEA
+
+**In Terminal:**
+```bash
+# Clone the repository
+git clone git@github.com:YOUR_USERNAME/just-use-fucking-kotlin.git
+
+# Navigate into the new directory
+cd just-use-fucking-kotlin
+```
 
 **In IntelliJ IDEA:**
-- [ ] File > New > Project
-- [ ] Select "Kotlin Multiplatform" from left sidebar
-- [ ] Project name: `JUFK`
-- [ ] Location: Choose appropriate directory (e.g., `~/Developer/JUFK`)
-- [ ] Select targets:
-  - [x] Android
-  - [x] iOS
-  - [x] Desktop
-  - [x] Web (both JS and WASM are included by default)
-- [ ] Package name: `com.ifochka.jufk` (or your own)
+- [ ] File > New > Project > Kotlin Multiplatform
+- [ ] Location: Set to the cloned directory (`.../just-use-fucking-kotlin`)
+- [ ] Project name: `jufk`
+- [ ] Select targets: Android, iOS, Desktop, Web (WASM)
+- [ ] Package name: `com.ifochka.jufk`
 - [ ] Click "Create"
-- [ ] Wait for IDEA to generate and sync
 
 **Voiceover:**
-> "IntelliJ IDEA has a great Kotlin Multiplatform template. We select all targets - Android, iOS, Desktop, and Web. The template includes both JavaScript and WebAssembly targets for web, giving us maximum browser compatibility."
+> "Now we clone the repo. We'll call our local project module `jufk` for simplicity, and generate the project right inside this directory. All targets are selected—we're not leaving anyone behind!"
+> "You might see a warning about the Android project structure. Don't worry about that for now—we're all about getting to a working app fast. We'll refactor it properly in a future session."
 
-**Important Note on Project Structure:**
+#### 3. Update Gradle and Dependencies
 
-The 2025 IntelliJ template may generate a unified structure with Android code in `composeApp/src/androidMain/`. However, this approach has a **deprecation warning** starting with AGP 9.0.
+**In IntelliJ IDEA:**
+- [ ] Open `gradle/wrapper/gradle-wrapper.properties`
+- [ ] Change the `distributionUrl` to use Gradle 9.0.0: `distributionUrl=https\://services.gradle.org/distributions/gradle-9.0.0-bin.zip`
 
-**Why we need a separate `androidApp` module:**
-- The KMP plugin (`com.android.kotlin.multiplatform.library`) only supports **library** targets
-- Android **applications** require the `com.android.application` plugin
-- These plugins will become incompatible in AGP 9.0
-- The recommended structure is: `composeApp` (KMP library) + `androidApp` (Android app)
+**Voiceover:**
+> "The template gives us a solid starting point, but the dependencies are often a bit behind. Let's start by updating to the latest version of Gradle. I'll change this to use Gradle 9.0."
 
-See: https://developer.android.com/kotlin/multiplatform/plugin#migrate
+- [ ] Open `gradle/libs.versions.toml`
+- [ ] Update versions for AGP, Kotlin, Compose, etc. to their latest stable versions.
 
-#### 3. Verify Project Structure
+**Voiceover:**
+> "Next, we'll update our key dependencies in the `libs.versions.toml` file. This includes the Android Gradle Plugin, Kotlin, and Compose Multiplatform. Keeping dependencies up-to-date is a good habit for security and getting the latest features. After changing build files, the IDE will prompt us to sync the project. Let's do that."
+
+- [ ] Sync the Gradle project in the IDE.
+
+#### 4. Run the Web App Locally
 
 **In IntelliJ Terminal:**
 ```bash
-ls -la
+./gradlew :composeApp:wasmJsBrowserDevelopmentRun
 ```
 
-**Expected structure (recommended for AGP 9.0+ compatibility):**
-```
-composeApp/              # KMP shared library
-  src/
-    commonMain/          # Shared business logic & UI
-    commonTest/          # Shared tests
-    desktopMain/         # Desktop (JVM)
-    iosMain/             # iOS-specific
-    jsMain/              # JS web target
-    wasmJsMain/          # WASM web target
-androidApp/              # Android application (separate module!)
-  src/main/
-    kotlin/              # MainActivity
-    res/                 # App resources, launcher icons
-    AndroidManifest.xml
-iosApp/                  # iOS Xcode project wrapper
-build.gradle.kts         # Root build file
-settings.gradle.kts      # Module settings
-gradle/
-  libs.versions.toml     # Version catalog
-gradlew                  # Gradle wrapper
-README.md                # Generated readme
-```
+**Voiceover (during build/run):**
+> "Now that our project is synced, let's run the web app locally using the development server to make sure everything works. While this is building and starting up, let's talk more about the 'why.'
+>
+> I mentioned the "Grandpa vs. AI" thing. I really do use AI assistants every day; they're fantastic. But knowing *what* to ask the AI and understanding the code it generates is a superpower. That's what we're learning here: the fundamentals, so you can be in control of the tools, not the other way around.
+>
+> And that "professional way"? We've already started by protecting our `main` branch. That's step one in our Trunk-Based Development strategy, a concept we'll build on throughout the series."
 
-**Voiceover:**
-> "Let's look at what was generated. The composeApp module is our KMP library with shared code for all platforms. For Android, we have a separate androidApp module - this is required because Android applications need the 'com.android.application' plugin which will be incompatible with KMP in future Gradle versions. Think of it as: composeApp is the shared library, androidApp is the Android-specific wrapper."
-
-**Note:** If the template generates everything in composeApp without a separate androidApp, you'll need to extract the Android app code into a separate module. This is the officially recommended structure from Google.
-
-#### 4. Review .gitignore
-
-**In IntelliJ:**
-- [ ] Open the generated `.gitignore` file
-- [ ] Review what the template provides
-
-**Template .gitignore contents:**
-```gitignore
-*.iml
-.kotlin
-.gradle
-**/build/
-xcuserdata
-!src/**/build/
-local.properties
-.idea
-.DS_Store
-captures
-.externalNativeBuild
-.cxx
-*.xcodeproj/*
-!*.xcodeproj/project.pbxproj
-!*.xcodeproj/xcshareddata/
-!*.xcodeproj/project.xcworkspace/
-!*.xcworkspace/contents.xcworkspacedata
-**/xcshareddata/WorkspaceSettings.xcsettings
-node_modules/
-```
-
-**Voiceover:**
-> "The template includes a sensible gitignore that covers most KMP needs - build outputs, IDE files, and platform-specific artifacts. We'll extend it as needed in future sessions."
-
-**What's covered:**
-- `.gradle/`, `**/build/` - Build outputs
-- `.idea/`, `*.iml` - IDE settings
-- `local.properties` - Local SDK paths
-- `.kotlin/` - Kotlin cache
-- `xcuserdata` - Xcode user data
-- `node_modules/` - For web dependencies
-
-**Note:** We'll add more entries (like signing keys, service accounts) as we set up CI/CD in later sessions.
-
-#### 5. Build the Project
+#### 5. Commit and Push via Pull Request
 
 **In IntelliJ Terminal:**
 ```bash
-./gradlew build
-```
+# Create a new branch for our initial project setup
+git checkout -b feat/initial-project-setup
 
-**Watch for:**
-- All modules compile successfully
-- May take 3-5 minutes on first run (downloading dependencies)
-
-**If build fails:**
-- Check Java version: `java -version` (needs JDK 17+)
-- Check Gradle version in `gradle/wrapper/gradle-wrapper.properties`
-- Check Kotlin version in `gradle/libs.versions.toml`
-
-**Voiceover:**
-> "Let's verify everything compiles. The first build will download dependencies, so it takes a bit longer."
-
-#### 6. Initialize Git and Push
-
-**In IntelliJ Terminal:**
-```bash
-# Initialize git
-git init
-
-# Add all files
+# Add all the new files
 git add .
 
-# First commit
-git commit -m "Initial commit: KMP project from IDEA template
+# Commit the changes
+git commit -m "feat: Initial KMP project generation"
 
-- Android, iOS, Desktop, Web (WASM) targets
-- Compose Multiplatform for shared UI
-- Generated from IntelliJ IDEA template"
-
-# Add remote (use your copied URL from step 1)
-git remote add origin git@github.com:YOUR_USERNAME/JUFK.git
-
-# Push to GitHub
-git branch -M main
-git push -u origin main
+# Push the new branch
+git push --set-upstream origin feat/initial-project-setup
 ```
 
-**In Browser:**
-- [ ] Refresh GitHub repo page
-- [ ] Show the files now visible on GitHub
+**In Browser (GitHub):**
+- [ ] Click "Compare & pull request".
+- [ ] Title: `feat: Initial KMP project generation`
+- [ ] Click "Create pull request".
+- [ ] Click "Merge pull request" and "Confirm merge".
 
 **Voiceover:**
-> "Now we commit this initial structure and push to GitHub. This is our starting point."
+> "Now we follow our professional workflow. We create a new branch, commit our changes, and open a pull request on GitHub. This is where a team would normally review the code. For now, it's just us, so we can merge it. This completes the cycle: change, PR, merge. Our main branch is updated and remains the single source of truth."
 
 ### Deliverable Checklist
 
-- [ ] GitHub repo created with initial project
-- [ ] All 4 targets compile successfully
-- [ ] Project structure visible in IntelliJ
-- [ ] Git history shows initial commit
+- [ ] GitHub repo created with a protected `main` branch.
+- [ ] KMP project generated inside the cloned repo.
+- [ ] All targets compile successfully.
+- [ ] First feature branch is merged into `main` via a pull request.
 
 ---
 
-## Iteration 1.2: Create Cloudflare Pages Project (2-3 min)
+## Iteration 1.2: Create Cloudflare Pages Project & Get Credentials (2-3 min)
 
 ### Actions
 
-#### 1. Login to Cloudflare
+#### 1. Create Cloudflare Pages Project Using Wrangler
+
+**In Terminal (already logged into wrangler):**
+```bash
+# Create the Cloudflare Pages project for production
+wrangler pages project create justusefuckingkotlin-com
+```
+
+**Voiceover:**
+> "Now let's set up our deployment target. Cloudflare Pages is perfect for hosting static sites and WASM apps. Since I'm already logged into wrangler, I can create the project directly from the command line. We're naming it `justusefuckingkotlin-com` to match our domain. In a future session, we'll also create a `justusefuckingkotlin-dev` project for our development environment—but for now, let's keep it simple and ship to production!"
+
+#### 2. Get Cloudflare Account ID
 
 **In Terminal:**
 ```bash
-wrangler login
+# List your Cloudflare accounts to get the Account ID
+wrangler whoami
 ```
 
-**What happens:**
-- Browser window opens
-- [ ] Click "Allow" to authorize wrangler
-- [ ] Return to terminal, should say "Successfully logged in"
-
 **Voiceover:**
-> "We'll use Cloudflare Pages for hosting our web app. It's fast, free for small projects, and has great CI/CD integration."
+> "To automate deployments from GitHub Actions, we need two things: our Account ID and an API Token. The `wrangler whoami` command shows us our Account ID. Copy this—we'll need it for our GitHub secrets."
 
-#### 2. Create Pages Project
+- [ ] Copy the Account ID from the output
 
-**In Terminal:**
-```bash
-wrangler pages project create jufk
-```
-
-**Interactive prompts - answer:**
-- Production branch: `main`
-- [ ] Note the project name (should be `jufk`)
-- [ ] Note the deployment URL (e.g., `jufk.pages.dev`)
-
-**Voiceover:**
-> "Creating a new Pages project called 'jufk'. This gives us a pages.dev domain where our app will be deployed."
-
-#### 3. (Optional) Configure Custom Domain
+#### 3. Create Cloudflare API Token
 
 **In Browser:**
-- [ ] Go to Cloudflare Dashboard > Pages
-- [ ] Click on "jufk" project
-- [ ] Custom domains > Set up a custom domain
-- [ ] Enter your domain (e.g., `justusefuckingkotlin.com`)
-- [ ] Follow DNS setup instructions
-
-**Voiceover (if doing this):**
-> "I already have a domain registered, so I'll quickly configure it here. You can skip this and use the free pages.dev domain."
-
-**Note for video:** You can skip this and do it later or off-camera to save time.
-
-### Deliverable Checklist
-
-- [ ] Cloudflare Pages project `jufk` created
-- [ ] Project visible in Cloudflare Dashboard
-- [ ] Deployment URL noted for later verification
-
----
-
-## Iteration 1.3: GitHub Actions Web Deployment (4-5 min)
-
-### Actions
-
-#### 1. Get Cloudflare Secrets
-
-**In Browser - Get API Token:**
-- [ ] Go to Cloudflare Dashboard
-- [ ] Click on your profile (top right)
-- [ ] My Profile > API Tokens
+- [ ] Go to https://dash.cloudflare.com/profile/api-tokens
 - [ ] Click "Create Token"
-- [ ] Use template "Edit Cloudflare Workers"
-- [ ] Or create custom token with:
-  - Permissions: Account > Cloudflare Pages > Edit
-  - Account Resources: Include > Your Account
+- [ ] Click "Use template" next to "Edit Cloudflare Workers"
+- [ ] Under "Account Resources", select your account
+- [ ] Under "Zone Resources", select "All zones" (or specific zone if preferred)
 - [ ] Click "Continue to summary"
 - [ ] Click "Create Token"
-- [ ] **Copy the token** (you won't see it again!)
-- [ ] Save it temporarily in a text file
-
-**Voiceover while showing:**
-> "We need two things from Cloudflare: an API token for authentication, and our Account ID. Let's grab the API token first from the API Tokens page."
-
-**In Browser - Get Account ID:**
-- [ ] Go to Cloudflare Dashboard
-- [ ] Click on "Pages" or any service
-- [ ] Look at the right sidebar
-- [ ] Find "Account ID"
-- [ ] Click to copy
-- [ ] Save it temporarily
+- [ ] **Copy the token immediately** (you won't see it again!)
 
 **Voiceover:**
-> "The Account ID is shown in the sidebar here. Copy this too."
+> "For the API Token, we go to the Cloudflare dashboard. We'll use the 'Edit Cloudflare Workers' template—this gives us the right permissions for Pages deployments. Make sure to copy this token right away; Cloudflare only shows it once!"
 
-#### 2. Add GitHub Secrets
+#### 4. Add Secrets to GitHub Repository
 
-**In Browser:**
-- [ ] Go to your GitHub repo: `github.com/YOUR_USERNAME/JUFK`
-- [ ] Settings > Secrets and variables > Actions
+**In Browser (GitHub Repo Settings):**
+- [ ] Go to Settings > Secrets and variables > Actions
 - [ ] Click "New repository secret"
-
-**Add Secret 1:**
-- Name: `CLOUDFLARE_API_TOKEN`
-- Secret: Paste the API token from step 1
+- [ ] Name: `CLOUDFLARE_ACCOUNT_ID`, Value: (paste the Account ID)
 - [ ] Click "Add secret"
-
-**Add Secret 2:**
-- Name: `CLOUDFLARE_ACCOUNT_ID`
-- Secret: Paste the Account ID from step 1
+- [ ] Click "New repository secret" again
+- [ ] Name: `CLOUDFLARE_API_TOKEN`, Value: (paste the API Token)
 - [ ] Click "Add secret"
 
 **Voiceover:**
-> "Now we add these as GitHub secrets so our workflow can authenticate with Cloudflare. These secrets are encrypted and won't be visible in logs."
+> "Now we store these credentials securely in GitHub. Repository secrets are encrypted and only exposed to workflows during runtime. This is the professional way—never hardcode credentials in your code!"
 
-#### 3. Create Workflow File
+### Deliverable Checklist
 
-**In IntelliJ:**
+- [ ] Cloudflare Pages project `justusefuckingkotlin-com` created
+- [ ] Account ID retrieved from `wrangler whoami`
+- [ ] API Token created with "Edit Cloudflare Workers" permissions
+- [ ] Both secrets added to GitHub repository
 
-- [ ] Create directory: `.github/workflows/`
-- [ ] Create file: `.github/workflows/deploy_web.yml`
+---
 
-**File content:**
+## Iteration 1.3: GitHub Actions Web Deployment Workflow (5-7 min)
+
+### Actions
+
+#### 1. Create the Deployment Workflow File
+
+**In IntelliJ Terminal:**
+```bash
+# Make sure we're on main and up to date
+git checkout main
+git pull
+
+# Create a new branch for the workflow
+git checkout -b feat/web-deployment-workflow
+
+# Create the workflows directory
+mkdir -p .github/workflows
+```
+
+**In IntelliJ IDEA, create file `.github/workflows/deploy-web.yml`:**
 
 ```yaml
-name: Deploy Web
+name: Deploy Web to Cloudflare Pages
 
 on:
+  # Trigger on push to main (after PR merge)
   push:
-    branches: [ main ]
+    branches:
+      - main
+  # Allow manual trigger for testing
+  workflow_dispatch:
 
 jobs:
   deploy:
@@ -369,217 +277,102 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Set up JDK 17
+      - name: Setup Java
         uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
           java-version: '17'
 
       - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v3
+        uses: gradle/actions/setup-gradle@v4
 
-      - name: Build JS
-        run: ./gradlew :composeApp:jsBrowserDistribution
+      - name: Build WASM distribution
+        run: ./gradlew :composeApp:wasmJsBrowserDistribution
 
       - name: Deploy to Cloudflare Pages
         uses: cloudflare/wrangler-action@v3
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          command: pages deploy composeApp/build/dist/wasmJs/productionExecutable --project-name=jufk
+          command: pages deploy composeApp/build/dist/wasmJs/productionExecutable --project-name=justusefuckingkotlin-com
 ```
 
-**Voiceover while typing:**
-> "This workflow triggers on every push to main. It checks out the code, builds the WASM bundle using Gradle, and deploys the output to Cloudflare Pages."
+**Voiceover:**
+> "Here's our deployment workflow. Let me walk you through it. We trigger on two events: `push` to main—which happens after every PR merge—and `workflow_dispatch`, which lets us run it manually. This manual trigger is crucial for testing before our first merge.
+>
+> The job checks out our code, sets up Java and Gradle, builds the WASM distribution, and then uses the official Cloudflare wrangler-action to deploy. Notice how we reference our secrets—GitHub automatically injects them at runtime."
 
-**Explain key parts:**
-- Trigger: `on: push: branches: [ main ]`
-- Build command: `./gradlew :composeApp:jsBrowserDistribution`
-- Build output location: `composeApp/build/dist/wasmJs/productionExecutable`
-- Deployment with secrets
-
-#### 4. Commit and Push
+#### 2. Commit and Push the Workflow
 
 **In IntelliJ Terminal:**
 ```bash
-git add .github/workflows/deploy_web.yml
-git commit -m "Add web deployment workflow
+# Add the workflow file
+git add .github/workflows/deploy-web.yml
 
-- Deploy to Cloudflare Pages on push to main
-- Build WASM bundle using Gradle
-- Use GitHub secrets for Cloudflare authentication"
-git push
+# Commit
+git commit -m "ci: Add web deployment workflow to Cloudflare Pages"
+
+# Push the branch
+git push --set-upstream origin feat/web-deployment-workflow
 ```
 
-#### 5. Watch Workflow Run
+**Voiceover:**
+> "Let's commit and push this workflow. But here's the thing—we haven't merged to main yet, and we want to make sure it works before we do. That's why we added `workflow_dispatch`."
+
+#### 3. Test the Workflow Manually Before Merging
+
+**In Browser (GitHub):**
+- [ ] Go to the repository's "Actions" tab
+- [ ] You'll see "Deploy Web to Cloudflare Pages" in the workflows list
+- [ ] Click on "Deploy Web to Cloudflare Pages"
+- [ ] Click "Run workflow" dropdown button (top right)
+- [ ] **Select your feature branch**: `feat/web-deployment-workflow`
+- [ ] Click the green "Run workflow" button
+- [ ] Watch the workflow run in real-time
+
+**Voiceover:**
+> "Here's the magic of `workflow_dispatch`. Even though our workflow normally triggers on pushes to main, we can manually run it from any branch. I'll select our feature branch and run it. This lets us validate the entire pipeline—build, deploy, everything—before we commit to merging. If something fails, we fix it on the branch. No broken main, no rollbacks needed."
+
+#### 4. Verify the Deployment
 
 **In Browser:**
-- [ ] Go to GitHub repo
-- [ ] Click "Actions" tab
-- [ ] See "Deploy Web" workflow running
-- [ ] Click on the running workflow
-- [ ] Show the steps executing
-- [ ] Wait for green checkmark (2-4 minutes)
+- [ ] Once the workflow completes successfully (green checkmark)
+- [ ] Go to https://justusefuckingkotlin-com.pages.dev (or the URL shown in the workflow output)
+- [ ] Verify the app loads correctly
 
 **Voiceover:**
-> "The workflow is now running. We can see it building the WASM bundle... and now deploying to Cloudflare. This takes about 3 minutes."
+> "And there it is—our Kotlin app, running in the browser, deployed to Cloudflare's global edge network. This is what production looks like!"
 
-**While waiting, you can:**
-- Explain what WASM is
-- Talk about why Cloudflare Pages vs other hosting
-- Show the code structure
+#### 5. Merge the PR
 
-#### 6. Verify Deployment
-
-**In Browser:**
-- [ ] Go to Cloudflare Dashboard > Pages > jufk
-- [ ] Click on latest deployment
-- [ ] See "Success" status
-- [ ] Click "View deployment" or go to your pages.dev URL
-- [ ] **Show the live site!**
-
-**Expected result:**
-- Default Kotlin Multiplatform template app
-- Shows Compose Multiplatform demo content
-- "Compose Multiplatform App" or similar
+**In Browser (GitHub):**
+- [ ] Go back to your repository
+- [ ] Click "Compare & pull request" for `feat/web-deployment-workflow`
+- [ ] Title: `ci: Add web deployment workflow to Cloudflare Pages`
+- [ ] Click "Create pull request"
+- [ ] Click "Merge pull request" and "Confirm merge"
 
 **Voiceover:**
-> "And there it is! Our Kotlin Multiplatform app is live on the web, running as WebAssembly in the browser. This is the same code that will run on Android, iOS, and Desktop."
-
-**In Browser - Final Show:**
-- [ ] Scroll around the site
-- [ ] Show it's responsive
-- [ ] Open browser dev tools > Network tab
-- [ ] Reload page
-- [ ] Show `.wasm` files being loaded
-
-**Voiceover:**
-> "If we check the network tab, we can see it's actually loading WebAssembly modules. This is Kotlin compiled to WASM, running natively in the browser."
+> "Now that we've verified the workflow works, we can confidently merge. From this point on, every merge to main will automatically deploy to production. That's continuous deployment in action!"
 
 ### Deliverable Checklist
 
-- [ ] `.github/workflows/deploy_web.yml` created and committed
-- [ ] GitHub secrets configured
-- [ ] Workflow runs successfully
-- [ ] Live site visible at Cloudflare Pages URL
-- [ ] Site shows default KMP template content
+- [ ] Workflow file created at `.github/workflows/deploy-web.yml`
+- [ ] Workflow includes both `push` trigger and `workflow_dispatch` for manual runs
+- [ ] Workflow tested successfully from feature branch before merging
+- [ ] Site live at https://justusefuckingkotlin-com.pages.dev
+- [ ] PR merged, automated deployments now active
 
 ---
 
-## Session 1 Wrap-Up (30 seconds)
+## Session 1 Complete!
 
-### Closing Script
+**What we accomplished:**
+- Created a GitHub repository with branch protection
+- Generated a Kotlin Multiplatform project targeting Web, Android, iOS, and Desktop
+- Set up Cloudflare Pages with secure credential management
+- Created our first CI/CD pipeline with GitHub Actions
+- Deployed our first production release!
 
-**Voiceover:**
-> "That's it for Session 1! We've created a Kotlin Multiplatform project with Android, iOS, Desktop, and Web targets, and we've deployed the web version live to Cloudflare Pages. In the next session, we'll add CI with code quality checks and set up proper dev and production environments. Thanks for watching!"
-
-### Call to Action
-
-- [ ] Show GitHub repo link on screen
-- [ ] Show live site URL on screen
-- [ ] Ask viewers to subscribe
-- [ ] Mention next video in series
-
----
-
-## Common Issues & Troubleshooting
-
-### Build Fails
-
-**Issue**: `./gradlew build` fails with "SDK not found"
-
-**Solution**:
-```bash
-# For Android SDK issues
-# Set ANDROID_HOME or install via Android Studio
-export ANDROID_HOME=$HOME/Library/Android/sdk  # macOS
-export ANDROID_HOME=$HOME/Android/Sdk          # Linux
-
-# For iOS issues (macOS only)
-xcode-select --install
-```
-
-### Workflow Fails
-
-**Issue**: "Build WASM" step fails
-
-**Check**:
-- Java version in workflow matches project requirements
-- Gradle wrapper is committed to repo
-- Path to WASM output is correct
-
-**Issue**: "Deploy to Cloudflare Pages" fails
-
-**Check**:
-- Secrets are named exactly `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID`
-- API token has correct permissions
-- Project name matches (`jufk`)
-
-### Site Doesn't Load
-
-**Issue**: White screen or errors in browser console
-
-**Check**:
-- Browser supports WASM (Chrome 91+, Firefox 89+, Safari 15+)
-- Check Cloudflare Pages deployment logs
-- Verify all `.wasm` files are deployed
-
----
-
-## Post-Recording Checklist
-
-- [ ] Video recorded with clear audio
-- [ ] Screen recordings captured at 1080p minimum
-- [ ] All terminal commands visible
-- [ ] Browser tabs/windows clearly shown
-- [ ] Final site demo is smooth
-- [ ] Transitions between iterations are clear
-- [ ] Video length is 10-14 minutes as planned
-
----
-
-## Files Created This Session
-
-```
-.github/
-  workflows/
-    deploy_web.yml         # Web deployment workflow
-
-(Rest of files generated by IntelliJ IDEA template)
-```
-
-## Git Commits This Session
-
-1. `Initial commit: KMP project from IDEA template`
-2. `Add web deployment workflow`
-
-## URLs for Video Description
-
-- GitHub Repo: `https://github.com/YOUR_USERNAME/JUFK`
-- Live Site: `https://jufk.pages.dev` (or custom domain)
-- Cloudflare Pages: `https://pages.cloudflare.com/`
-- Kotlin Multiplatform: `https://kotlinlang.org/docs/multiplatform.html`
-
----
-
-## App.kt Content Evolution
-
-Each session will include small updates to `App.kt` to show the project evolving as real content, not just infrastructure. This helps viewers see tangible progress.
-
-**Session 1 (this session):** Keep template default
-- "Click me!" button with Compose Multiplatform logo
-- Shows the template works out of the box
-
-**Future sessions will add:**
-- Session 2: Maybe change button text to "Just Use Fucking Kotlin"
-- Session 3+: Add platform sections, hero text, styling
-- Final sessions: Full polished UI matching justusefuckingkotlin.com
-
----
-
-## Next Session Preview
-
-In Session 2, we'll:
-- Add CI workflow with ktlint, detekt, and Android Lint
-- Split deployments into DEV and PROD environments
-- Create our first production release (v1.0.0)
+**Next Session Preview:**
+> "In the next session, we'll add our first real content to the site and start making it look like our design concept. See you there!"
