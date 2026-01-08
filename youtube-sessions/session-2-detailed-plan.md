@@ -319,12 +319,12 @@ git push --set-upstream origin feat/ci-quality-gates
 **In Browser (GitHub):**
 - [ ] Create pull request
 - [ ] Watch the CI checks run
-- [ ] Point out parallel jobs executing
+- [ ] Point out the sequential steps in the single job
 
 **Voiceover:**
-> "And now the magic happens. Our PR triggers the CI workflow. Look - both jobs are running in parallel. The lint job runs ktlint and detekt, the test job runs our unit tests.
+> "And now the magic happens. Our PR triggers the CI workflow. Watch the steps run one after another - ktlint, detekt, lint, tests. Each step is clearly labeled so you know exactly what's being checked.
 >
-> If any of these fail, the PR can't be merged. That's the power of quality gates."
+> If any step fails, the PR can't be merged. That's the power of quality gates."
 
 #### 4. Merge PR
 
@@ -337,7 +337,7 @@ git push --set-upstream origin feat/ci-quality-gates
 ### Deliverable
 
 - CI workflow created
-- Both jobs running in parallel
+- All checks running sequentially in one job
 - PR blocked until CI passes
 - Quality gates active
 
@@ -528,8 +528,8 @@ git push --set-upstream origin feat/hero-text
 - Set up ktlint for code formatting
 - Set up detekt for static analysis
 - Set up Android Lint with Compose-specific checks
-- Created CI workflow with parallel jobs
-- Quality gates blocking PRs until checks pass
+- Created CI workflow with sequential quality checks
+- Quality gates blocking PRs until all checks pass
 
 **Series Continuity:**
 - Faster builds with Gradle caching
