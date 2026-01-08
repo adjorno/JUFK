@@ -104,25 +104,34 @@ This ensures:
 ---
 
 ### Iteration 2.3: detekt Setup - Static Analysis
-**Time Estimate**: 3-4 min
+**Time Estimate**: 2-3 min
 
 **Steps**:
 1. Add detekt plugin to `gradle/libs.versions.toml` and `build.gradle.kts`
-2. Create `config/detekt/detekt.yml` with sensible defaults
-3. Run `./gradlew detekt` to check existing code
-4. Explain key detekt rules (complexity, style, potential bugs)
-5. Fix any issues found
+2. Run `./gradlew detekt` - use defaults, tune later if needed
+3. Fix any critical issues
 
-**Delivered**: Static analysis catching potential bugs
+**Delivered**: Static analysis enabled with sensible defaults
 
 **Key Files**:
 - `gradle/libs.versions.toml` (detekt version)
 - `build.gradle.kts` (detekt plugin)
-- `config/detekt/detekt.yml`
 
 ---
 
-### Iteration 2.4: Unit Tests in CI
+### Iteration 2.4: Android Lint with Compose Checks
+**Time Estimate**: 1-2 min
+
+**Steps**:
+1. Android Lint comes with AGP - no setup needed
+2. Run `./gradlew :composeApp:lint` locally
+3. Fix any critical issues
+
+**Delivered**: Android Lint (with Compose checks) verified working
+
+---
+
+### Iteration 2.5: Unit Tests in CI
 **Time Estimate**: 2-3 min
 
 **Steps**:
@@ -135,16 +144,14 @@ This ensures:
 
 ---
 
-### Iteration 2.5: GitHub Actions CI Workflow
-**Time Estimate**: 3-4 min
+### Iteration 2.6: GitHub Actions CI Workflow
+**Time Estimate**: 2-3 min
 
 **Steps**:
 1. Create `.github/workflows/ci.yml`
-2. Configure triggers: push to main, all pull requests
-3. Add jobs: ktlint, detekt, unit tests (parallel)
-4. Add Gradle caching for fast builds
-5. Commit + push via PR
-6. Watch CI run on the PR itself (meta!)
+2. Single job, separate steps for visibility (ktlint, detekt, lint, tests)
+3. Gradle caching for fast builds
+4. Commit + push via PR, watch CI run
 
 **Delivered**: Complete CI pipeline with quality gates
 
@@ -155,7 +162,7 @@ This ensures:
 
 ## Series Continuity: Session 1 Promises (20%)
 
-### Iteration 2.6: Bonus - Faster Builds with Gradle Caching
+### Iteration 2.7: Bonus - Faster Builds with Gradle Caching
 **Time Estimate**: 2 min
 
 **Steps**:
@@ -167,7 +174,7 @@ This ensures:
 
 ---
 
-### Iteration 2.7: Bonus - First UI Update
+### Iteration 2.8: Bonus - First UI Update
 **Time Estimate**: 2 min
 
 **Steps**:

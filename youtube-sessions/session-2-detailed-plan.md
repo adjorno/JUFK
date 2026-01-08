@@ -35,6 +35,7 @@
 > By the end of this video, every pull request to your project will automatically be checked for:
 > - **Code formatting** with ktlint
 > - **Static analysis** with detekt
+> - **Compose-specific issues** with Android Lint
 > - **Unit tests** to catch regressions
 >
 > Let's set this up step by step.
@@ -138,7 +139,7 @@ ktlint_standard_no-wildcard-imports = disabled
 
 ---
 
-## Iteration 2.3: detekt Setup - Static Analysis (3-4 min)
+## Iteration 2.3: detekt Setup - Static Analysis (2-3 min)
 
 ### Actions
 
@@ -171,42 +172,9 @@ alias(libs.plugins.detekt)
 ```
 
 **Voiceover:**
-> "detekt is a static analysis tool. Unlike ktlint which only cares about formatting, detekt analyzes your code for potential bugs, complexity issues, and code smells."
+> "detekt is a static analysis tool. Unlike ktlint which only cares about formatting, detekt analyzes your code for potential bugs, complexity issues, and code smells. We'll use the default rules for now - you can always customize them later."
 
-#### 2. Create detekt Configuration
-
-**Create directory `config/detekt/` and file `detekt.yml`:**
-
-```yaml
-build:
-  maxIssues: 0
-
-complexity:
-  LongMethod:
-    threshold: 60
-  LongParameterList:
-    functionThreshold: 10
-    constructorThreshold: 10
-  TooManyFunctions:
-    thresholdInFiles: 20
-    thresholdInClasses: 20
-
-style:
-  MagicNumber:
-    active: false
-  MaxLineLength:
-    maxLineLength: 120
-  WildcardImport:
-    active: false
-
-formatting:
-  active: false  # We use ktlint for formatting
-```
-
-**Voiceover:**
-> "This config file customizes detekt's rules. I'm disabling the magic number rule because it's too noisy for UI code, and turning off formatting since ktlint handles that. The key setting is maxIssues: 0 - any issue fails the build."
-
-#### 3. Run detekt
+#### 2. Run detekt
 
 **In Terminal:**
 ```bash
@@ -214,17 +182,44 @@ formatting:
 ```
 
 **Voiceover:**
-> "Let's run detekt and see if it finds any issues in our existing code. If it does, we'll fix them before continuing."
+> "Let's run detekt and see if it finds any issues. The defaults are sensible - we can tune the rules in a future session if needed."
 
 ### Deliverable
 
-- detekt plugin configured
-- Custom `detekt.yml` created
-- All detekt issues resolved
+- detekt plugin enabled with default configuration
+- Any critical issues fixed
 
 ---
 
-## Iteration 2.4: Unit Tests in CI (2-3 min)
+## Iteration 2.4: Android Lint with Compose Checks (1-2 min)
+
+### Actions
+
+#### 1. Enable Android Lint in CI
+
+Android Lint is already included with the Android Gradle Plugin - no setup needed! It includes Compose-specific checks out of the box.
+
+**Voiceover:**
+> "Android Lint comes free with the Android Gradle Plugin. It includes Compose-specific checks that catch performance issues like unstable parameters and missing modifiers. No extra setup required!"
+
+#### 2. Run Lint Locally
+
+**In Terminal:**
+```bash
+./gradlew :composeApp:lint
+```
+
+**Voiceover:**
+> "Let's run lint and see what it finds. We'll use the defaults - you can customize the rules later if certain checks are too noisy for your project."
+
+### Deliverable
+
+- Android Lint verified working
+- Any critical issues fixed
+
+---
+
+## Iteration 2.5: Unit Tests in CI (2-3 min)
 
 ### Actions
 
@@ -253,7 +248,7 @@ formatting:
 
 ---
 
-## Iteration 2.5: GitHub Actions CI Workflow (3-4 min)
+## Iteration 2.6: GitHub Actions CI Workflow (3-4 min)
 
 ### Actions
 
@@ -273,8 +268,8 @@ on:
       - main
 
 jobs:
-  lint:
-    name: Code Quality
+  check:
+    name: Quality Checks
     runs-on: ubuntu-latest
 
     steps:
@@ -290,37 +285,25 @@ jobs:
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v4
 
-      - name: Run ktlint
+      - name: Code Formatting (ktlint)
         run: ./gradlew ktlintCheck
 
-      - name: Run detekt
+      - name: Static Analysis (detekt)
         run: ./gradlew detekt
 
-  test:
-    name: Unit Tests
-    runs-on: ubuntu-latest
+      - name: Android Lint
+        run: ./gradlew :composeApp:lint
 
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Set up Java
-        uses: actions/setup-java@v4
-        with:
-          distribution: temurin
-          java-version: 17
-
-      - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v4
-
-      - name: Run tests
+      - name: Unit Tests
         run: ./gradlew allTests
 ```
 
 **Voiceover:**
-> "Here's our CI workflow. Two jobs running in parallel - one for code quality checks, one for tests. Both use Gradle caching for faster builds.
+> "Here's our CI workflow. One job, four checks - each with its own step so you can see exactly what failed.
 >
-> The workflow triggers on pushes to main and on all pull requests. This means every PR gets checked before it can be merged."
+> Gradle stays warm between steps, so this is actually faster than parallel jobs. And when something fails, you immediately know if it's formatting, static analysis, lint, or tests.
+>
+> The workflow triggers on pushes to main and on all pull requests. Every PR gets checked before it can be merged."
 
 #### 2. Commit and Push
 
@@ -364,7 +347,7 @@ git push --set-upstream origin feat/ci-quality-gates
 
 ---
 
-## Iteration 2.6: Bonus - Faster Builds with Gradle Caching (2 min)
+## Iteration 2.7: Bonus - Faster Builds with Gradle Caching (2 min)
 
 ### Script Transition
 
@@ -410,7 +393,7 @@ git push --set-upstream origin fix/faster-builds
 
 ---
 
-## Iteration 2.7: Bonus - First UI Update (2 min)
+## Iteration 2.8: Bonus - First UI Update (2 min)
 
 ### Script Transition
 
@@ -530,6 +513,7 @@ git push --set-upstream origin feat/hero-text
 > "That's it for today! We now have professional CI quality gates:
 > - ktlint ensures consistent formatting
 > - detekt catches potential bugs
+> - Android Lint catches Compose-specific issues like unstable parameters
 > - Unit tests prevent regressions
 >
 > Every PR is automatically checked before it can be merged.
@@ -543,6 +527,7 @@ git push --set-upstream origin feat/hero-text
 **Primary (Standalone Value):**
 - Set up ktlint for code formatting
 - Set up detekt for static analysis
+- Set up Android Lint with Compose-specific checks
 - Created CI workflow with parallel jobs
 - Quality gates blocking PRs until checks pass
 
