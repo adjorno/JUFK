@@ -181,7 +181,7 @@ This ensures:
 **Delivered**: CI builds significantly faster
 
 **Key Files**:
-- `.github/workflows/web-build-and-deploy.yml`
+- `.github/workflows/web-deploy.yml`
 
 ---
 
@@ -335,7 +335,131 @@ This ensures:
 
 ---
 
-# YOUTUBE SESSION 4: Android to Play Store
+# YOUTUBE SESSION 4: iOS to TestFlight
+
+**Searchable Title**: "How to Deploy Kotlin Multiplatform iOS App to TestFlight"
+
+**Standalone Value**: Complete guide to deploying a KMP iOS app to TestFlight - XcodeGen setup, Fastlane configuration, and CI/CD with GitHub Actions.
+
+**Session Goal**: Deploy iOS app to TestFlight
+
+## Primary Topic: iOS Deployment (80%)
+
+### Iteration 4.1: iOS Project Setup with XcodeGen
+**Time Estimate**: 3-4 min
+
+**Steps**:
+1. Install XcodeGen if needed: `brew install xcodegen`
+2. Create `iosApp/project.yml` configuration
+3. Generate Xcode project: `xcodegen generate`
+4. Configure bundle ID, team ID in project.yml
+5. Verify build in Xcode
+
+**Delivered**: Reproducible Xcode project
+
+**Key Files**:
+- `iosApp/project.yml`
+
+---
+
+## Iteration 4.2: iOS App Icons
+**Time Estimate**: 2-3 min
+
+**Steps**:
+1. Create `scripts/generate-ios-icons.sh`
+2. Add source icon SVG
+3. Generate all required icon sizes
+4. Add to Xcode asset catalog
+5. Commit + push
+
+**Delivered**: iOS app icons configured
+
+**Key Files**:
+- `scripts/generate-ios-icons.sh`
+- `scripts/icon-source.svg`
+- `iosApp/iosApp/Assets.xcassets/AppIcon.appiconset/`
+
+---
+
+## Iteration 4.3: Fastlane iOS Setup
+**Time Estimate**: 4-5 min
+
+**Steps**:
+1. Add iOS lanes to `fastlane/Fastfile`:
+   - `testflight_upload` - build and upload to TestFlight
+   - Auto-increment build number
+2. Add GitHub secrets:
+   - Distribution certificate (P12 + password)
+   - Provisioning profile
+   - App Store Connect API key
+3. Test locally (if possible)
+
+**Delivered**: Fastlane configured for iOS
+
+**Key Files**:
+- `fastlane/Fastfile` (iOS lanes added)
+
+---
+
+## Iteration 4.4: GitHub Actions iOS Deployment
+**Time Estimate**: 2-3 min
+
+**Steps**:
+1. Create `.github/workflows/ios-deploy.yml`
+2. Configure Xcode version, signing
+3. Use Fastlane testflight_upload lane
+4. Commit + push
+5. Verify app appears in TestFlight
+
+**Delivered**: iOS app in TestFlight
+
+**Key Files**:
+- `.github/workflows/ios-deploy.yml`
+
+---
+
+## Series Continuity: UI Evolution + Infrastructure (20%)
+
+### Iteration 4.5: Web Release Pipeline + Versioning + Footer
+**Time Estimate**: 4-5 min
+
+**Why This Makes Sense**:
+- Versioning scheme requires release tags to exist (for base version)
+- Good time to introduce dev vs prod release process
+- Footer shows version → visual confirmation of deployment
+- Establishes foundation that all platforms will use
+
+**Steps**:
+1. Setup dev environment (main branch → `dev.justusefuckingkotlin.com`)
+2. Create Web release workflow:
+   - `.github/workflows/web-release.yml` (triggered by tags like `v*.*.*`)
+   - Deploys to production `justusefuckingkotlin.com`
+3. Implement versioning in `buildSrc/src/main/kotlin/Versioning.kt`:
+   - Production: Extract from git tag (e.g., `v1.0.0` → `1.0.0`)
+   - Dev: `1.0.0.YYYYMMDD.HHMM.GITSHA` (uses latest tag as base version)
+4. Add BuildKonfig plugin for compile-time version injection
+5. Create `ui/components/FixedFooter.kt` to display version
+6. Update `App.kt` to add footer to Scaffold bottomBar
+7. Create first release: `git tag v0.1.0 && git push --tags`
+8. Verify Web deploys to production with proper version
+
+**Delivered**: Web release pipeline, dev environment, version display, FixedFooter component
+
+**Key Files**:
+- `.github/workflows/web-release.yml` (new - tag-based Web releases)
+- `buildSrc/src/main/kotlin/Versioning.kt` (new - version extraction helpers)
+- `composeApp/build.gradle.kts` (BuildKonfig setup)
+- `composeApp/src/commonMain/kotlin/ui/components/FixedFooter.kt` (new)
+- `App.kt` (add footer)
+- `.github/workflows/web-deploy.yml` (update for dev versioning)
+
+---
+
+**Session 4 Total Time Estimate**: 14-19 min
+
+---
+
+# YOUTUBE SESSION 5: Android to Play Store
 
 **Searchable Title**: "How to Deploy Kotlin Multiplatform Android App to Play Store"
 
@@ -345,7 +469,7 @@ This ensures:
 
 ## Primary Topic: Android Deployment (80%)
 
-### Iteration 4.1: Android Signing Configuration
+### Iteration 5.1: Android Signing Configuration
 **Time Estimate**: 3-4 min
 
 **Steps**:
@@ -362,7 +486,7 @@ This ensures:
 
 ---
 
-## Iteration 4.2: Play Store Assets
+## Iteration 5.2: Play Store Assets
 **Time Estimate**: 2-3 min
 
 **Steps**:
@@ -379,7 +503,7 @@ This ensures:
 
 ---
 
-## Iteration 4.3: Fastlane Android Setup
+## Iteration 5.3: Fastlane Android Setup
 **Time Estimate**: 4-5 min
 
 **Steps**:
@@ -401,11 +525,11 @@ This ensures:
 
 ---
 
-## Iteration 4.4: GitHub Actions Android Deployment
+## Iteration 5.4: GitHub Actions Android Deployment
 **Time Estimate**: 2-3 min
 
 **Steps**:
-1. Create `.github/workflows/deploy_android.yml`
+1. Create `.github/workflows/android-deploy.yml`
 2. Trigger: push to main (with path filter)
 3. Use Fastlane internal lane
 4. Commit + push
@@ -414,145 +538,26 @@ This ensures:
 **Delivered**: Android app on Play Store internal track
 
 **Key Files**:
-- `.github/workflows/deploy_android.yml`
-
----
-
-## Series Continuity: UI Evolution + Infrastructure (20%)
-
-### Iteration 4.5: Dev Environment + Versioning + Footer
-**Time Estimate**: 3-4 min
-
-**Why This Makes Sense**:
-- Deploying to Play Store → need proper version numbers
-- Good time to introduce dev vs prod environments
-- Footer shows version → visual confirmation of deployment
-
-**Steps**:
-1. Setup dev environment (PRs → `dev.justusefuckingkotlin.com`)
-2. Implement versioning scheme:
-   - Production: `v1.0.0` (semantic)
-   - Dev/PR: `1.0.0.YYYYMMDD.HHMM.GITSHA`
-3. Add BuildKonfig plugin for version injection
-4. Create `ui/components/FixedFooter.kt` to display version
-5. Update `App.kt` to add footer to Scaffold bottomBar
-6. Update CI workflows to generate and pass versions
-
-**Delivered**: Dev environment, version display, FixedFooter component
-
-**Key Files**:
-- `composeApp/src/commonMain/kotlin/ui/components/FixedFooter.kt` (new)
-- `buildSrc/src/main/kotlin/Versioning.kt` (new - helper functions)
-- `composeApp/build.gradle.kts` (BuildKonfig setup)
-- `App.kt` (add footer)
-- `.github/workflows/web-build-and-deploy.yml` (versioning)
-- `.github/workflows/deploy_android.yml` (versioning)
-
----
-
-**Session 4 Total Time Estimate**: 14-19 min
-
----
-
-# YOUTUBE SESSION 5: iOS to TestFlight
-
-**Searchable Title**: "How to Deploy Kotlin Multiplatform iOS App to TestFlight"
-
-**Standalone Value**: Complete guide to deploying a KMP iOS app to TestFlight - XcodeGen setup, Fastlane configuration, and CI/CD with GitHub Actions.
-
-**Session Goal**: Deploy iOS app to TestFlight
-
-## Primary Topic: iOS Deployment (80%)
-
-### Iteration 5.1: iOS Project Setup with XcodeGen
-**Time Estimate**: 3-4 min
-
-**Steps**:
-1. Install XcodeGen if needed: `brew install xcodegen`
-2. Create `iosApp/project.yml` configuration
-3. Generate Xcode project: `xcodegen generate`
-4. Configure bundle ID, team ID in project.yml
-5. Verify build in Xcode
-
-**Delivered**: Reproducible Xcode project
-
-**Key Files**:
-- `iosApp/project.yml`
-
----
-
-## Iteration 5.2: iOS App Icons
-**Time Estimate**: 2-3 min
-
-**Steps**:
-1. Create `scripts/generate-ios-icons.sh`
-2. Add source icon SVG
-3. Generate all required icon sizes
-4. Add to Xcode asset catalog
-5. Commit + push
-
-**Delivered**: iOS app icons configured
-
-**Key Files**:
-- `scripts/generate-ios-icons.sh`
-- `scripts/icon-source.svg`
-- `iosApp/iosApp/Assets.xcassets/AppIcon.appiconset/`
-
----
-
-## Iteration 5.3: Fastlane iOS Setup
-**Time Estimate**: 4-5 min
-
-**Steps**:
-1. Add iOS lanes to `fastlane/Fastfile`:
-   - `testflight_upload` - build and upload to TestFlight
-   - Auto-increment build number
-2. Add GitHub secrets:
-   - Distribution certificate (P12 + password)
-   - Provisioning profile
-   - App Store Connect API key
-3. Test locally (if possible)
-
-**Delivered**: Fastlane configured for iOS
-
-**Key Files**:
-- `fastlane/Fastfile` (iOS lanes added)
-
----
-
-## Iteration 5.4: GitHub Actions iOS Deployment
-**Time Estimate**: 2-3 min
-
-**Steps**:
-1. Create `.github/workflows/deploy_ios.yml`
-2. Configure Xcode version, signing
-3. Use Fastlane testflight_upload lane
-4. Commit + push
-5. Verify app appears in TestFlight
-
-**Delivered**: iOS app in TestFlight
-
-**Key Files**:
-- `.github/workflows/deploy_ios.yml`
+- `.github/workflows/android-deploy.yml`
 
 ---
 
 ## Series Continuity: UI Evolution (20%)
 
-### Iteration 5.5: Add Android Platform Card
+### Iteration 5.5: Add iOS Platform Card
 **Time Estimate**: 2-3 min
 
 **Why This Makes Sense**:
-- Android was deployed in Session 4 → celebrate by showing it on the site
+- iOS was deployed in Session 4 → celebrate by showing it on the site
 - Introduces PlatformSectionCard component pattern (reusable!)
-- Real content (Android is live on Play Store!)
+- Real content (iOS is live on TestFlight!)
 
 **Steps**:
 1. Create `data/PlatformContent.kt` with PlatformInfo data model
 2. Create `ui/components/PlatformSectionCard.kt` (reusable card component)
 3. Update `App.kt` to change from centered Box to scrollable Column layout
 4. Add "Available On" section header
-5. Add Android platform card with LIVE badge
+5. Add iOS platform card with LIVE badge
 
 **Delivered**: First platform card, scrollable layout, reusable card pattern
 
@@ -617,23 +622,23 @@ This ensures:
 
 ## Series Continuity: UI Evolution (20%)
 
-### Iteration 6.3: Add iOS Platform Card
+### Iteration 6.3: Add Android Platform Card
 **Time Estimate**: 2 min
 
 **Why This Makes Sense**:
-- iOS deployed in Session 5 → add it to the site
+- Android deployed in Session 5 → add it to the site
 - Reuse PlatformSectionCard pattern (established in Session 5)
 - Simple addition - just add data and one line of code
 
 **Steps**:
-1. Update `data/PlatformContent.kt` - add iOS platform info
-2. Update `App.kt` - add second PlatformSectionCard for iOS
+1. Update `data/PlatformContent.kt` - add Android platform info
+2. Update `App.kt` - add second PlatformSectionCard for Android
 
-**Delivered**: iOS visible on website
+**Delivered**: Android visible on website
 
 **Key Files**:
-- `data/PlatformContent.kt` (add iOS)
-- `App.kt` (add iOS card)
+- `data/PlatformContent.kt` (add Android)
+- `App.kt` (add Android card)
 
 ---
 
@@ -758,11 +763,11 @@ This ensures:
 
 **Steps**:
 1. Create reusable workflow templates:
-   - `template-build-web.yml`
-   - `template-build-android.yml`
-   - `template-build-ios.yml`
-   - `template-build-desktop-dmg.yml`
-   - `template-build-desktop-windows.yml`
+   - `template-web-build.yml`
+   - `template-android-build.yml`
+   - `template-ios-build.yml`
+   - `template-desktop-dmg-build.yml`
+   - `template-desktop-windows-build.yml`
 2. Each accepts version as input
 3. Each uploads artifacts
 
