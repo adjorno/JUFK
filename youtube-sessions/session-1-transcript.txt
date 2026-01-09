@@ -1,0 +1,320 @@
+[00:00 - 00:03] If you're watching this video, probably something good will happen.
+[00:03 - 00:08] Kotlin and I were able to pull off some projects straight to production and I'm ready to
+[00:08 - 00:11] share some details of a development process.
+[00:11 - 00:16] I was thinking to work with Kotlin Multiplatform Framework for a very long time, but I didn't
+[00:16 - 00:17] have an idea.
+[00:17 - 00:21] I wanted it to be small, just to prove a concept at the same time.
+[00:21 - 00:23] I wanted it to be complete.
+[00:23 - 00:32] About one week ago, I was doing scrolling my x-fit and I saw one post made by the author
+[00:32 - 00:42] of the Tailwind Framework was decide the off-concept that we all know about, just to entertain
+[00:42 - 00:46] in a way to promote your language or the Framework, there are a bunch of them.
+[00:46 - 00:48] And I thought, that's it!
+[00:48 - 00:53] I want to build the same in Kotlin with a key difference.
+[00:53 - 01:01] I want to use single-code base and create web application, Android application, iOS application,
+[01:01 - 01:10] desktop, Mac and Windows application, and command line tools to be exposed on homebrew.
+[01:10 - 01:13] You might say, Grandpa, did you peel?
+[01:13 - 01:15] It's 2026.
+[01:15 - 01:18] We have LLamps to make ups.
+[01:18 - 01:21] And you will be right to a certain point.
+[01:21 - 01:23] LLamps are great.
+[01:23 - 01:30] But one thing, when you make a prompt cursor, create an Instagram copy so I can make millions,
+[01:30 - 01:33] and to be honest, I don't think it's going to fly.
+[01:33 - 01:38] Another thing is, when you are knowledgeable, and you know what to build, how to build,
+[01:38 - 01:43] and you guide the LLM with nice prompts.
+[01:43 - 01:49] Believe me, it's a different feeling and it's a different level of efficiency.
+[01:49 - 01:55] So we're going to implement the project following standards like trunk-based development,
+[01:55 - 02:02] CI, CD, automated deployments, test and production environments, different tracks for mobile
+[02:02 - 02:06] apps, promotions, static-code analysis.
+[02:06 - 02:11] These skills will lead you to high-paying jobs.
+[02:11 - 02:17] And not to get you bored, I will try to make sessions short, like up to 15 minutes.
+[02:17 - 02:19] Yeah, you get me right.
+[02:19 - 02:24] Every 15 minutes, we're going to deploy something new to production.
+[02:24 - 02:26] Not bad for a grandpa.
+[02:26 - 02:27] Yeah?
+[02:27 - 02:30] Okay, let's talk in more coding.
+[02:30 - 02:36] First, we will create the repo.
+[02:36 - 02:38] Lovely.
+[02:38 - 02:46] Kotlin, I put use on the second place, because I find GFK better a cronium than JFU.
+[02:46 - 02:48] I can't spell it.
+[02:48 - 02:51] Okay, open source license, create repo.
+[02:51 - 02:53] There is nothing to hide.
+[02:53 - 02:58] Completely public.
+[02:58 - 03:01] Let's make it bigger.
+[03:01 - 03:03] And let's go.
+[03:03 - 03:05] Kit.
+[03:05 - 03:06] Color.
+[03:06 - 03:07] Color.
+[03:07 - 03:10] Folder with concise name.
+[03:10 - 03:12] I'm going to use Android Studio.
+[03:12 - 03:14] Feel free to use anything else.
+[03:14 - 03:16] It's up to your taste.
+[03:16 - 03:17] All of them are great.
+[03:17 - 03:25] I like Android Studio, because it offers nice template.
+[03:25 - 03:29] And because I can do almost everything there.
+[03:29 - 03:30] What do you want?
+[03:30 - 03:31] We want everything.
+[03:31 - 03:32] We want Android.
+[03:32 - 03:33] iOS.
+[03:33 - 03:34] We want ShareUI.
+[03:34 - 03:35] We want Desktop.
+[03:35 - 03:41] We want Web.
+[03:41 - 03:43] It takes a little bit more time.
+[03:43 - 03:49] It would be actually a nice challenge for Kotlin, as I'm not using a powerful machine.
+[03:49 - 03:53] This is just a basic MacBook Air of 6-year-old.
+[03:53 - 03:57] No fancy hardware involved.
+[03:57 - 04:03] Kotlin is being built by...
+[04:03 - 04:04] Grado.
+[04:04 - 04:06] Grado is a powerful tool.
+[04:06 - 04:13] We will learn its possibilities with more sessions today.
+[04:13 - 04:24] We will just update the dependencies to the latest one.
+[04:24 - 04:27] Grado itself.
+[04:27 - 04:32] I think today 2921 is the latest one.
+[04:32 - 04:33] Great.
+[04:33 - 04:38] Now we can synchronize.
+[04:38 - 04:43] The first thing to deployment can go to the web target.
+[04:43 - 04:45] We're going to use Cloudflare.
+[04:45 - 04:54] I can show you how fast and easy we can do with such a powerful framework.
+[04:54 - 04:55] Compose.
+[04:55 - 05:01] Multiplatform and Kotlin Multiplatform offers a lot of applications.
+[05:01 - 05:04] Out of the box with this template.
+[05:04 - 05:07] Web targets JavaScript in the bottom.
+[05:07 - 05:10] One is the traditional JavaScript.
+[05:10 - 05:15] It's interoperable with standard JavaScript packages.
+[05:15 - 05:19] It's easier for development and simple sites.
+[05:19 - 05:24] It's claimed to be very performant and close to native.
+[05:24 - 05:30] If you have a complex application, audio, video animations, gaming, use this one.
+[05:30 - 05:33] We can use both.
+[05:33 - 05:36] The result would be the same for our application.
+[05:36 - 05:41] But just for fun, I would use awesome.
+[05:41 - 05:46] Let's run and check out what the template generated for us.
+[05:46 - 05:49] Oh, it was quite fast.
+[05:49 - 05:51] Nice animation.
+[05:51 - 05:54] This is something that we're going to deploy to production as a first iteration.
+[05:54 - 05:59] And then we're going to adapt the UI.
+[05:59 - 06:07] Let's create a new branch.
+[06:07 - 06:18] First, let's commit everything that was generated by the template.
+[06:18 - 06:23] Create a template.
+[06:23 - 06:35] Now let's create the GitHub action.
+[06:35 - 06:39] That will deploy our application automatically.
+[06:39 - 06:44] Work flows, this, and the file.
+[06:44 - 06:48] Web, build, and deploy.
+[06:48 - 06:53] Yes, please.
+[06:53 - 07:00] Deploy to...
+[07:00 - 07:03] That's it.
+[07:03 - 07:07] We wanted to be automated.
+[07:07 - 07:10] Which means that there should be some trigger.
+[07:10 - 07:17] The trigger would be every push to main branch.
+[07:17 - 07:23] Also, we want for testing sometimes to trigger it manually.
+[07:23 - 07:28] That's why we need to add workflow this much.
+[07:28 - 07:32] Now the actual pipeline.
+[07:32 - 07:35] It's going to run on...
+[07:35 - 07:41] Do we have Ubuntu latest? Something like this?
+[07:41 - 07:46] And what are the steps?
+[07:46 - 07:49] Do we have any?
+[07:49 - 07:50] Any AI help us?
+[07:50 - 07:53] No, then we need to come up with ourselves.
+[07:53 - 07:58] Check out code.
+[07:58 - 08:07] Then we would need setup Java.
+[08:07 - 08:17] Then we would need build with us distribution.
+[08:17 - 08:25] Then we would need deploy to cloud player.
+[08:25 - 08:31] Nice help.
+[08:31 - 08:34] Nice help.
+[08:34 - 08:40] That's for...
+[08:40 - 08:46] Distribution.
+[08:46 - 08:49] I don't remember.
+[08:49 - 08:56] I think it's something tamarind.
+[08:56 - 09:03] To build the distribution, we need to run the Gradle command.
+[09:03 - 09:08] Which one? We will find out ourselves.
+[09:08 - 09:15] There is always a way to run desks.
+[09:15 - 09:18] Let's see.
+[09:18 - 09:21] Verification.
+[09:21 - 09:24] This is our task.
+[09:24 - 09:30] Let's run it.
+[09:30 - 09:33] Just to make sure that we are correct.
+[09:33 - 09:39] I don't want to recreate the pipeline 15 times.
+[09:39 - 09:42] Cool.
+[09:42 - 09:45] Now deploy to cloud player.
+[09:45 - 09:50] GitHub actions.
+[09:50 - 09:55] We can see a GitHub actions.
+[09:55 - 10:02] This is our piece of code we are going to use.
+[10:02 - 10:05] Going back.
+[10:05 - 10:08] Cool.
+[10:08 - 10:10] We don't want to connect.
+[10:10 - 10:15] Now we need to fill in some gaps.
+[10:15 - 10:18] The easiest one is the directory.
+[10:18 - 10:22] We just build it locally.
+[10:22 - 10:25] So we can find out ourselves build.
+[10:25 - 10:28] Distribution, production executable.
+[10:28 - 10:33] This is the folder that contains our static application.
+[10:33 - 10:36] Copypath from project through.
+[10:36 - 10:39] And replace from project through.
+[10:39 - 10:42] Copypath.
+[10:42 - 10:45] Now project.
+[10:45 - 10:48] Let's create a project.
+[10:48 - 10:51] There is a command line tool called Runler.
+[10:51 - 10:54] That's for cloud player.
+[10:54 - 10:57] Pages, project, create.
+[10:57 - 11:04] If you want to deploy from the main branch.
+[11:04 - 11:07] Cool.
+[11:07 - 11:10] We create it.
+[11:10 - 11:20] So we can fill it in.
+[11:20 - 11:23] Now we need account ID and API token.
+[11:23 - 11:25] Probably we can do it with the command line.
+[11:25 - 11:28] I'm not aware and maybe it will take some time to find out.
+[11:28 - 11:31] So let's do it from the back.
+[11:31 - 11:34] Let's go to cloud player.
+[11:34 - 11:38] And if we go to workers and pages.
+[11:38 - 11:39] Yeah.
+[11:39 - 11:44] You can see we immediately have our production application.
+[11:44 - 11:51] This is the account ID by belief.
+[11:51 - 11:56] Go here.
+[11:56 - 11:59] I did wrong.
+[11:59 - 12:03] Secret set account ID.
+[12:03 - 12:05] Bounce.
+[12:05 - 12:07] And this is it.
+[12:07 - 12:10] Let's go.
+[12:10 - 12:11] Cool.
+[12:11 - 12:19] Now we need the token.
+[12:19 - 12:22] Let's generate the token.
+[12:22 - 12:24] Profile.
+[12:24 - 12:26] API tokens.
+[12:26 - 12:27] Now we don't need the user one.
+[12:27 - 12:29] We need the account one.
+[12:29 - 12:34] For CICD it's better for account ones.
+[12:34 - 12:37] It's stuck.
+[12:37 - 12:38] Okay.
+[12:38 - 12:39] Create.
+[12:39 - 12:40] Custom.
+[12:40 - 12:41] GitHub.
+[12:41 - 12:43] Deploy.
+[12:43 - 12:45] And we need for account.
+[12:45 - 12:46] Pagees.
+[12:46 - 12:48] Cloud for pages.
+[12:48 - 12:49] Edit.
+[12:49 - 12:50] Go to summary.
+[12:50 - 12:56] Now I'm going to switch to a camera mod.
+[12:56 - 12:59] Because I don't want to expose the access token.
+[12:59 - 13:01] Just security manager.
+[13:01 - 13:07] Now I'm copying the access token to clipboard.
+[13:07 - 13:11] And now we can go back.
+[13:11 - 13:13] Paste in it.
+[13:13 - 13:15] And we're here.
+[13:15 - 13:18] Let's double check.
+[13:18 - 13:19] Mm-hmm.
+[13:19 - 13:20] Yeah, yeah, yeah.
+[13:20 - 13:21] Looks.
+[13:21 - 13:22] Check out.
+[13:22 - 13:23] Build.
+[13:23 - 13:24] And deploy.
+[13:24 - 13:27] Create.
+[13:27 - 13:31] Create.
+[13:31 - 13:33] Deploy.
+[13:33 - 13:35] Read the web.
+[13:35 - 13:39] Workflow to deploy.
+[13:39 - 13:40] Cool.
+[13:40 - 13:42] That's it.
+[13:42 - 13:47] Now we just need to make it available in production.
+[13:47 - 13:51] For costs.
+[13:51 - 13:53] Create.
+[13:53 - 13:55] Create.
+[13:55 - 13:57] Just double check.
+[13:57 - 14:04] This is the commit that was generated by the Android Studio template.
+[14:04 - 14:05] Not something interesting.
+[14:05 - 14:08] This is the commit where we created the pipeline.
+[14:08 - 14:11] It will be triggered once we merge the full request.
+[14:11 - 14:16] It's good.
+[14:16 - 14:22] I like squash and merge to keep my Git history clean and linear.
+[14:22 - 14:32] And deploy web was triggered automatically.
+[14:32 - 14:34] It will take some time.
+[14:34 - 14:39] There are some improvements that we can make in order to make it work.
+[14:39 - 14:43] And I will share how to do it later.
+[14:43 - 14:45] Right now we have five minutes.
+[14:45 - 14:46] Let's see.
+[14:46 - 14:48] What's happening here?
+[14:48 - 14:50] And maybe we can do something useful.
+[14:50 - 14:51] Oh, first thing.
+[14:51 - 14:55] We didn't protect our trunk branch.
+[14:55 - 14:59] I would say very important.
+[14:59 - 15:00] Let's go.
+[15:00 - 15:03] Branch rules set.
+[15:03 - 15:08] What is this?
+[15:08 - 15:09] Something new.
+[15:09 - 15:10] I don't know.
+[15:10 - 15:18] Let's go.
+[15:18 - 15:20] Let's go traditional way.
+[15:20 - 15:21] Main.
+[15:21 - 15:23] Yes, I want pull request.
+[15:23 - 15:24] No, I don't want approvals.
+[15:24 - 15:26] I'm the only developer.
+[15:26 - 15:30] Yes, I want everything to be run.
+[15:30 - 15:32] Yes, I want the branch to be up to date.
+[15:32 - 15:35] Yes, I want the linear history.
+[15:35 - 15:38] And that's it.
+[15:38 - 15:48] And I also like to have only squash merging.
+[15:48 - 15:55] Then our Git history of trunk branch will be always clean,
+[15:55 - 16:00] nice, linear and check by the CI gates.
+[16:00 - 16:03] So you're running?
+[16:03 - 16:04] That's great.
+[16:04 - 16:07] There were a few shortcuts that I did.
+[16:07 - 16:14] And I would like to talk about them while pipeline is running.
+[16:14 - 16:20] The first shortcut probably that I merged my pull request too fast.
+[16:20 - 16:21] Never do it.
+[16:21 - 16:26] First, we need to validate that the feature that we are developing is a good quality.
+[16:26 - 16:29] And I might make some mistake here.
+[16:29 - 16:34] You saw I did it in a type that in the manual way.
+[16:34 - 16:37] There was big risk that I did some type.
+[16:37 - 16:43] So it would be nice to check that it works nicely before we actually merge.
+[16:43 - 16:53] One of the tricks how to do it is first add another trigger and add your branch, feature branch.
+[16:53 - 17:03] So now when you push this pipeline to the remote, Git would automatically trigger the pipeline before we even merge.
+[17:03 - 17:07] One thing to mention, there is security policy.
+[17:07 - 17:10] And it's really, really great policy by GitHub.
+[17:10 - 17:19] So if you trigger the pipeline from a fourth branch with the open pull request, this pipeline will not have access to the secrets.
+[17:19 - 17:27] Because some bad boys can actually extract these secrets from pipelines.
+[17:27 - 17:34] That's why when you go into test it, do not create pull request.
+[17:34 - 17:37] Because we want to deploy to CloudFry.
+[17:37 - 17:39] This is point number one.
+[17:39 - 17:42] Point number two is actually CloudFry.
+[17:42 - 17:46] Let's go there.
+[17:46 - 17:58] Do you remember that when we created the project, we mentioned the production branch.
+[17:58 - 18:01] And you mentioned to be main.
+[18:01 - 18:11] So when we are going to deploy something from non-made branch, it will be considered as a preview deployment, not a production deployment.
+[18:11 - 18:18] And the difference that preview deployments will not be exposed through the static links.
+[18:18 - 18:23] For example, for this one, where is it?
+[18:23 - 18:27] The CloudFry domain would be this.
+[18:27 - 18:32] And only production deployments will end up here.
+[18:32 - 18:38] When we go into have a preview deployment, it will generate some temporary link.
+[18:38 - 18:45] And you will be always accessible to the deployments as well.
+[18:45 - 18:48] But what about this one?
+[18:48 - 18:51] We don't want our application here.
+[18:51 - 18:54] We want our application on our lovely domain.
+[18:54 - 18:57] So this is what we need to set up.
+[18:57 - 19:00] So we have autocomplete, great.
+[19:00 - 19:02] Continue.
+[19:02 - 19:11] Activate.
+[19:11 - 19:13] That's just it.
+[19:13 - 19:15] I believe we are ready.
+[19:15 - 19:23] So once this deployment will be finished, and I think it's about to be finished,
+[19:23 - 19:30] then we will be able to see our application in production.
+[19:30 - 19:43] There were a few small things that I did before the recording that's actually to create the account.
+[19:43 - 19:50] And while I was creating it, it actually matter of clicking the button like created domain.
+[19:50 - 19:57] It was asked me to update the DNS name servers at your register.
+[19:57 - 20:04] And I bought the domain in Squarespace, and this is what I added.
+[20:04 - 20:05] That's it.
+[20:05 - 20:11] The process is just time-consuming, that's why I didn't want to make it as a part of this video.
+[20:11 - 20:17] Let's go to our pipeline.
+[20:18 - 20:21] Yeah, it runs.
+[20:21 - 20:26] It takes a bit of time.
+[20:26 - 20:31] And probably the next session, we will make it faster.
+[20:31 - 20:33] Close to two, three minutes.
+[20:33 - 20:36] We will make it faster two more times.
+[20:36 - 20:41] But now it's about to be finished.
+[20:41 - 20:43] Let's see.
+[20:43 - 20:46] A floating, a floating success.
+[20:46 - 20:49] Beautiful, that's it.
+[20:49 - 20:54] Now, deploying deployment complete.
+[20:54 - 20:56] It's green magic.
+[20:56 - 20:58] Let's double-check where we are.
+[20:58 - 21:04] Just use our side is deployed.
+[21:04 - 21:09] We are in production, and our domain congrats.
+[21:09 - 21:21] So, let's see how our Git history looks like.
+[21:21 - 21:24] Beautiful.
