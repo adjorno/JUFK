@@ -1,10 +1,10 @@
-# Session 2: CI Quality Gates for Kotlin Multiplatform - Detailed Action Plan
+# Session 2: Migrate to New KMP Plugin & Speed Up Builds - Detailed Action Plan
 
-**Searchable Title**: "How to Set Up CI Quality Gates for Kotlin Multiplatform"
+**Searchable Title**: "How to Migrate to the New Kotlin Multiplatform Plugin DSL"
 
-**Standalone Value**: Any developer can watch this session to learn how to set up professional CI quality gates (ktlint, detekt, Android Lint, unit tests) for a Kotlin Multiplatform project. Works for any KMP project, not just JUFK.
+**Standalone Value**: Learn to migrate from the legacy KMP plugin to the new DSL with `androidLibrary {}` block and separate `androidApp` module. Also covers Gradle caching for faster CI builds. Works for any KMP project.
 
-**Total Time Estimate**: 16-20 minutes
+**Total Time Estimate**: 12-16 minutes
 
 ---
 
@@ -14,42 +14,37 @@
 - [ ] IDE ready (Android Studio or IntelliJ IDEA)
 - [ ] Terminal ready
 - [ ] Browser with GitHub open
-- [ ] Note current CI build time for "before" comparison (for bonus section)
-- [ ] Test all commands below to ensure they work
-- [ ] Practice pronouncing: ktlint (K-T-lint), detekt (dee-TEKT)
+- [ ] Note current CI build time for "before" comparison
+- [ ] Practice pronouncing: Gradle (GRAY-dul)
 
 ---
 
-## PRIMARY TOPIC: CI Quality Gates (80% of session)
+## PRIMARY TOPIC: KMP Plugin Migration (80% of session)
 
 ---
 
-## Iteration 2.1: Introduction - Why CI Quality Gates Matter (1-2 min)
+## Iteration 2.1: Introduction - Why Migrate? (1 min)
 
 ### Script
 
-> Welcome! Today we're setting up CI quality gates for a Kotlin Multiplatform project.
+> Welcome back! Today we're modernizing our Kotlin Multiplatform project structure.
 >
-> Whether you're working solo or on a team, quality gates are essential. They catch problems before they hit production - formatting issues, potential bugs, and broken tests.
+> The new KMP plugin DSL is cleaner and more consistent. Instead of a separate `android {}` block, everything lives inside the `kotlin {}` block. More importantly, it separates library code from app code - better architecture.
 >
-> By the end of this video, every pull request to your project will automatically be checked for:
-> - **Code formatting** with ktlint
-> - **Static analysis** with detekt
-> - **Compose-specific issues** with Android Lint
-> - **Unit tests** to catch regressions
+> By the end of this video, your project will use the modern KMP structure with a separate `androidApp` module.
 >
-> Let's set this up step by step.
+> Let's get started.
 
 ### Key Points to Cover
 
-- CI quality gates = automatic checks that run on every PR
-- Prevents "it works on my machine" problems
-- Catches issues early, before code review
-- Professional standard for any serious project
+- New KMP plugin DSL is the recommended approach
+- Cleaner, more consistent configuration
+- Separates library (`composeApp`) from application (`androidApp`)
+- Required for some newer KMP features
 
 ---
 
-## Iteration 2.2: ktlint Setup - Code Formatting (3-4 min)
+## Iteration 2.2: Update composeApp to Library Structure (3-4 min)
 
 ### Actions
 
@@ -59,287 +54,237 @@
 ```bash
 git checkout main
 git pull
-git checkout -b feat/ci-quality-gates
+git checkout -b refactor/kmp-plugin-migration
 ```
 
-#### 2. Add ktlint Plugin
+#### 2. Update composeApp/build.gradle.kts
 
-**In IDE, open `gradle/libs.versions.toml`:**
+**In IDE, open `composeApp/build.gradle.kts`:**
 
-Add to `[versions]` section:
-```toml
-ktlint = "12.1.2"
-```
+Find the `kotlin {}` block and locate the `android {}` block inside it (or outside it). Replace it with:
 
-Add to `[plugins]` section:
-```toml
-ktlint = { id = "org.jlleitschuh.gradle.ktlint", version.ref = "ktlint" }
-```
-
-**In root `build.gradle.kts`:**
-
-Add to plugins block:
 ```kotlin
-alias(libs.plugins.ktlint) apply false
-```
+kotlin {
+    androidLibrary {
+        namespace = "com.ifochka.jufk"
+        compileSdk = 35
+        minSdk = 24
 
-**In `composeApp/build.gradle.kts`:**
+        // Enable Android resources
+        withAndroidResources()
+    }
 
-Add to plugins block:
-```kotlin
-alias(libs.plugins.ktlint)
-```
-
-**Voiceover:**
-> "ktlint is like Prettier for Kotlin. It enforces consistent code formatting across your entire project. No more arguments about tabs vs spaces or where to put braces."
-
-#### 3. Create .editorconfig
-
-**Create file `.editorconfig` in project root:**
-
-```ini
-root = true
-
-[*]
-charset = utf-8
-end_of_line = lf
-indent_size = 4
-indent_style = space
-insert_final_newline = true
-max_line_length = 120
-trim_trailing_whitespace = true
-
-[*.{kt,kts}]
-ktlint_code_style = ktlint_official
-ktlint_standard_no-wildcard-imports = disabled
+    // ... rest of targets (wasmJs, etc.)
+}
 ```
 
 **Voiceover:**
-> "The editorconfig file tells ktlint and your IDE what rules to follow. We're using the official Kotlin style with 4-space indentation and 120-character line length."
-
-#### 4. Run ktlint and Fix Issues
-
-**In Terminal:**
-```bash
-# Check for issues
-./gradlew ktlintCheck
-
-# Auto-fix what can be fixed
-./gradlew ktlintFormat
-```
-
-**Voiceover:**
-> "ktlint can automatically fix most formatting issues. Run ktlintFormat and it rewrites your code to match the style rules. This is safe - it only changes whitespace and formatting, never logic."
-
-### Deliverable
-
-- ktlint plugin configured
-- `.editorconfig` created
-- Existing code formatted
-
----
-
-## Iteration 2.3: detekt Setup - Static Analysis (2-3 min)
-
-### Actions
-
-#### 1. Add detekt Plugin
-
-**In `gradle/libs.versions.toml`:**
-
-Add to `[versions]` section:
-```toml
-detekt = "1.23.7"
-```
-
-Add to `[plugins]` section:
-```toml
-detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
-```
-
-**In root `build.gradle.kts`:**
-
-Add to plugins block:
-```kotlin
-alias(libs.plugins.detekt) apply false
-```
-
-**In `composeApp/build.gradle.kts`:**
-
-Add to plugins block:
-```kotlin
-alias(libs.plugins.detekt)
-```
-
-**Voiceover:**
-> "detekt is a static analysis tool. Unlike ktlint which only cares about formatting, detekt analyzes your code for potential bugs, complexity issues, and code smells. We'll use the default rules for now - you can always customize them later."
-
-#### 2. Run detekt
-
-**In Terminal:**
-```bash
-./gradlew detekt
-```
-
-**Voiceover:**
-> "Let's run detekt and see if it finds any issues. The defaults are sensible - we can tune the rules in a future session if needed."
-
-### Deliverable
-
-- detekt plugin enabled with default configuration
-- Any critical issues fixed
-
----
-
-## Iteration 2.4: Android Lint with Compose Checks (1-2 min)
-
-### Actions
-
-#### 1. Enable Android Lint in CI
-
-Android Lint is already included with the Android Gradle Plugin - no setup needed! It includes Compose-specific checks out of the box.
-
-**Voiceover:**
-> "Android Lint comes free with the Android Gradle Plugin. It includes Compose-specific checks that catch performance issues like unstable parameters and missing modifiers. No extra setup required!"
-
-#### 2. Run Lint Locally
-
-**In Terminal:**
-```bash
-./gradlew :composeApp:lint
-```
-
-**Voiceover:**
-> "Let's run lint and see what it finds. We'll use the defaults - you can customize the rules later if certain checks are too noisy for your project."
-
-### Deliverable
-
-- Android Lint verified working
-- Any critical issues fixed
-
----
-
-## Iteration 2.5: Unit Tests in CI (2-3 min)
-
-### Actions
-
-#### 1. Review Existing Test Structure
-
-**In IDE, navigate to:**
-`composeApp/src/commonTest/kotlin/com/ifochka/jufk/`
-
-**Voiceover:**
-> "Kotlin Multiplatform has a great testing story. Tests in commonTest run on all platforms. You can also write platform-specific tests in androidTest, iosTest, etc."
-
-#### 2. Run Tests Locally
-
-**In Terminal:**
-```bash
-./gradlew allTests
-```
-
-**Voiceover:**
-> "The allTests task runs tests for all platforms. This is what we'll run in CI to make sure nothing is broken."
-
-### Deliverable
-
-- Understand test structure
-- Tests passing locally
-
----
-
-## Iteration 2.6: GitHub Actions CI Workflow (3-4 min)
-
-### Actions
-
-#### 1. Create CI Workflow File
-
-**Create file `.github/workflows/ci.yml`:**
-
-```yaml
-name: CI
-
-on:
-  push:
-    branches:
-      - main
-  pull_request:
-    branches:
-      - main
-
-jobs:
-  check:
-    name: Quality Checks
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Set up Java
-        uses: actions/setup-java@v4
-        with:
-          distribution: temurin
-          java-version: 17
-
-      - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v4
-
-      - name: Code Formatting (ktlint)
-        run: ./gradlew ktlintCheck
-
-      - name: Static Analysis (detekt)
-        run: ./gradlew detekt
-
-      - name: Android Lint
-        run: ./gradlew :composeApp:lint
-
-      - name: Unit Tests
-        run: ./gradlew allTests
-```
-
-**Voiceover:**
-> "Here's our CI workflow. One job, four checks - each with its own step so you can see exactly what failed.
+> "The new KMP plugin uses `androidLibrary` inside the kotlin block instead of a separate `android` block. This makes the configuration cleaner and more consistent across platforms.
 >
-> Gradle stays warm between steps, so this is actually faster than parallel jobs. And when something fails, you immediately know if it's formatting, static analysis, lint, or tests.
->
-> The workflow triggers on pushes to main and on all pull requests. Every PR gets checked before it can be merged."
+> We're explicitly enabling Android resources with `withAndroidResources()` - the new DSL requires this."
 
-#### 2. Commit and Push
+#### 3. Verify Library Build
+
+**In Terminal:**
+```bash
+./gradlew :composeApp:build
+```
+
+**Voiceover:**
+> "composeApp now builds as a library. Next, we need to create the actual Android application module that uses this library."
+
+### Deliverable
+
+- composeApp using new KMP plugin DSL (`androidLibrary {}`)
+- Android resources enabled
+- Library builds successfully
+
+---
+
+## Iteration 2.3: Create androidApp Module (4-5 min)
+
+### Actions
+
+#### 1. Create androidApp Directory Structure
+
+**In Terminal:**
+```bash
+mkdir -p androidApp/src/main/kotlin/com/ifochka/jufk
+```
+
+#### 2. Create androidApp/build.gradle.kts
+
+**Create new file `androidApp/build.gradle.kts`:**
+
+```kotlin
+plugins {
+    alias(libs.plugins.androidApplication)
+    alias(libs.plugins.kotlinAndroid)
+    alias(libs.plugins.composeCompiler)
+}
+
+android {
+    namespace = "com.ifochka.jufk.app"
+    compileSdk = 35
+
+    defaultConfig {
+        applicationId = "com.ifochka.jufk"
+        minSdk = 24
+        targetSdk = 35
+        versionCode = 1
+        versionName = "1.0"
+    }
+
+    buildTypes {
+        release {
+            isMinifyEnabled = false
+        }
+    }
+
+    buildFeatures {
+        compose = true
+    }
+
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
+    }
+}
+
+dependencies {
+    implementation(project(":composeApp"))
+    implementation(libs.androidx.activity.compose)
+}
+```
+
+**Voiceover:**
+> "The androidApp module is a standard Android application. It depends on composeApp - the shared library - and provides the Android-specific entry point."
+
+#### 3. Move MainActivity
+
+**If `composeApp/src/androidMain/kotlin/.../MainActivity.kt` exists, move it:**
+
+```bash
+# Move MainActivity if it exists
+mv composeApp/src/androidMain/kotlin/com/ifochka/jufk/MainActivity.kt androidApp/src/main/kotlin/com/ifochka/jufk/ 2>/dev/null || true
+```
+
+**Or create new `androidApp/src/main/kotlin/com/ifochka/jufk/MainActivity.kt`:**
+
+```kotlin
+package com.ifochka.jufk
+
+import android.os.Bundle
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.setContent
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.tooling.preview.Preview
+
+class MainActivity : ComponentActivity() {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContent {
+            App()
+        }
+    }
+}
+
+@Preview
+@Composable
+fun AppAndroidPreview() {
+    App()
+}
+```
+
+#### 4. Create AndroidManifest.xml
+
+**Create `androidApp/src/main/AndroidManifest.xml`:**
+
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <application
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@android:style/Theme.Material.Light.NoActionBar">
+        <activity
+            android:name=".MainActivity"
+            android:exported="true"
+            android:theme="@android:style/Theme.Material.Light.NoActionBar">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+    </application>
+</manifest>
+```
+
+**Voiceover:**
+> "The app-specific stuff - MainActivity, the application manifest - now lives in the androidApp module. composeApp becomes a pure library that androidApp depends on."
+
+#### 5. Update settings.gradle.kts
+
+**In IDE, open `settings.gradle.kts` and add:**
+
+```kotlin
+include(":androidApp")
+```
+
+**Voiceover:**
+> "Don't forget to include the new module in settings.gradle.kts."
+
+#### 6. Verify androidApp Build
+
+**In Terminal:**
+```bash
+./gradlew :androidApp:assembleDebug
+```
+
+**Voiceover:**
+> "Let's verify the Android app builds. Perfect! This separation will make our life easier in future sessions when we add more Android-specific configuration like signing and deployment."
+
+### Deliverable
+
+- `androidApp` module created
+- MainActivity in androidApp
+- Android app builds successfully
+- Clean separation: composeApp (library) + androidApp (application)
+
+---
+
+## Iteration 2.4: Update Deploy Workflow for androidApp (2 min)
+
+### Actions
+
+**Note:** Only update if you have existing Android deployment workflows. For JUFK, we currently only deploy Web, so this is a quick verification step.
+
+**Voiceover:**
+> "Quick check - we don't have Android deployment yet, but when we add it in a future session, we'll reference `:androidApp` instead of `:composeApp` for the Android build.
+>
+> For now, let's commit our changes."
 
 **In Terminal:**
 ```bash
 git add .
-git commit -m "ci: Add CI quality gates (ktlint, detekt, tests)"
-git push --set-upstream origin feat/ci-quality-gates
+git status
 ```
 
-#### 3. Create PR and Watch CI
-
-**In Browser (GitHub):**
-- [ ] Create pull request
-- [ ] Watch the CI checks run
-- [ ] Point out the sequential steps in the single job
+**Show the changes:**
+- Modified: `composeApp/build.gradle.kts`
+- Added: `androidApp/` directory with build file, MainActivity, manifest
+- Modified: `settings.gradle.kts`
 
 **Voiceover:**
-> "And now the magic happens. Our PR triggers the CI workflow. Watch the steps run one after another - ktlint, detekt, lint, tests. Each step is clearly labeled so you know exactly what's being checked.
->
-> If any step fails, the PR can't be merged. That's the power of quality gates."
-
-#### 4. Merge PR
-
-- [ ] Wait for CI to pass
-- [ ] Merge the PR
-
-**Voiceover:**
-> "CI passed! Now every future PR will go through the same checks. We've just made our codebase much harder to break."
+> "Clean migration - library and app are now properly separated."
 
 ### Deliverable
 
-- CI workflow created
-- All checks running sequentially in one job
-- PR blocked until CI passes
-- Quality gates active
+- Migration complete
+- Ready to commit
 
 ---
 
@@ -347,61 +292,61 @@ git push --set-upstream origin feat/ci-quality-gates
 
 ---
 
-## Iteration 2.7: Bonus - Faster Builds with Gradle Caching (2 min)
+## Iteration 2.5: Faster Builds with Gradle Caching (2-3 min)
 
 ### Script Transition
 
-> "Quick bonus for those following the series - I promised in Session 1 to make builds faster. Let's fix that."
+> "Before we wrap up, let me keep a promise from Session 1 - making builds faster."
 
 ### Actions
 
-**Update `.github/workflows/web-build-and-deploy.yml`:**
+**In IDE, open `.github/workflows/web-build-and-deploy.yml`:**
 
-Change:
-```yaml
-- name: Checkout Sources
-  uses: actions/checkout@v3
-```
+Find the checkout step and update:
 
-To:
 ```yaml
 - name: Checkout Sources
   uses: actions/checkout@v4
 
 - name: Setup Gradle
   uses: gradle/actions/setup-gradle@v4
-```
 
-**In Terminal:**
-```bash
-git checkout main
-git pull
-git checkout -b fix/faster-builds
-# Make the changes
-git add .
-git commit -m "ci: Add Gradle caching to deploy workflow"
-git push --set-upstream origin fix/faster-builds
+- name: Set up Java
+  uses: actions/setup-java@v4
+  with:
+    distribution: temurin
+    java-version: 17
 ```
 
 **Voiceover:**
-> "By adding the Gradle setup action, subsequent builds will use cached dependencies. First build is the same, but after that you'll see 2-3 minute builds instead of 5+."
+> "Two simple changes: upgrade actions/checkout to v4, and add the Gradle setup action. This caches Gradle dependencies and build outputs.
+>
+> The first build stays the same, but subsequent builds will be 2-3 minutes instead of 5+. Gradle is smart - it only re-downloads what changed."
+
+**In Terminal:**
+```bash
+git add .github/workflows/web-build-and-deploy.yml
+git commit -m "ci: Add Gradle caching to deploy workflow"
+```
 
 ### Deliverable
 
 - Deploy workflow updated with caching
-- Builds noticeably faster
+- Future builds will be significantly faster
 
 ---
 
-## Iteration 2.8: Bonus - First UI Update (2 min)
+## Iteration 2.6: First UI Update (2-3 min)
 
 ### Script Transition
 
-> "One more promise to keep - something new deployed every session."
+> "One more thing - let's give our site some personality."
 
 ### Actions
 
-**Update `composeApp/src/commonMain/kotlin/com/ifochka/jufk/App.kt`:**
+**In IDE, open `composeApp/src/commonMain/kotlin/com/ifochka/jufk/App.kt`:**
+
+Replace the content with:
 
 ```kotlin
 package com.ifochka.jufk
@@ -484,143 +429,36 @@ fun App() {
 }
 ```
 
-**In Terminal:**
-```bash
-git checkout main
-git pull
-git checkout -b feat/hero-text
-# Make the changes (or paste from above)
-./gradlew ktlintFormat  # Format with our new rules!
-git add .
-git commit -m "feat: Add hero text - Just Use Fucking Kotlin"
-git push --set-upstream origin feat/hero-text
-```
-
 **Voiceover:**
-> "Quick UI change - now our site actually says 'Just Use Fucking Kotlin.' Notice I ran ktlintFormat first - our quality gates are already paying off!"
-
-### Deliverable
-
-- New UI deployed
-- Site shows "Just Use Fucking Kotlin"
-
----
-
-## Iteration 2.9: Migrate to New KMP Plugin DSL (4-5 min)
-
-### Script Transition
-
-> "One more thing before we wrap up - let's address some tech debt. The new Kotlin Multiplatform plugin has a cleaner DSL, and now's the perfect time to migrate."
-
-### Actions
-
-#### 1. Update composeApp to Library Structure
-
-**In IDE, open `composeApp/build.gradle.kts`:**
-
-Replace the `android {}` block with the new DSL inside the kotlin multiplatform block:
-
-```kotlin
-kotlin {
-    androidLibrary {
-        namespace = "com.ifochka.jufk"
-        compileSdk = 35
-        minSdk = 24
-
-        // Enable Android resources
-        withAndroidResources()
-    }
-
-    // ... rest of targets
-}
-```
-
-**Voiceover:**
-> "The new KMP plugin uses `androidLibrary` inside the kotlin block instead of a separate `android` block. This makes the configuration cleaner and more consistent across platforms."
-
-#### 2. Create androidApp Module
-
-**Create `androidApp/build.gradle.kts`:**
-
-```kotlin
-plugins {
-    alias(libs.plugins.androidApplication)
-    alias(libs.plugins.kotlinAndroid)
-    alias(libs.plugins.composeCompiler)
-}
-
-android {
-    namespace = "com.ifochka.jufk.app"
-    compileSdk = 35
-
-    defaultConfig {
-        applicationId = "com.ifochka.jufk"
-        minSdk = 24
-        targetSdk = 35
-        versionCode = 1
-        versionName = "1.0"
-    }
-
-    buildFeatures {
-        compose = true
-    }
-}
-
-dependencies {
-    implementation(project(":composeApp"))
-    implementation(libs.androidx.activity.compose)
-}
-```
-
-#### 3. Move Android App Content
-
-**Move files to `androidApp/src/main/`:**
-- `MainActivity.kt`
-- `AndroidManifest.xml` (with application-level config)
+> "Now our site actually says 'Just Use Fucking Kotlin' with proper styling. Dark background, bold 'Fucking' in red, clean typography."
 
 **In Terminal:**
 ```bash
-mkdir -p androidApp/src/main/kotlin/com/ifochka/jufk
-mv composeApp/src/androidMain/kotlin/com/ifochka/jufk/MainActivity.kt androidApp/src/main/kotlin/com/ifochka/jufk/
+git add composeApp/src/commonMain/kotlin/com/ifochka/jufk/App.kt
+git commit -m "feat: Add hero text - Just Use Fucking Kotlin
+
+Co-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>"
 ```
 
 **Voiceover:**
-> "The app-specific stuff - MainActivity, the application manifest - now lives in the androidApp module. composeApp becomes a pure library that androidApp depends on."
+> "Let's push everything and watch it deploy."
 
-#### 4. Update settings.gradle.kts
-
-**Add to `settings.gradle.kts`:**
-```kotlin
-include(":androidApp")
-```
-
-#### 5. Verify Build
-
-**In Terminal:**
 ```bash
-./gradlew :androidApp:assembleDebug
-```
-
-**Voiceover:**
-> "Let's verify everything still works. This separation will make our life easier in future sessions when we add more Android-specific configuration."
-
-#### 6. Commit and Push
-
-**In Terminal:**
-```bash
-git checkout main
-git pull
-git checkout -b refactor/kmp-plugin-migration
-git add .
-git commit -m "refactor: Migrate to new KMP plugin DSL with separate androidApp module"
 git push --set-upstream origin refactor/kmp-plugin-migration
 ```
 
+**In Browser:**
+- Create pull request
+- Wait for deploy workflow to complete
+- Show new production site
+
+**Voiceover:**
+> "There it is - justusefuckingkotlin.com now has personality. And this will look identical on Android, iOS, Desktop when we get there - that's the power of Compose Multiplatform."
+
 ### Deliverable
 
-- Project using modern KMP plugin DSL
-- Clean separation: `composeApp` (library) + `androidApp` (application)
-- Ready for future sessions
+- Hero text styled and deployed
+- Visible progress on the project
 
 ---
 
@@ -628,39 +466,34 @@ git push --set-upstream origin refactor/kmp-plugin-migration
 
 ### Outro Script
 
-> "That's it for today! We now have professional CI quality gates:
-> - ktlint ensures consistent formatting
-> - detekt catches potential bugs
-> - Android Lint catches Compose-specific issues like unstable parameters
-> - Unit tests prevent regressions
+> "That's it for today! We've modernized our project structure:
+> - Migrated to the new KMP plugin DSL
+> - Separated library code (composeApp) from app code (androidApp)
+> - Made CI builds 2-3x faster with Gradle caching
+> - Gave our site some personality
 >
-> Every PR is automatically checked before it can be merged.
+> This cleaner structure will pay off in future sessions when we add Android deployment, iOS, and more platforms.
 >
-> We also migrated to the new KMP plugin DSL with a separate androidApp module - this cleaner structure will make future sessions easier.
+> If you're watching this standalone, the migration steps work for any Kotlin Multiplatform project - not just this one.
 >
-> If you're new here, this CI setup works for any Kotlin Multiplatform project - not just this one. Try it on your own project!
->
-> For those following the series, next time we're taking this app to the Play Store. See you then!"
+> For those following the series, next time we're adding CI quality gates - automatic code formatting and static analysis. See you then!"
 
 ### What We Accomplished
 
 **Primary (Standalone Value):**
-- Set up ktlint for code formatting
-- Set up detekt for static analysis
-- Set up Android Lint with Compose-specific checks
-- Created CI workflow with sequential quality checks
-- Quality gates blocking PRs until all checks pass
+- Migrated to new KMP plugin DSL with `androidLibrary {}` block
+- Created separate `androidApp` module for Android-specific code
+- Clean architecture: library vs application separation
 
 **Series Continuity:**
-- Faster builds with Gradle caching
+- Faster builds with Gradle caching (5+ min → 2-3 min)
 - New UI deployed to production
-- Migrated to new KMP plugin DSL with separate androidApp module
 
 ---
 
 ## Tips from Session 1 Retrospective
 
-1. **Practice technical terms**: ktlint (K-T-lint), detekt (dee-TEKT)
-2. **Test workflow from feature branch** before merging (use workflow_dispatch)
-3. **Complete thoughts** - don't trail off mid-sentence
-4. **Pause after key points** - give viewers time to absorb
+1. **Practice technical terms**: Gradle (GRAY-dul)
+2. **Complete thoughts** - don't trail off mid-sentence
+3. **Pause after key points** - give viewers time to absorb
+4. **Show, don't just tell** - actually run the builds, show the results

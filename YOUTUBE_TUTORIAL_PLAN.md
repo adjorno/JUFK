@@ -36,6 +36,39 @@ This ensures:
 - Cloudflare account (wrangler CLI installed)
 - PostHog account
 
+## Deployment and Versioning Strategy
+
+**Unified strategy across all platforms (Web, Android, iOS, Desktop, CLI):**
+
+### Environments
+- **Dev Environment**: Merges to `main` branch
+  - Web: `dev.justusefuckingkotlin.com` (Cloudflare subdomain)
+  - Android: Internal testing track
+  - iOS: TestFlight internal testing
+  - Desktop/CLI: Dev builds (not distributed)
+
+- **Production Environment**: Git tags (e.g., `v1.0.0`)
+  - Web: `justusefuckingkotlin.com` (Cloudflare production)
+  - Android: Play Store (promoted from internal to public)
+  - iOS: TestFlight public or App Store
+  - Desktop/CLI: GitHub Releases + Homebrew
+
+### Versioning Scheme
+- **Dev/PR builds** (from `main` branch):
+  - Format: `1.0.0.YYYYMMDD.HHMM.GITSHA`
+  - Example: `1.0.0.20260109.1430.a3f2b1c`
+  - Used for: Footer display, internal testing, dev environment
+
+- **Production releases** (from git tags):
+  - Format: `v1.0.0` (semantic versioning)
+  - Example: `v1.0.0`, `v1.1.0`, `v2.0.0`
+  - Used for: Public releases, Play Store, TestFlight, GitHub Releases
+
+### Implementation
+- **BuildKonfig**: Injects version at compile time
+- **CI Workflows**: Generate appropriate version based on trigger (main vs tag)
+- **Session 4**: Full setup introduced (dev environment + versioning + footer)
+
 ---
 
 # YOUTUBE SESSION 1: Deploy KMP to Production [COMPLETED]
@@ -64,7 +97,118 @@ This ensures:
 
 ---
 
-# YOUTUBE SESSION 2: CI Quality Gates for Kotlin Multiplatform
+# YOUTUBE SESSION 2: Migrate to New KMP Plugin & Speed Up Builds
+
+**Searchable Title**: "How to Migrate to the New Kotlin Multiplatform Plugin DSL"
+
+**Standalone Value**: Learn to migrate from the legacy KMP plugin to the new DSL with `androidLibrary {}` block. Also covers Gradle caching for faster CI builds.
+
+**Session Goal**: Modernize project structure and speed up CI
+
+## Primary Topic: KMP Plugin Migration (80%)
+
+### Iteration 2.1: Introduction - Why Migrate?
+**Time Estimate**: 1 min
+
+**Script Points**:
+- The new KMP plugin DSL is cleaner and more consistent
+- Separates library code from app code (better architecture)
+- Required for some newer KMP features
+- "By the end of this video, your project will use the modern KMP structure"
+
+---
+
+### Iteration 2.2: Update composeApp to Library Structure
+**Time Estimate**: 3-4 min
+
+**Steps**:
+1. Open `composeApp/build.gradle.kts`
+2. Replace `android {}` block with `androidLibrary {}` inside kotlin block
+3. Enable `androidResources` explicitly with `withAndroidResources()`
+4. Explain the new DSL structure
+5. Run `./gradlew :composeApp:build` to verify
+
+**Delivered**: composeApp using new KMP plugin DSL
+
+**Key Files**:
+- `composeApp/build.gradle.kts`
+
+---
+
+### Iteration 2.3: Create androidApp Module
+**Time Estimate**: 4-5 min
+
+**Steps**:
+1. Create `androidApp/build.gradle.kts` with Android Application plugin
+2. Create `androidApp/src/main/AndroidManifest.xml`
+3. Move `MainActivity.kt` from composeApp to androidApp
+4. Add dependency on `:composeApp`
+5. Update `settings.gradle.kts` to include `:androidApp`
+6. Run `./gradlew :androidApp:assembleDebug` to verify
+
+**Delivered**: Clean separation of library and app code
+
+**Key Files**:
+- `androidApp/build.gradle.kts` (new)
+- `androidApp/src/main/kotlin/` (new)
+- `settings.gradle.kts`
+
+---
+
+### Iteration 2.4: Update Deploy Workflow for androidApp
+**Time Estimate**: 2 min
+
+**Steps**:
+1. Update any Android build references to use `:androidApp`
+2. Verify workflow still works
+3. Commit + push via PR
+
+**Delivered**: Deployment working with new structure
+
+---
+
+## Series Continuity: Session 1 Promises (20%)
+
+### Iteration 2.5: Faster Builds with Gradle Caching
+**Time Estimate**: 2-3 min
+
+**Steps**:
+1. Update existing deploy workflow with `gradle/actions/setup-gradle@v4`
+2. Update `actions/checkout@v3` -> `actions/checkout@v4`
+3. Explain how Gradle caching works
+4. Show before/after build times (5+ min -> 2-3 min)
+
+**Delivered**: CI builds significantly faster
+
+**Key Files**:
+- `.github/workflows/web-build-and-deploy.yml`
+
+---
+
+### Iteration 2.6: First UI Update
+**Time Estimate**: 2-3 min
+
+**Steps**:
+1. Update `App.kt` with styled "Just Use Fucking Kotlin" hero text
+2. Add tagline: "One language. All platforms."
+3. Run `./gradlew ktlintFormat` (preview of next session!)
+4. Merge and deploy
+5. Show new production site
+
+**Delivered**: Visible progress on the project
+
+**Key Files**:
+- `composeApp/src/commonMain/kotlin/App.kt`
+
+---
+
+**Session 2 Total Time Estimate**: 12-16 min
+
+**Detailed Plan**: See [/youtube-sessions/session-2-detailed-plan.md](youtube-sessions/session-2-detailed-plan.md)
+
+---
+
+# YOUTUBE SESSION 3: CI Quality Gates for Kotlin Multiplatform
 
 **Searchable Title**: "How to Set Up CI Quality Gates for Kotlin Multiplatform"
 
@@ -74,17 +218,18 @@ This ensures:
 
 ## Primary Topic: CI Quality Gates (80%)
 
-### Iteration 2.1: Introduction to CI Quality Gates
+### Iteration 3.1: Introduction - Why CI Quality Gates Matter
 **Time Estimate**: 1 min
 
 **Script Points**:
-- What are CI quality gates and why they matter
-- Overview: ktlint (formatting), detekt (static analysis), Android Lint, unit tests
-- "By the end of this video, every PR will be automatically checked for quality"
+- CI quality gates = automatic checks that run on every PR
+- Prevents "it works on my machine" problems
+- Catches issues early, before code review
+- Overview: ktlint (formatting), detekt (static analysis), Android Lint (Compose), unit tests
 
 ---
 
-### Iteration 2.2: ktlint Setup - Code Formatting
+### Iteration 3.2: ktlint Setup - Code Formatting
 **Time Estimate**: 3-4 min
 
 **Steps**:
@@ -92,7 +237,6 @@ This ensures:
 2. Create `.editorconfig` with Kotlin style rules
 3. Run `./gradlew ktlintFormat` to auto-fix existing code
 4. Explain what ktlint checks (imports, spacing, naming)
-5. Show before/after of formatted code
 
 **Delivered**: Automatic code formatting enforcement
 
@@ -103,7 +247,7 @@ This ensures:
 
 ---
 
-### Iteration 2.3: detekt Setup - Static Analysis
+### Iteration 3.3: detekt Setup - Static Analysis
 **Time Estimate**: 2-3 min
 
 **Steps**:
@@ -119,7 +263,7 @@ This ensures:
 
 ---
 
-### Iteration 2.4: Android Lint with Compose Checks
+### Iteration 3.4: Android Lint with Compose Checks
 **Time Estimate**: 1-2 min
 
 **Steps**:
@@ -131,27 +275,27 @@ This ensures:
 
 ---
 
-### Iteration 2.5: Unit Tests in CI
+### Iteration 3.5: Unit Tests in CI
 **Time Estimate**: 2-3 min
 
 **Steps**:
 1. Show existing test structure (`commonTest`)
-2. Add a meaningful test (or show the existing one)
-3. Run `./gradlew allTests` locally
-4. Explain multiplatform test targets
+2. Run `./gradlew allTests` locally
+3. Explain multiplatform test targets
 
 **Delivered**: Unit tests ready for CI
 
 ---
 
-### Iteration 2.6: GitHub Actions CI Workflow
-**Time Estimate**: 2-3 min
+### Iteration 3.6: GitHub Actions CI Workflow
+**Time Estimate**: 3-4 min
 
 **Steps**:
 1. Create `.github/workflows/ci.yml`
 2. Single job, separate steps for visibility (ktlint, detekt, lint, tests)
-3. Gradle caching for fast builds
+3. Trigger on push to main and all PRs
 4. Commit + push via PR, watch CI run
+5. Merge when CI passes
 
 **Delivered**: Complete CI pipeline with quality gates
 
@@ -160,61 +304,38 @@ This ensures:
 
 ---
 
-## Series Continuity: Session 1 Promises (20%)
+## Series Continuity: UI Evolution (20%)
 
-### Iteration 2.7: Bonus - Faster Builds with Gradle Caching
-**Time Estimate**: 2 min
+### Iteration 3.7: Extract Theme + Add Scaffold
+**Time Estimate**: 3-4 min
 
-**Steps**:
-1. Update existing deploy workflow with `gradle/actions/setup-gradle@v4`
-2. Update `actions/checkout@v3` -> `actions/checkout@v4`
-3. Show before/after build times
-
-**Delivered**: CI builds ~2-3 min instead of 5+
-
----
-
-### Iteration 2.8: Bonus - First UI Update
-**Time Estimate**: 2 min
+**Why This Makes Sense**:
+- CI enforces consistent code structure → good time to extract theme constants
+- Theme extraction is like "code quality for UI"
+- Natural progression from inline styles to proper architecture
 
 **Steps**:
-1. Quick change to `App.kt` - styled "Just Use Fucking Kotlin" text
-2. Merge and deploy
-3. Show new production site
+1. Create `theme/Theme.kt` with JufkColors and JufkTypography
+2. Create `ui/components/HeroSection.kt` (extract from App.kt)
+3. Update `App.kt` to use JufkTheme and Scaffold
+4. Wrap hero in proper component structure
 
-**Delivered**: Visible progress on the project
-
----
-
-### Iteration 2.9: Migrate to New KMP Plugin DSL
-**Time Estimate**: 4-5 min
-
-**Steps**:
-1. Update `composeApp/build.gradle.kts` to new plugin DSL
-2. Replace `android {}` block with `androidLibrary {}` in kotlin multiplatform block
-3. Enable `androidResources` explicitly
-4. Create new `androidApp` module for app-specific content
-5. Move `MainActivity`, `AndroidManifest.xml`, app resources to `androidApp`
-6. Update `settings.gradle.kts` to include new module
-7. Verify Android app still builds and runs
-
-**Delivered**: Project using modern KMP plugin DSL, ready for future sessions
+**Delivered**: Theme-based architecture, reusable HeroSection component
 
 **Key Files**:
-- `composeApp/build.gradle.kts`
-- `androidApp/build.gradle.kts` (new)
-- `androidApp/src/androidMain/` (new)
-- `settings.gradle.kts`
+- `composeApp/src/commonMain/kotlin/theme/Theme.kt` (new)
+- `composeApp/src/commonMain/kotlin/ui/components/HeroSection.kt` (new)
+- `composeApp/src/commonMain/kotlin/App.kt` (refactored)
 
 ---
 
-**Session 2 Total Time Estimate**: 16-20 min
+**Session 3 Total Time Estimate**: 15-20 min
 
-**Detailed Plan**: See [/youtube-sessions/session-2-detailed-plan.md](youtube-sessions/session-2-detailed-plan.md)
+**Detailed Plan**: See [/youtube-sessions/session-3-detailed-plan.md](youtube-sessions/session-3-detailed-plan.md)
 
 ---
 
-# YOUTUBE SESSION 3: Android to Play Store
+# YOUTUBE SESSION 4: Android to Play Store
 
 **Searchable Title**: "How to Deploy Kotlin Multiplatform Android App to Play Store"
 
@@ -222,7 +343,9 @@ This ensures:
 
 **Session Goal**: Deploy Android app to Play Store internal track
 
-## Iteration 3.1: Android Signing Configuration
+## Primary Topic: Android Deployment (80%)
+
+### Iteration 4.1: Android Signing Configuration
 **Time Estimate**: 3-4 min
 
 **Steps**:
@@ -239,7 +362,7 @@ This ensures:
 
 ---
 
-## Iteration 3.2: Play Store Assets
+## Iteration 4.2: Play Store Assets
 **Time Estimate**: 2-3 min
 
 **Steps**:
@@ -256,7 +379,7 @@ This ensures:
 
 ---
 
-## Iteration 3.3: Fastlane Android Setup
+## Iteration 4.3: Fastlane Android Setup
 **Time Estimate**: 4-5 min
 
 **Steps**:
@@ -278,7 +401,7 @@ This ensures:
 
 ---
 
-## Iteration 3.4: GitHub Actions Android Deployment
+## Iteration 4.4: GitHub Actions Android Deployment
 **Time Estimate**: 2-3 min
 
 **Steps**:
@@ -295,11 +418,43 @@ This ensures:
 
 ---
 
-**Session 3 Total Time Estimate**: 11-15 min
+## Series Continuity: UI Evolution + Infrastructure (20%)
+
+### Iteration 4.5: Dev Environment + Versioning + Footer
+**Time Estimate**: 3-4 min
+
+**Why This Makes Sense**:
+- Deploying to Play Store → need proper version numbers
+- Good time to introduce dev vs prod environments
+- Footer shows version → visual confirmation of deployment
+
+**Steps**:
+1. Setup dev environment (PRs → `dev.justusefuckingkotlin.com`)
+2. Implement versioning scheme:
+   - Production: `v1.0.0` (semantic)
+   - Dev/PR: `1.0.0.YYYYMMDD.HHMM.GITSHA`
+3. Add BuildKonfig plugin for version injection
+4. Create `ui/components/FixedFooter.kt` to display version
+5. Update `App.kt` to add footer to Scaffold bottomBar
+6. Update CI workflows to generate and pass versions
+
+**Delivered**: Dev environment, version display, FixedFooter component
+
+**Key Files**:
+- `composeApp/src/commonMain/kotlin/ui/components/FixedFooter.kt` (new)
+- `buildSrc/src/main/kotlin/Versioning.kt` (new - helper functions)
+- `composeApp/build.gradle.kts` (BuildKonfig setup)
+- `App.kt` (add footer)
+- `.github/workflows/web-build-and-deploy.yml` (versioning)
+- `.github/workflows/deploy_android.yml` (versioning)
 
 ---
 
-# YOUTUBE SESSION 4: iOS to TestFlight
+**Session 4 Total Time Estimate**: 14-19 min
+
+---
+
+# YOUTUBE SESSION 5: iOS to TestFlight
 
 **Searchable Title**: "How to Deploy Kotlin Multiplatform iOS App to TestFlight"
 
@@ -307,7 +462,9 @@ This ensures:
 
 **Session Goal**: Deploy iOS app to TestFlight
 
-## Iteration 4.1: iOS Project Setup with XcodeGen
+## Primary Topic: iOS Deployment (80%)
+
+### Iteration 5.1: iOS Project Setup with XcodeGen
 **Time Estimate**: 3-4 min
 
 **Steps**:
@@ -324,7 +481,7 @@ This ensures:
 
 ---
 
-## Iteration 4.2: iOS App Icons
+## Iteration 5.2: iOS App Icons
 **Time Estimate**: 2-3 min
 
 **Steps**:
@@ -343,7 +500,7 @@ This ensures:
 
 ---
 
-## Iteration 4.3: Fastlane iOS Setup
+## Iteration 5.3: Fastlane iOS Setup
 **Time Estimate**: 4-5 min
 
 **Steps**:
@@ -363,7 +520,7 @@ This ensures:
 
 ---
 
-## Iteration 4.4: GitHub Actions iOS Deployment
+## Iteration 5.4: GitHub Actions iOS Deployment
 **Time Estimate**: 2-3 min
 
 **Steps**:
@@ -380,11 +537,37 @@ This ensures:
 
 ---
 
-**Session 4 Total Time Estimate**: 11-15 min
+## Series Continuity: UI Evolution (20%)
+
+### Iteration 5.5: Add Android Platform Card
+**Time Estimate**: 2-3 min
+
+**Why This Makes Sense**:
+- Android was deployed in Session 4 → celebrate by showing it on the site
+- Introduces PlatformSectionCard component pattern (reusable!)
+- Real content (Android is live on Play Store!)
+
+**Steps**:
+1. Create `data/PlatformContent.kt` with PlatformInfo data model
+2. Create `ui/components/PlatformSectionCard.kt` (reusable card component)
+3. Update `App.kt` to change from centered Box to scrollable Column layout
+4. Add "Available On" section header
+5. Add Android platform card with LIVE badge
+
+**Delivered**: First platform card, scrollable layout, reusable card pattern
+
+**Key Files**:
+- `composeApp/src/commonMain/kotlin/data/PlatformContent.kt` (new)
+- `composeApp/src/commonMain/kotlin/ui/components/PlatformSectionCard.kt` (new)
+- `App.kt` (major refactor - Box → Column)
 
 ---
 
-# YOUTUBE SESSION 5: Desktop App
+**Session 5 Total Time Estimate**: 13-18 min
+
+---
+
+# YOUTUBE SESSION 6: Desktop App
 
 **Searchable Title**: "How to Build Desktop Apps with Kotlin Multiplatform (Compose Desktop)"
 
@@ -392,7 +575,9 @@ This ensures:
 
 **Session Goal**: Desktop app running locally with proper packaging
 
-## Iteration 5.1: Desktop Entry Point & Icons
+## Primary Topic: Desktop App (80%)
+
+### Iteration 6.1: Desktop Entry Point & Icons
 **Time Estimate**: 3-4 min
 
 **Steps**:
@@ -412,7 +597,7 @@ This ensures:
 
 ---
 
-## Iteration 5.2: Desktop Packaging Configuration
+## Iteration 6.2: Desktop Packaging Configuration
 **Time Estimate**: 2-3 min
 
 **Steps**:
@@ -430,11 +615,33 @@ This ensures:
 
 ---
 
-**Session 5 Total Time Estimate**: 5-7 min
+## Series Continuity: UI Evolution (20%)
+
+### Iteration 6.3: Add iOS Platform Card
+**Time Estimate**: 2 min
+
+**Why This Makes Sense**:
+- iOS deployed in Session 5 → add it to the site
+- Reuse PlatformSectionCard pattern (established in Session 5)
+- Simple addition - just add data and one line of code
+
+**Steps**:
+1. Update `data/PlatformContent.kt` - add iOS platform info
+2. Update `App.kt` - add second PlatformSectionCard for iOS
+
+**Delivered**: iOS visible on website
+
+**Key Files**:
+- `data/PlatformContent.kt` (add iOS)
+- `App.kt` (add iOS card)
 
 ---
 
-# YOUTUBE SESSION 6: CLI Tool
+**Session 6 Total Time Estimate**: 7-9 min
+
+---
+
+# YOUTUBE SESSION 7: CLI Tool
 
 **Searchable Title**: "How to Build Native CLI Tools with Kotlin (Kotlin/Native + Homebrew)"
 
@@ -442,7 +649,9 @@ This ensures:
 
 **Session Goal**: Native CLI binary distributed via Homebrew
 
-## Iteration 6.1: CLI Module Setup
+## Primary Topic: CLI Tool (80%)
+
+### Iteration 7.1: CLI Module Setup
 **Time Estimate**: 3-4 min
 
 **Steps**:
@@ -465,7 +674,7 @@ This ensures:
 
 ---
 
-## Iteration 6.2: Homebrew Tap Setup
+## Iteration 7.2: Homebrew Tap Setup
 **Time Estimate**: 3-4 min
 
 **Steps**:
@@ -481,7 +690,7 @@ This ensures:
 
 ---
 
-## Iteration 6.3: CLI Build in Release Workflow
+## Iteration 7.3: CLI Build in Release Workflow
 **Time Estimate**: 2-3 min
 
 **Steps**:
@@ -497,11 +706,28 @@ This ensures:
 
 ---
 
-**Session 6 Total Time Estimate**: 8-11 min
+## Series Continuity: UI Evolution (20%)
+
+### Iteration 7.4: Add Desktop Platform Card
+**Time Estimate**: 2 min
+
+**Steps**:
+1. Update `data/PlatformContent.kt` - add Desktop platform info (🖥️ macOS/Windows/Linux)
+2. Update `App.kt` - add third PlatformSectionCard for Desktop
+
+**Delivered**: Desktop visible on website
+
+**Key Files**:
+- `data/PlatformContent.kt` (add Desktop)
+- `App.kt` (add Desktop card)
 
 ---
 
-# YOUTUBE SESSION 7: Release Pipeline
+**Session 7 Total Time Estimate**: 10-13 min
+
+---
+
+# YOUTUBE SESSION 8: Release Pipeline
 
 **Searchable Title**: "How to Automate Multi-Platform Releases with GitHub Actions"
 
@@ -509,7 +735,9 @@ This ensures:
 
 **Session Goal**: Unified release workflow triggered by git tags
 
-## Iteration 7.1: Version Extraction Workflow
+## Primary Topic: Release Pipeline (80%)
+
+### Iteration 8.1: Version Extraction Workflow
 **Time Estimate**: 2-3 min
 
 **Steps**:
@@ -525,7 +753,7 @@ This ensures:
 
 ---
 
-## Iteration 7.2: Platform Build Templates
+## Iteration 8.2: Platform Build Templates
 **Time Estimate**: 4-5 min
 
 **Steps**:
@@ -545,7 +773,7 @@ This ensures:
 
 ---
 
-## Iteration 7.3: Main Release Workflow
+## Iteration 8.3: Main Release Workflow
 **Time Estimate**: 3-4 min
 
 **Steps**:
@@ -563,77 +791,182 @@ This ensures:
 
 ---
 
-**Session 7 Total Time Estimate**: 9-12 min
+## Series Continuity: UI Evolution (20%)
+
+### Iteration 8.4: Add CLI Platform Card
+**Time Estimate**: 2 min
+
+**Steps**:
+1. Update `data/PlatformContent.kt` - add CLI platform info (⌨️ Homebrew installation)
+2. Update `App.kt` - add fourth PlatformSectionCard for CLI
+
+**Delivered**: CLI visible on website
+
+**Key Files**:
+- `data/PlatformContent.kt` (add CLI)
+- `App.kt` (add CLI card)
 
 ---
 
-# YOUTUBE SESSION 8: UI & Content
+**Session 8 Total Time Estimate**: 11-14 min
 
-**Searchable Title**: "Compose Multiplatform UI - Building Responsive Cross-Platform Layouts"
+---
 
-**Standalone Value**: Learn to build polished, responsive UIs with Compose Multiplatform that work across all screen sizes and platforms.
+# YOUTUBE SESSION 9: Release Pipeline Completion
 
-**Session Goal**: Polish UI with proper content and styling
+**Searchable Title**: "Completing the Multi-Platform Release Pipeline"
 
-## Iteration 8.1: UI Component Structure
+**Standalone Value**: Finalize release automation and add final platform to the website.
+
+**Session Goal**: Complete release pipeline, add Web to site
+
+## Primary Topic: Release Pipeline Completion (80%)
+
+### Iteration 9.1: Test Full Release Pipeline
+**Time Estimate**: 5-6 min
+
+**Steps**:
+1. Create test release tag: `git tag v0.1.0`
+2. Watch all platform builds execute
+3. Verify GitHub Release created with artifacts
+4. Test each platform download/install
+5. Verify production deployments
+
+**Delivered**: Validated release pipeline
+
+---
+
+## Series Continuity: UI Evolution (20%)
+
+### Iteration 9.2: Add Web Platform Card + Responsive Grid
+**Time Estimate**: 3 min
+
+**Why This Makes Sense**:
+- All platforms deployed → time to add Web (the first platform!)
+- Refactor linear list to responsive grid
+- Polish layout for all screen sizes
+
+**Steps**:
+1. Update `data/PlatformContent.kt` - add Web platform (🌐 justusefuckingkotlin.com)
+2. Update `data/PlatformContent.kt` - create `allPlatforms` list
+3. Update `App.kt` - replace Column of individual cards with FlowRow grid
+4. Make platform cards responsive (min 300dp, max 400dp)
+
+**Delivered**: All 5 platforms visible in responsive grid
+
+**Key Files**:
+- `data/PlatformContent.kt` (add Web, create allPlatforms list)
+- `App.kt` (Column → FlowRow with responsive sizing)
+
+---
+
+**Session 9 Total Time Estimate**: 8-9 min
+
+---
+
+# YOUTUBE SESSION 10: Compose UI Architecture Deep Dive
+
+**Searchable Title**: "Compose Multiplatform UI Architecture - Components, Theming, and State Management"
+
+**Standalone Value**: Learn to structure a professional Compose Multiplatform UI with proper component architecture, theming, and state management. Complete deep dive into UI patterns.
+
+**Session Goal**: Review full UI architecture, refactor for clean separation, add final components
+
+**This is THE dedicated UI session** - stepping back to explain everything built incrementally in Sessions 2-9
+
+## Part 1: Architecture Overview (3-4 min)
+
+### Iteration 10.1: Review Component Hierarchy
+**Time Estimate**: 3-4 min
+
+**What to Cover**:
+- Walk through what we've built incrementally:
+  - Session 2: Basic hero with inline styles
+  - Session 3: Theme.kt + HeroSection component
+  - Session 4: FixedFooter with versioning
+  - Session 5-9: Platform cards + responsive grid
+- Explain the current architecture:
+  ```
+  App.kt (theme wrapper + Scaffold with all the logic)
+    ├── HeroSection.kt
+    ├── Platform cards (inline in App.kt)
+    └── FixedFooter.kt
+  ```
+- Identify what needs refactoring:
+  - App.kt is doing too much (orchestration + layout)
+  - No state management (data hardcoded in App.kt)
+  - No section-level components
+
+**Delivered**: Understanding of current architecture and refactoring plan
+
+---
+
+## Part 2: Refactor to Clean Architecture (4-5 min)
+
+### Iteration 10.2: Extract HomeScreen and Add ViewModel
 **Time Estimate**: 4-5 min
 
 **Steps**:
-1. Create UI components:
-   - `ui/components/HeroSection.kt`
-   - `ui/components/PlatformSectionCard.kt`
-   - `ui/components/LimitationsCard.kt`
-   - `ui/components/FixedFooter.kt`
-2. Create `HomeScreen.kt` composing all components
-3. Create `HomeViewModel.kt` for state management
+1. Create `HomeViewModel.kt` with platform data and content
+2. Create `HomeScreen.kt` - move all layout logic from App.kt
+3. Create `ui/sections/PlatformSection.kt` - extract platform grid
+4. Create `ui/sections/LimitationsSection.kt` - new section for project info
+5. Simplify `App.kt` to just be theme wrapper: `JufkTheme { HomeScreen() }`
 
-**Delivered**: Clean UI architecture
+**Delivered**: Clean separation - App (theme) → HomeScreen (layout) → Sections (composition) → Components (reusable)
 
 **Key Files**:
-- `composeApp/src/commonMain/kotlin/ui/`
-- `composeApp/src/commonMain/kotlin/HomeScreen.kt`
-- `composeApp/src/commonMain/kotlin/HomeViewModel.kt`
+- `HomeScreen.kt` (new)
+- `HomeViewModel.kt` (new)
+- `ui/sections/PlatformSection.kt` (new)
+- `ui/sections/LimitationsSection.kt` (new)
+- `App.kt` (simplified)
 
 ---
 
-## Iteration 8.2: Content & Theme
+## Part 3: Add Final Components (3-4 min)
+
+### Iteration 10.3: Limitations Cards and Polish
 **Time Estimate**: 3-4 min
 
 **Steps**:
-1. Create `data/PlatformContent.kt` with platform info
-2. Create `theme/Theme.kt` with Material 3 colors
-3. Add content: hero title, platform descriptions, limitations
-4. Style for all screen sizes
+1. Create `ui/components/LimitationsCard.kt` - reusable card for lists
+2. Add two cards to LimitationsSection:
+   - "What This Is" (features: single codebase, multiplatform, CI/CD, production)
+   - "Limitations" (demo project, minimal UI, incomplete features, YouTube series)
+3. Polish responsive design (spacing, typography, accessibility)
+4. Test on all platforms
 
-**Delivered**: Polished content on all platforms
+**Delivered**: Complete, polished UI with all components
 
 **Key Files**:
-- `composeApp/src/commonMain/kotlin/data/PlatformContent.kt`
-- `composeApp/src/commonMain/kotlin/theme/Theme.kt`
+- `ui/components/LimitationsCard.kt` (new)
+- `HomeViewModel.kt` (add features/limitations data)
+- `ui/sections/LimitationsSection.kt` (use LimitationsCard)
 
 ---
 
-## Iteration 8.3: BuildKonfig for Version Display
+## Part 4: Architecture Explanation (2-3 min)
+
+### Iteration 10.4: Explain Compose Multiplatform Patterns
 **Time Estimate**: 2-3 min
 
-**Steps**:
-1. Add BuildKonfig plugin
-2. Configure version injection
-3. Display version in footer
-4. Update CI to pass version to Gradle
+**What to Cover**:
+- **Separation of Concerns**: Theme → Screen → Sections → Components → Data
+- **Reusability**: PlatformSectionCard, LimitationsCard work anywhere
+- **State Management**: ViewModel holds data, composables render it
+- **Responsive Design**: FlowRow, widthIn for adaptive layouts
+- **Cross-Platform**: Same code runs on Web, Android, iOS, Desktop
 
-**Delivered**: Version visible in app
-
-**Key Files**:
-- `build.gradle.kts` (BuildKonfig)
+**Delivered**: Educational value - how to structure real Compose Multiplatform UIs
 
 ---
 
-**Session 8 Total Time Estimate**: 9-12 min
+**Session 10 Total Time Estimate**: 12-16 min
 
 ---
 
-# YOUTUBE SESSION 9: Analytics
+# YOUTUBE SESSION 11: Cross-Platform Analytics
 
 **Searchable Title**: "Cross-Platform Analytics in Kotlin Multiplatform (PostHog Integration)"
 
@@ -641,7 +974,9 @@ This ensures:
 
 **Session Goal**: Cross-platform analytics with PostHog
 
-## Iteration 9.1: kotrack Module Setup
+## Primary Topic: Analytics (80%)
+
+### Iteration 11.1: kotrack Module Setup
 **Time Estimate**: 4-5 min
 
 **Steps**:
@@ -660,7 +995,7 @@ This ensures:
 
 ---
 
-## Iteration 9.2: Platform-Specific Implementations
+### Iteration 11.2: Platform-Specific Implementations
 **Time Estimate**: 4-5 min
 
 **Steps**:
@@ -680,7 +1015,7 @@ This ensures:
 
 ---
 
-## Iteration 9.3: Identity Storage & Events
+### Iteration 11.3: Identity Storage & Events
 **Time Estimate**: 3-4 min
 
 **Steps**:
@@ -701,11 +1036,25 @@ This ensures:
 
 ---
 
-**Session 9 Total Time Estimate**: 11-14 min
+## Series Continuity: UI Evolution (20%)
+
+### Iteration 11.4: Add Analytics to UI Interactions
+**Time Estimate**: 2 min
+
+**Steps**:
+1. Track platform card clicks
+2. Track page views
+3. Test analytics in PostHog dashboard
+
+**Delivered**: UI interactions tracked
 
 ---
 
-# YOUTUBE SESSION 10: Final Polish & Full Release
+**Session 11 Total Time Estimate**: 13-16 min
+
+---
+
+# YOUTUBE SESSION 12: Final Polish & Full Release
 
 **Searchable Title**: "Shipping a Kotlin Multiplatform App to All Platforms (Complete Guide)"
 
@@ -713,7 +1062,7 @@ This ensures:
 
 **Session Goal**: Complete multi-platform release with documentation
 
-## Iteration 10.1: README & Documentation
+## Iteration 12.1: README & Documentation
 **Time Estimate**: 2-3 min
 
 **Steps**:
@@ -731,7 +1080,7 @@ This ensures:
 
 ---
 
-## Iteration 10.2: Final Review & Full Platform Release
+## Iteration 12.2: Final Review & Full Platform Release
 **Time Estimate**: 4-5 min
 
 **Steps**:
@@ -750,4 +1099,4 @@ This ensures:
 
 ---
 
-**Session 10 Total Time Estimate**: 6-8 min
+**Session 12 Total Time Estimate**: 6-8 min
