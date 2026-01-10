@@ -9,7 +9,7 @@ on:
       - 'composeApp/**'
       - 'iosApp/**'
       - 'fastlane/**'
-      - '.github/workflows/deploy_ios.yml'
+      - '.github/workflows/ios-deploy.yml'
   workflow_dispatch:
     inputs:
       destination:

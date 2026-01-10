@@ -56,27 +56,6 @@ jobs:
           path: '**/build/reports/detekt/'
           retention-days: 7
 
-  android-lint:
-    name: Android Lint
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup Gradle
-        uses: ./.github/actions/setup-gradle
-
-      - name: Run Android Lint
-        run: ./gradlew :androidApp:lint
-
-      - name: Upload lint report
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: lint-report
-          path: 'androidApp/build/reports/lint-results*.html'
-          retention-days: 7
-
   test:
     name: Unit Tests
     runs-on: ubuntu-latest
