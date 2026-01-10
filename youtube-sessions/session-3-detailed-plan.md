@@ -31,9 +31,38 @@
 - [ ] IDE ready (Android Studio or IntelliJ IDEA)
 - [ ] Terminal ready
 - [ ] Browser with GitHub open
+- [ ] **Helper file open**: `session-3-helper.txt` in Android Studio Scratches (see below)
 - [ ] **Fix from Session 2**: Update `actions/checkout@v3` → `actions/checkout@v4` during CI setup
 - [ ] Practice pronouncing: ktlint (K-T-lint), detekt (dee-TEKT), Multiplatform (not "Multiplot from")
 - [ ] Review 30 sec: What's the single takeaway? → "Every PR is checked automatically"
+
+---
+
+## Why We Use Pre-Prepared Snippets (session-3-helper.txt)
+
+**The Problem:** Previous sessions ran longer than planned because typing YAML workflows, Gradle configs, and .editorconfig files from scratch wastes viewer time. Nobody wants to watch someone type `uses: actions/checkout@v4` character by character.
+
+**The Solution:** A helper file with all the boilerplate pre-prepared. Keep it open in Android Studio Scratches (`File → New → Scratch File → Text`).
+
+**Transparency on Camera:**
+> "I have a helper file with the configs we need. These are standard templates I use across projects - I'll copy them in and explain what each part does."
+
+**What to copy-paste:**
+- Version catalog entries (`libs.versions.toml`)
+- Plugin declarations (`build.gradle.kts`)
+- `.editorconfig` content
+- `detekt.yml` content
+- `ci.yml` workflow
+
+**What to type live:**
+- Terminal commands (quick, shows the workflow)
+- Small edits or customizations
+- File names when creating files
+
+**Viewer Benefit:**
+- Faster pacing, no dead air
+- Focus on *understanding* the config, not watching typing
+- Shows realistic workflow (experienced devs use templates)
 
 ---
 
@@ -80,38 +109,33 @@ git checkout -b feat/ci-quality-gates
 
 #### 2. Add ktlint Plugin
 
-**In IDE, open `gradle/libs.versions.toml`:**
+**Copy from helper file → `gradle/libs.versions.toml`:**
 
-Add to `[versions]` section:
 ```toml
-ktlint = "12.1.2"
-```
+# [versions]
+ktlint = "14.0.1"
 
-Add to `[plugins]` section:
-```toml
+# [plugins]
 ktlint = { id = "org.jlleitschuh.gradle.ktlint", version.ref = "ktlint" }
 ```
 
-**In root `build.gradle.kts`:**
-
-Add to plugins block:
+**Copy from helper file → root `build.gradle.kts` plugins block:**
 ```kotlin
 alias(libs.plugins.ktlint) apply false
 ```
 
-**In `composeApp/build.gradle.kts`:**
-
-Add to plugins block:
+**Copy from helper file → `composeApp/build.gradle.kts` plugins block:**
 ```kotlin
 alias(libs.plugins.ktlint)
 ```
 
 **Voiceover:**
-> "ktlint is like Prettier for Kotlin. It enforces consistent code formatting across your entire project. No more arguments about tabs vs spaces or where to put braces."
+> "I'm copying the ktlint plugin config from my helper file. ktlint is like Prettier for Kotlin - it enforces consistent code formatting. No more arguments about tabs vs spaces."
 
 #### 3. Create .editorconfig
 
-**Create file `.editorconfig` in project root:**
+**Create file `.editorconfig` in project root, copy content from helper file:**
+
 ```ini
 root = true
 
@@ -126,25 +150,22 @@ trim_trailing_whitespace = true
 
 [*.{kt,kts}]
 ktlint_code_style = ktlint_official
-ktlint_standard_no-wildcard-imports = disabled
+ktlint_function_naming_ignore_when_annotated_with = Composable
+ktlint_standard_multiline-expression-wrapping = disabled
 ```
 
 **Voiceover:**
-> "The editorconfig file tells ktlint and your IDE what rules to follow. We're using the official Kotlin style with 4-space indentation and 120-character line length."
+> "Now I'll create an .editorconfig file and paste the config from my helper. This sets up Kotlin's official style with 4-space indentation. The key Compose line allows PascalCase for Composable function names."
 
-#### 4. Run ktlint and Fix Issues
+#### 4. Run ktlint
 
 **In Terminal:**
 ```bash
-# Check for issues
 ./gradlew ktlintCheck
-
-# Auto-fix what can be fixed
-./gradlew ktlintFormat
 ```
 
 **Voiceover:**
-> "ktlint can automatically fix most formatting issues. Run ktlintFormat and it rewrites your code to match the style rules. This is safe - it only changes whitespace and formatting, never logic."
+> "Let's run ktlint and make sure our code passes. If there are formatting issues, ktlintFormat can auto-fix them."
 
 ### Deliverable
 
@@ -160,49 +181,107 @@ ktlint_standard_no-wildcard-imports = disabled
 
 #### 1. Add detekt Plugin
 
-**In `gradle/libs.versions.toml`:**
+**Copy from helper file → `gradle/libs.versions.toml`:**
 
-Add to `[versions]` section:
 ```toml
-detekt = "1.23.7"
-```
+# [versions]
+detekt = "1.23.8"
 
-Add to `[plugins]` section:
-```toml
+# [plugins]
 detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
 ```
 
-**In root `build.gradle.kts`:**
-
-Add to plugins block:
+**Copy from helper file → root `build.gradle.kts` plugins block:**
 ```kotlin
 alias(libs.plugins.detekt) apply false
 ```
 
-**In `composeApp/build.gradle.kts`:**
-
-Add to plugins block:
+**Copy from helper file → `composeApp/build.gradle.kts` plugins block:**
 ```kotlin
 alias(libs.plugins.detekt)
 ```
 
 **Voiceover:**
-> "detekt is a static analysis tool. Unlike ktlint which only cares about formatting, detekt analyzes your code for potential bugs, complexity issues, and code smells. We'll use the default rules for now - you can always customize them later."
+> "Same pattern for detekt - copying from my helper file. detekt is a static analysis tool. Unlike ktlint which cares about formatting, detekt finds potential bugs, complexity issues, and code smells."
 
-#### 2. Run detekt
+#### 2. Create detekt.yml Configuration
 
-**In Terminal:**
-```bash
-./gradlew detekt
+**Create file `detekt.yml` in project root, copy content from helper file:**
+
+Based on [detekt Compose docs](https://detekt.dev/docs/introduction/compose/)
+
+```yaml
+# Compose-friendly detekt configuration
+naming:
+  FunctionNaming:
+    ignoreAnnotated:
+      - 'Composable'
+  TopLevelPropertyNaming:
+    constantPattern: '[A-Z][_A-Za-z0-9]*'
+
+complexity:
+  LongParameterList:
+    ignoreAnnotated:
+      - 'Composable'
+  LongMethod:
+    ignoreAnnotated:
+      - 'Composable'
+  CyclomaticComplexMethod:
+    ignoreAnnotated:
+      - 'Composable'
+  TooManyFunctions:
+    ignoreAnnotatedFunctions:
+      - 'Preview'
+
+style:
+  MagicNumber:
+    ignoreAnnotated:
+      - 'Composable'
+    ignorePropertyDeclaration: true
+    ignoreCompanionObjectPropertyDeclaration: true
+  UnusedParameter:
+    ignoreAnnotated:
+      - 'Composable'
+  UnusedPrivateMember:
+    ignoreAnnotated:
+      - 'Preview'
 ```
 
 **Voiceover:**
-> "Let's run detekt and see if it finds any issues. The defaults are sensible - we can tune the rules in a future session if needed."
+> "Creating detekt.yml - again from my helper file. This config is based on the official detekt Compose documentation. The key pattern is `ignoreAnnotated: Composable` - this tells detekt that Composable functions are naturally longer and have more parameters than regular functions."
+
+#### 3. Configure detekt in build.gradle.kts
+
+**Copy from helper file → root `build.gradle.kts` subprojects block:**
+```kotlin
+configure<io.gitlab.arturbosch.detekt.extensions.DetektExtension> {
+    buildUponDefaultConfig = true
+    config.setFrom(files("$rootDir/detekt.yml"))
+    parallel = true
+}
+
+tasks.withType<io.gitlab.arturbosch.detekt.Detekt>().configureEach {
+    exclude { it.file.path.contains("/build/") }
+}
+```
+
+**Voiceover:**
+> "One more paste into build.gradle.kts - this points detekt to our config file and excludes the build directory where generated code lives."
+
+#### 4. Run detekt
+
+**In Terminal:**
+```bash
+./gradlew detektMetadataCommonMain
+```
+
+**Voiceover:**
+> "For Kotlin Multiplatform, we run detektMetadataCommonMain - this checks the shared code in commonMain."
 
 ### Deliverable
 
-- detekt plugin enabled with default configuration
-- Any critical issues fixed
+- detekt plugin with Compose-friendly config
+- Generated code excluded via Gradle task config
 
 ---
 
@@ -241,53 +320,56 @@ alias(libs.plugins.detekt)
 
 #### 1. Create CI Workflow File
 
-**Create file `.github/workflows/ci.yml`:**
+**Create file `.github/workflows/ci.yml`, copy content from helper file:**
 
 ```yaml
 name: CI
 
 on:
   push:
-    branches:
-      - main
+    branches: [main]
   pull_request:
-    branches:
-      - main
+    branches: [main]
 
 jobs:
   check:
-    name: Quality Checks
+    name: Check
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Set up Java
+      - name: Set up JDK 17
         uses: actions/setup-java@v4
         with:
-          distribution: temurin
-          java-version: 17
+          distribution: 'temurin'
+          java-version: '17'
 
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v4
 
-      - name: Code Formatting (ktlint)
+      - name: Run ktlint
         run: ./gradlew ktlintCheck
 
-      - name: Static Analysis (detekt)
-        run: ./gradlew detekt
+      - name: Run detekt
+        run: |
+          ./gradlew \
+            detektMetadataCommonMain \
+            detektAndroidMain \
+            detektIosArm64Main \
+            detektDesktopMain \
+            detektWasmJsMain
 
-      - name: Unit Tests
-        run: ./gradlew allTests
+      - name: Run tests
+        run: ./gradlew testDebugUnitTest
 ```
 
 **Voiceover:**
-> "Here's our CI workflow. One job, three checks - each with its own step so you can see exactly what failed.
+> "Last big paste - the CI workflow. This is all from my helper file. One job with three checks: ktlint, detekt, and tests.
 >
-> Gradle stays warm between steps, so this is actually faster than parallel jobs. And when something fails, you immediately know if it's formatting, static analysis, or tests.
+> For detekt, we run multiple tasks to check all our platform targets - common, Android, iOS, Desktop, and Web.
 >
-> The workflow triggers on pushes to main and on all pull requests. Every PR gets checked before it can be merged."
+> Gradle stays warm between steps, so sequential is actually faster than parallel jobs. And when something fails, you immediately know which check broke."
 
 #### 2. Commit and Push
 
@@ -510,9 +592,10 @@ git commit -m "feat: Extract theme and add Scaffold structure"
 ### What We Accomplished
 
 **Primary (Standalone Value):**
-- Set up ktlint for code formatting
-- Set up detekt for static analysis
+- Set up ktlint for code formatting (with .editorconfig)
+- Set up detekt for static analysis (Compose-friendly config)
 - Created CI workflow with sequential quality checks
+- Learned KMP-specific task: `detektMetadataCommonMain`
 - Quality gates blocking PRs until all checks pass
 
 **Series Continuity:**
@@ -530,14 +613,28 @@ git commit -m "feat: Extract theme and add Scaffold structure"
 
 | File | Purpose |
 |------|---------|
-| `gradle/libs.versions.toml` | ktlint, detekt versions |
-| `build.gradle.kts` | ktlint, detekt plugins |
-| `composeApp/build.gradle.kts` | Apply ktlint, detekt |
-| `.editorconfig` | Code style rules |
+| `gradle/libs.versions.toml` | ktlint 14.0.1, detekt 1.23.8 |
+| `build.gradle.kts` | ktlint, detekt plugins + config |
+| `.editorconfig` | ktlint code style + rule overrides |
+| `detekt.yml` | Compose-friendly detekt rules |
 | `.github/workflows/ci.yml` | CI quality gates workflow |
 | `theme/Theme.kt` | JufkTheme, JufkColors |
 | `ui/components/HeroSection.kt` | Extracted hero component |
 | `App.kt` | Simplified with Scaffold |
+
+## Helper File Reference
+
+**File:** `youtube-sessions/session-3-helper.txt`
+
+Contains all copy-paste snippets used during the session:
+- Version catalog entries
+- Plugin declarations
+- `.editorconfig` content
+- `detekt.yml` content
+- Full `ci.yml` workflow
+- Terminal commands reference
+
+Open in Android Studio Scratches before recording.
 
 ---
 

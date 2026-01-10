@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -41,8 +40,6 @@ import com.ifochka.jufk.data.Limitation
 import com.ifochka.jufk.data.PlatformSection
 import com.ifochka.jufk.data.Video
 import com.ifochka.jufk.ui.components.HeroSection
-import com.ifochka.jufk.ui.components.LimitationsCard
-import com.ifochka.jufk.ui.components.LinkCard
 import com.ifochka.jufk.ui.components.PlatformSectionCard
 import com.ifochka.jufk.ui.theme.Dimensions
 import com.ifochka.kotrack.getPlatformName
@@ -55,12 +52,12 @@ fun HomeScreen(
     heroTitle: String,
     heroSubtitle: String,
     platformSections: List<PlatformSection>,
-    limitations: List<Limitation>,
-    limitationsHeading: String,
-    makingOfHeading: String,
-    videos: List<Video>,
-    goodnessHeading: String,
-    goodnessLinks: List<GoodnessLink>,
+    @Suppress("unused") limitations: List<Limitation>,
+    @Suppress("unused") limitationsHeading: String,
+    @Suppress("unused") makingOfHeading: String,
+    @Suppress("unused") videos: List<Video>,
+    @Suppress("unused") goodnessHeading: String,
+    @Suppress("unused") goodnessLinks: List<GoodnessLink>,
     inspirationText: String,
     inspirationLinks: List<InspirationLink>,
     inspirationSuffix: String,

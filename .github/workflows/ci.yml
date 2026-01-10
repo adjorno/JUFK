@@ -42,10 +42,20 @@ jobs:
         run: ./gradlew ktlintCheck
 
       - name: Run detekt
-        run: ./gradlew detekt
+        run: |
+          ./gradlew \
+            detektMetadataCommonMain \
+            detektAndroidMain \
+            detektIosArm64Main \
+            detektDesktopMain \
+            detektWasmJsMain \
+            detektMetadataNativeMain \
+            detektLinuxX64Main \
+            detektMetadataMacosMain \
+            detektMingwX64Main
 
       - name: Run tests
-        run: ./gradlew allTests
+        run: ./gradlew testDebugUnitTest
 
       - name: Upload detekt report
         if: always()

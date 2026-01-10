@@ -1,0 +1,238 @@
+# Session 3 Helper - Copy-Paste Snippets
+# =======================================
+# This file contains pre-prepared code snippets for the YouTube session.
+# Typing boilerplate YAML and Gradle configs live wastes viewer time.
+# Copy-paste from here, explain what each part does on camera.
+
+
+# ============================================
+# 1. GRADLE VERSION CATALOG (libs.versions.toml)
+# ============================================
+
+# Add to [versions] section:
+ktlint = "14.0.1"
+detekt = "1.23.8"
+
+# Add to [plugins] section:
+ktlint = { id = "org.jlleitschuh.gradle.ktlint", version.ref = "ktlint" }
+detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
+
+
+# ============================================
+# 2. ROOT build.gradle.kts - PLUGINS BLOCK
+# ============================================
+
+# Add to plugins block:
+alias(libs.plugins.ktlint) apply false
+alias(libs.plugins.detekt) apply false
+
+
+# ============================================
+# 3. ROOT build.gradle.kts - SUBPROJECTS CONFIG
+# ============================================
+
+# Add inside subprojects { } block:
+configure<org.jlleitschuh.gradle.ktlint.KtlintExtension> {
+    filter {
+        exclude { it.file.path.contains("/build/") }
+    }
+}
+
+configure<io.gitlab.arturbosch.detekt.extensions.DetektExtension> {
+    buildUponDefaultConfig = true
+    config.setFrom(files("$rootDir/detekt.yml"))
+    parallel = true
+}
+
+tasks.withType<io.gitlab.arturbosch.detekt.Detekt>().configureEach {
+    exclude { it.file.path.contains("/build/") }
+}
+
+
+# ============================================
+# 4. composeApp/build.gradle.kts - PLUGINS
+# ============================================
+
+# Add to plugins block:
+alias(libs.plugins.ktlint)
+alias(libs.plugins.detekt)
+
+
+# ============================================
+# 5. .editorconfig (create in project root)
+# ============================================
+
+root = true
+
+[*]
+charset = utf-8
+end_of_line = lf
+indent_size = 4
+indent_style = space
+insert_final_newline = true
+max_line_length = 120
+trim_trailing_whitespace = true
+
+[*.{kt,kts}]
+ktlint_code_style = ktlint_official
+ktlint_function_naming_ignore_when_annotated_with = Composable
+ktlint_standard_multiline-expression-wrapping = disabled
+
+
+# ============================================
+# 6. detekt.yml (create in project root)
+# ============================================
+# Based on: https://detekt.dev/docs/introduction/compose/
+
+# Compose-friendly detekt configuration
+naming:
+  FunctionNaming:
+    ignoreAnnotated:
+      - 'Composable'
+  TopLevelPropertyNaming:
+    constantPattern: '[A-Z][_A-Za-z0-9]*'
+
+complexity:
+  LongParameterList:
+    ignoreAnnotated:
+      - 'Composable'
+  LongMethod:
+    ignoreAnnotated:
+      - 'Composable'
+  CyclomaticComplexMethod:
+    ignoreAnnotated:
+      - 'Composable'
+  TooManyFunctions:
+    ignoreAnnotatedFunctions:
+      - 'Preview'
+
+style:
+  MagicNumber:
+    ignoreAnnotated:
+      - 'Composable'
+    ignorePropertyDeclaration: true
+    ignoreCompanionObjectPropertyDeclaration: true
+  UnusedParameter:
+    ignoreAnnotated:
+      - 'Composable'
+  UnusedPrivateMember:
+    ignoreAnnotated:
+      - 'Preview'
+  MaxLineLength:
+    active: false
+
+exceptions:
+  TooGenericExceptionCaught:
+    excludes:
+      - '**/kotrack/**'
+  SwallowedException:
+    excludes:
+      - '**/kotrack/**'
+
+
+# ============================================
+# 7. .github/workflows/ci.yml (full file)
+# ============================================
+
+name: CI
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'composeApp/**'
+      - 'androidApp/**'
+      - 'iosApp/**'
+      - 'cli/**'
+      - 'kotrack/**'
+      - 'fastlane/**'
+      - '*.gradle.kts'
+      - 'gradle.properties'
+      - 'gradle/**'
+      - '.github/workflows/ci.yml'
+  pull_request:
+    branches: [main]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    name: Check
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Run ktlint
+        run: ./gradlew ktlintCheck
+
+      - name: Run detekt
+        run: |
+          ./gradlew \
+            detektMetadataCommonMain \
+            detektAndroidMain \
+            detektIosArm64Main \
+            detektDesktopMain \
+            detektWasmJsMain \
+            detektMetadataNativeMain \
+            detektLinuxX64Main \
+            detektMetadataMacosMain \
+            detektMingwX64Main
+
+      - name: Run tests
+        run: ./gradlew testDebugUnitTest
+
+      - name: Upload detekt report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: detekt-report
+          path: '**/build/reports/detekt/'
+          retention-days: 7
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results
+          path: '**/build/reports/tests/'
+          retention-days: 7
+
+
+# ============================================
+# TERMINAL COMMANDS (for reference)
+# ============================================
+
+# Create branch:
+git checkout -b feat/ci-quality-gates
+
+# Run ktlint:
+./gradlew ktlintCheck
+
+# Auto-fix formatting:
+./gradlew ktlintFormat
+
+# Run detekt (KMP shared code):
+./gradlew detektMetadataCommonMain
+
+# Run all detekt tasks:
+./gradlew detektMetadataCommonMain detektAndroidMain detektIosArm64Main detektDesktopMain detektWasmJsMain
+
+# Run tests:
+./gradlew testDebugUnitTest
+
+# Commit:
+git add .
+git commit -m "ci: Add CI quality gates (ktlint, detekt, tests)"
+git push --set-upstream origin feat/ci-quality-gates

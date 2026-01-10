@@ -73,7 +73,8 @@ data class InspirationLink(
 object Content {
     const val HERO_TITLE = "Just Use Fucking Kotlin. Period."
     const val HERO_SUBTITLE =
-        "Too many platforms. Too many rewrites. The same logic, drifting apart over time. One language keeps it together."
+        "Too many platforms. Too many rewrites. " +
+            "The same logic, drifting apart over time. One language keeps it together."
 
     const val BREW_COMMAND = "brew install adjorno/jufk/jufk"
 

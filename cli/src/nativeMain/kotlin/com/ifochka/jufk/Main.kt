@@ -2,8 +2,6 @@ package com.ifochka.jufk
 
 import com.ifochka.kotrack.AnalyticsManager
 import com.ifochka.kotrack.createAnalytics
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 
 fun main() =
