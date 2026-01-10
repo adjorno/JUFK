@@ -12,7 +12,7 @@ object AppContext {
     }
 
     fun get(): Context {
-        if (!::application.isInitialized) throw IllegalStateException("App context isn't initialised.")
+        check(::application.isInitialized) { "App context isn't initialised." }
         return application.applicationContext
     }
 }

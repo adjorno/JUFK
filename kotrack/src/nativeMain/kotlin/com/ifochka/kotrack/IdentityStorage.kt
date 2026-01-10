@@ -31,6 +31,7 @@ internal suspend fun saveDistinctIdToTempKotlinIO(id: String) {
     }
 }
 
+@Suppress("ReturnCount") // Early returns for validation
 internal suspend fun loadDistinctIdFromKotlinIO(): String? {
     val path = getDistinctIdPath() ?: return null
 
