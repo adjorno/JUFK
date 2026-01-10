@@ -6,11 +6,9 @@ on:
     branches:
       - main
     paths:
-      - 'composeApp/**'
-      - 'androidApp/**'
-      - 'kotrack/**'
-      - 'fastlane/**'
-      - '.github/workflows/android-deploy.yml'
+      - 'composeApp/**/*.kt'
+      - 'androidApp/**/*.kt'
+      - 'kotrack/**/*.kt'
   workflow_dispatch:
     inputs:
       track:

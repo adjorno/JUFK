@@ -5,9 +5,9 @@ on:
   push:
     branches: [main]
     paths:
-      - 'composeApp/**'
-      - '.github/workflows/web-deploy-dev.yml'
-      - '.github/workflows/template-build-web.yml'
+      - 'composeApp/**/*.kt'
+      - 'composeApp/**/*.html'
+      - 'kotrack/**/*.kt'
   workflow_dispatch:
 
 permissions:

@@ -6,10 +6,10 @@ on:
     branches:
       - main
     paths:
-      - 'composeApp/**'
-      - 'iosApp/**'
-      - 'fastlane/**'
-      - '.github/workflows/ios-deploy.yml'
+      - 'composeApp/**/*.kt'
+      - 'iosApp/**/*.kt'
+      - 'iosApp/**/*.swift'
+      - 'kotrack/**/*.kt'
   workflow_dispatch:
     inputs:
       destination:
