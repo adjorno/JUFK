@@ -373,57 +373,27 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 fun App() {
     MaterialTheme {
         Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(Color(0xFF1a1a2e)),
-            contentAlignment = Alignment.Center
+            modifier = Modifier.fillMaxSize().background(Color.Black),
+            contentAlignment = Alignment.TopCenter,
         ) {
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
-                modifier = Modifier.padding(24.dp)
-            ) {
-                Text(
-                    text = buildAnnotatedString {
-                        withStyle(
-                            style = SpanStyle(
-                                color = Color.White,
-                                fontSize = 48.sp,
-                                fontWeight = FontWeight.Normal
-                            )
-                        ) {
-                            append("Just Use ")
-                        }
-                        withStyle(
-                            style = SpanStyle(
-                                color = Color(0xFFe94560),
-                                fontSize = 48.sp,
-                                fontWeight = FontWeight.Bold
-                            )
-                        ) {
-                            append("Fucking ")
-                        }
-                        withStyle(
-                            style = SpanStyle(
-                                color = Color.White,
-                                fontSize = 48.sp,
-                                fontWeight = FontWeight.Normal
-                            )
-                        ) {
-                            append("Kotlin")
-                        }
-                    },
-                    textAlign = TextAlign.Center
-                )
-
-                Spacer(modifier = Modifier.height(16.dp))
-
-                Text(
-                    text = "One language. All platforms.",
-                    color = Color.Gray,
-                    fontSize = 18.sp,
-                    textAlign = TextAlign.Center
-                )
-            }
+            Text(
+                text = buildAnnotatedString {
+                    append("Just Use Fucking ")
+                    withStyle(
+                        style = SpanStyle(
+                            color = Color(0xFF8A45FC),
+                            fontSize = 72.sp,
+                            fontWeight = FontWeight.Normal,
+                        )
+                    ) { append("Kotlin") }
+                    append(".\nPeriod.")
+                },
+                color = Color.White,
+                fontSize = 72.sp,
+                fontWeight = FontWeight.Bold,
+                lineHeight = 96.sp,
+                textAlign = TextAlign.Center,
+            )
         }
     }
 }
@@ -488,6 +458,66 @@ git push --set-upstream origin refactor/kmp-plugin-migration
 **Series Continuity:**
 - Faster builds with Gradle caching (5+ min → 2-3 min)
 - New UI deployed to production
+
+---
+
+## Session 2 Retrospective (Post-Recording)
+
+### Timing Analysis
+- **Planned Duration**: 12-16 minutes
+- **Actual Duration**: ~21 minutes (exceeded by 5-9 minutes)
+- **Reason for overrun**: Added 6+ minute discussion on development philosophy (trunk-based development, commit naming, branch naming) that wasn't planned
+
+### What Went According to Plan ✓
+1. **KMP Plugin Migration**: Successfully migrated to `multiplatformLibrary` plugin with `androidLibrary {}` block
+2. **androidApp Module**: Created with proper structure, MainActivity, and dependency on composeApp
+3. **Gradle Caching**: Added `gradle/actions/setup-gradle@v5` (actually newer than planned v4)
+4. **Hero Text**: Deployed styled "Just Use Fucking Kotlin" text
+
+### What Deviated from Plan
+
+| Planned | Actual | Impact |
+|---------|--------|--------|
+| `withAndroidResources()` | `androidResources.enable = true` | Equivalent, just different syntax |
+| `actions/checkout@v4` | Stayed at `actions/checkout@v3` | Minor - should update in Session 3 |
+| `implementation(project(":composeApp"))` | `implementation(projects.composeApp)` | Better - uses type-safe accessors |
+| `kotlin/` directory for sources | `java/` directory | OK - works either way |
+| `compileOptions { }` block | `kotlin { jvmToolchain(17) }` | Better - centralized JVM config |
+| Scripted intro | Improvised intro | Less polished but authentic |
+| Order: migration then caching | Order: caching then migration | No impact |
+| Red color for "Fucking" | Purple color for "Kotlin" | Different visual choice |
+| Tagline "One language. All platforms." | "Period." as tagline | Different creative choice |
+
+### Unplanned Additions
+1. **Development Philosophy Discussion (15:14-18:45)**: ~3.5 minutes discussing:
+   - Trunk-based development defense
+   - Why PRs are still valuable
+   - Branch/commit naming philosophy
+   - "Red-green-refactor at bigger scale" concept
+2. **Auto-delete branches setting (17:47-18:07)**: Showed GitHub settings
+3. **Design preview (08:44-09:00)**: Showed LLM-generated design mockup
+
+### Technical Implementation Differences
+- Used `jvmToolchain(17)` in both modules (cleaner than `compileOptions`)
+- Added `enableEdgeToEdge()` in MainActivity (modern Android practice)
+- Used type-safe project accessors (`projects.composeApp` instead of `project(":composeApp")`)
+- Added `proguard-rules.pro` file (not mentioned in plan)
+
+### Lessons for Session 3
+1. **Stick to the plan for timing** - Philosophy discussions are valuable but should be separate content
+2. **Keep tangents short** - If discussing something unplanned, set a 1-minute limit
+3. **Scripted intro matters** - The planned intro was more professional and searchable
+4. **Show the "before" state** - Successfully showed build times before/after
+
+### Pronunciation Issues from Transcript
+- "Multiplot from" (00:38-00:40) - Should be "Multiplatform"
+- Technical terms generally clear
+
+### Positive Observations
+1. Successfully demonstrated the migration step-by-step
+2. Good explanation of why library/app separation matters
+3. Git move usage for preserving history was a nice addition
+4. Philosophy content could be extracted for a separate video
 
 ---
 

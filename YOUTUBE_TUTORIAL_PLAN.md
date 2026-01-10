@@ -85,8 +85,8 @@ This ensures:
 | Session | Primary Topic | UI Addition | Release Pipeline | Time |
 |---------|--------------|-------------|------------------|------|
 | 1 | Web to Production | - | - | 21 min ✓ |
-| 2 | KMP Migration | Hero text | - | 12-16 min |
-| 3 | CI Quality Gates | Theme + Scaffold | **Basic Web release** | 14-17 min |
+| 2 | KMP Migration | Hero text | - | 21 min ✓ |
+| 3 | CI Quality Gates | Theme + Scaffold | - | 16-20 min |
 | 4 | iOS to TestFlight | Footer + versioning | + iOS release | 14-17 min |
 | 5 | Android to Play Store | GitHub button | + Android release | 14-16 min |
 | 6 | Desktop App | Social links | + Desktop release | 10-12 min |
@@ -126,13 +126,22 @@ This ensures:
 
 ---
 
-# YOUTUBE SESSION 2: Migrate to New KMP Plugin & Speed Up Builds
+# YOUTUBE SESSION 2: Migrate to New KMP Plugin & Speed Up Builds [COMPLETED]
 
 **Searchable Title**: "How to Migrate to the New Kotlin Multiplatform Plugin DSL"
 
 **Standalone Value**: Learn to migrate from the legacy KMP plugin to the new DSL with `androidLibrary {}` block. Also covers Gradle caching for faster CI builds.
 
+**Status**: COMPLETED
+**Actual Duration**: ~21 minutes (exceeded 12-16 min estimate)
+**Retrospective**: See [session-2-detailed-plan.md](youtube-sessions/session-2-detailed-plan.md#session-2-retrospective-post-recording)
+
 **Session Goal**: Modernize project structure and speed up CI
+
+**Promises Made for Future Sessions**:
+1. Make CI even faster with quality checks (next session)
+2. Deploy something new each session
+3. Show design evolution from mockup
 
 ## Primary Topic: KMP Plugin Migration (80%)
 
@@ -231,21 +240,27 @@ This ensures:
 
 ---
 
-**Session 2 Total Time Estimate**: 12-16 min
+**Session 2 Total Time Estimate**: 12-16 min (actual: 21 min)
 
 **Detailed Plan**: See [/youtube-sessions/session-2-detailed-plan.md](youtube-sessions/session-2-detailed-plan.md)
 
+**Key Takeaways from Session 2**:
+- Both sessions ran ~21 minutes - consider planning for 20 min sessions
+- Unplanned philosophy tangents added significant time
+- Technical execution was good, creative choices differed from plan
+- Development philosophy content could be separate videos
+
 ---
 
-# YOUTUBE SESSION 3: CI Quality Gates + Basic Release Pipeline
+# YOUTUBE SESSION 3: CI Quality Gates
 
 **Searchable Title**: "How to Set Up CI Quality Gates for Kotlin Multiplatform"
 
-**Standalone Value**: Any developer can watch this session to learn how to set up professional CI quality gates (ktlint, detekt, Android Lint, unit tests) for a Kotlin Multiplatform project. Also introduces basic release workflow.
+**Standalone Value**: Any developer can watch this session to learn how to set up professional CI quality gates (ktlint, detekt, Android Lint, unit tests) for a Kotlin Multiplatform project.
 
-**Session Goal**: Set up CI quality gates and basic release pipeline
+**Session Goal**: Set up CI quality gates and clean up code architecture
 
-## Primary Topic: CI Quality Gates (70%)
+## Primary Topic: CI Quality Gates (80%)
 
 ### Iteration 3.1: Introduction - Why CI Quality Gates Matter
 **Time Estimate**: 1 min
@@ -333,33 +348,9 @@ This ensures:
 
 ---
 
-## Series Continuity: Release Pipeline + UI (30%)
+## Series Continuity: Theme + Scaffold (20%)
 
-### Iteration 3.7: Basic Web Release Pipeline
-**Time Estimate**: 3-4 min
-
-**Why This Makes Sense**:
-- Versioning scheme requires release tags to exist (for base version)
-- Early release pipeline enables proper dev/prod separation
-- Foundation that all platforms will build upon
-
-**Steps**:
-1. Create `.github/workflows/web-release.yml` (triggered by tags `v*.*.*`)
-2. Implement basic versioning in `buildSrc/src/main/kotlin/Versioning.kt`:
-   - Production: Extract from git tag (e.g., `v0.1.0` → `0.1.0`)
-   - Dev: `0.1.0.YYYYMMDD.HHMM.GITSHA`
-3. Create first release: `git tag v0.1.0 && git push --tags`
-4. Verify Web deploys to production via tag
-
-**Delivered**: Basic release pipeline, first version tag
-
-**Key Files**:
-- `.github/workflows/web-release.yml` (new)
-- `buildSrc/src/main/kotlin/Versioning.kt` (new)
-
----
-
-### Iteration 3.8: Extract Theme + Add Scaffold
+### Iteration 3.7: Extract Theme + Add Scaffold
 **Time Estimate**: 3-4 min
 
 **Steps**:
@@ -377,7 +368,7 @@ This ensures:
 
 ---
 
-**Session 3 Total Time Estimate**: 14-17 min
+**Session 3 Total Time Estimate**: 16-20 min
 
 **Detailed Plan**: See [/youtube-sessions/session-3-detailed-plan.md](youtube-sessions/session-3-detailed-plan.md)
 

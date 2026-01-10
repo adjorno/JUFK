@@ -4,7 +4,24 @@
 
 **Standalone Value**: Any developer can watch this session to learn how to set up professional CI quality gates (ktlint, detekt, Android Lint, unit tests) for a Kotlin Multiplatform project. Works for any KMP project, not just JUFK.
 
-**Total Time Estimate**: 12-16 minutes
+**Total Time Estimate**: 16-20 minutes (Sessions 1 & 2 both ran 21 min, so plan conservatively)
+
+---
+
+## Lessons from Previous Sessions
+
+**From Session 1 & 2:**
+- Both sessions ran ~21 minutes despite shorter estimates
+- Unplanned tangents added significant time - avoid philosophy discussions mid-session
+- Scripted intros work better for searchability
+- Technical demonstrations went smoothly
+- "Before and after" comparisons work well
+
+**For This Session:**
+- Keep intro scripted and under 1 minute
+- Time-box each section strictly
+- Save tangents for outro or separate content
+- Show the failing CI run to demonstrate value
 
 ---
 
@@ -14,11 +31,13 @@
 - [ ] IDE ready (Android Studio or IntelliJ IDEA)
 - [ ] Terminal ready
 - [ ] Browser with GitHub open
-- [ ] Practice pronouncing: ktlint (K-T-lint), detekt (dee-TEKT)
+- [ ] **Fix from Session 2**: Update `actions/checkout@v3` → `actions/checkout@v4` during CI setup
+- [ ] Practice pronouncing: ktlint (K-T-lint), detekt (dee-TEKT), Multiplatform (not "Multiplot from")
+- [ ] Review 30 sec: What's the single takeaway? → "Every PR is checked automatically"
 
 ---
 
-## PRIMARY TOPIC: CI Quality Gates (100% of session)
+## PRIMARY TOPIC: CI Quality Gates (80% of session)
 
 ---
 
@@ -340,6 +359,169 @@ git push --set-upstream origin feat/ci-quality-gates
 
 ---
 
+## SERIES CONTINUITY: Theme + Scaffold (20% of session)
+
+---
+
+## Iteration 3.7: Extract Theme (2-3 min)
+
+### Actions
+
+#### 1. Create Theme File
+
+**Create `composeApp/src/commonMain/kotlin/com/ifochka/jufk/theme/Theme.kt`:**
+
+```kotlin
+package com.ifochka.jufk.theme
+
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.darkColorScheme
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.graphics.Color
+
+object JufkColors {
+    val Background = Color.Black
+    val TextPrimary = Color.White
+    val AccentPurple = Color(0xFF8A45FC)
+}
+
+private val DarkColorScheme = darkColorScheme(
+    primary = JufkColors.AccentPurple,
+    background = JufkColors.Background,
+    onBackground = JufkColors.TextPrimary,
+    surface = JufkColors.Background,
+    onSurface = JufkColors.TextPrimary,
+)
+
+@Composable
+fun JufkTheme(content: @Composable () -> Unit) {
+    MaterialTheme(
+        colorScheme = DarkColorScheme,
+        content = content
+    )
+}
+```
+
+**Voiceover:**
+> "Let's clean up our code. Right now we have hardcoded colors in App.kt. A proper theme makes colors reusable and keeps things consistent."
+
+#### 2. Create HeroSection Component
+
+**Create `composeApp/src/commonMain/kotlin/com/ifochka/jufk/ui/components/HeroSection.kt`:**
+
+```kotlin
+package com.ifochka.jufk.ui.components
+
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.withStyle
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import com.ifochka.jufk.theme.JufkColors
+
+@Composable
+fun HeroSection(modifier: Modifier = Modifier) {
+    Text(
+        modifier = modifier.padding(top = 48.dp),
+        text = buildAnnotatedString {
+            append("Just Use Fucking ")
+            withStyle(
+                SpanStyle(
+                    fontSize = 72.sp,
+                    fontWeight = FontWeight.Normal,
+                    color = JufkColors.AccentPurple
+                )
+            ) {
+                append("Kotlin")
+            }
+            append(".\nPeriod.")
+        },
+        color = JufkColors.TextPrimary,
+        fontSize = 72.sp,
+        fontWeight = FontWeight.Bold,
+        lineHeight = 96.sp,
+        textAlign = TextAlign.Center,
+    )
+}
+```
+
+**Voiceover:**
+> "The hero section is now a standalone component. We can reuse it, test it in isolation, and the main App stays clean."
+
+---
+
+## Iteration 3.8: Update App with Scaffold (2-3 min)
+
+### Actions
+
+#### 1. Update App.kt to Use Theme and Scaffold
+
+**Update `composeApp/src/commonMain/kotlin/com/ifochka/jufk/App.kt`:**
+
+```kotlin
+package com.ifochka.jufk
+
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.Scaffold
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import com.ifochka.jufk.theme.JufkColors
+import com.ifochka.jufk.theme.JufkTheme
+import com.ifochka.jufk.ui.components.HeroSection
+import org.jetbrains.compose.ui.tooling.preview.Preview
+
+@Composable
+@Preview
+fun App() {
+    JufkTheme {
+        Scaffold { paddingValues ->
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(JufkColors.Background),
+                contentAlignment = Alignment.TopCenter
+            ) {
+                HeroSection()
+            }
+        }
+    }
+}
+```
+
+**Voiceover:**
+> "Now our App is much cleaner. JufkTheme wraps everything, Scaffold gives us a proper Material 3 structure, and HeroSection handles the content. This architecture will make adding more sections easy in future sessions."
+
+#### 2. Verify and Commit
+
+**In Terminal:**
+```bash
+# Verify the app still works
+./gradlew :composeApp:wasmJsBrowserDevelopmentRun
+
+# Add to existing branch
+git add .
+git commit -m "feat: Extract theme and add Scaffold structure"
+```
+
+### Deliverable
+
+- JufkTheme with consistent colors
+- HeroSection as reusable component
+- App.kt using Scaffold for proper Material 3 structure
+- Clean architecture: Theme → App → Sections → Components
+
+---
+
 ## Session 3 Complete!
 
 ### Outro Script
@@ -347,14 +529,16 @@ git push --set-upstream origin feat/ci-quality-gates
 > "That's it for today! We now have professional CI quality gates:
 > - ktlint ensures consistent formatting
 > - detekt catches potential bugs
-> - Android Lint catches Compose-specific issues like unstable parameters
+> - Android Lint catches Compose-specific issues
 > - Unit tests prevent regressions
 >
 > Every PR is automatically checked before it can be merged.
 >
-> If you're new here, this works for any Kotlin Multiplatform project - not just this one. Try it on your own project!
+> We also cleaned up our code architecture - extracted a theme and HeroSection component. This sets us up nicely for adding more UI in future sessions.
 >
-> For those following the series, next time we're taking this app to the Play Store. See you then!"
+> If you're new here, this CI setup works for any Kotlin Multiplatform project. Try it on your own!
+>
+> For those following the series, next time we're deploying to iOS TestFlight. See you then!"
 
 ### What We Accomplished
 
@@ -365,11 +549,38 @@ git push --set-upstream origin feat/ci-quality-gates
 - Created CI workflow with sequential quality checks
 - Quality gates blocking PRs until all checks pass
 
+**Series Continuity:**
+- Extracted JufkTheme for consistent colors
+- Created HeroSection component (reusable)
+- Added Scaffold for proper Material 3 structure
+- Clean architecture foundation for future UI work
+
+**Technical Debt Addressed:**
+- Updated `actions/checkout@v3` → `actions/checkout@v4` in deploy workflow
+
 ---
 
-## Tips from Session 1 Retrospective
+## Key Files Changed
 
-1. **Practice technical terms**: ktlint (K-T-lint), detekt (dee-TEKT)
+| File | Purpose |
+|------|---------|
+| `gradle/libs.versions.toml` | ktlint, detekt versions |
+| `build.gradle.kts` | ktlint, detekt plugins |
+| `composeApp/build.gradle.kts` | Apply ktlint, detekt |
+| `.editorconfig` | Code style rules |
+| `.github/workflows/ci.yml` | CI quality gates workflow |
+| `theme/Theme.kt` | JufkTheme, JufkColors |
+| `ui/components/HeroSection.kt` | Extracted hero component |
+| `App.kt` | Simplified with Scaffold |
+
+---
+
+## Tips from Sessions 1 & 2 Retrospectives
+
+1. **Practice technical terms**: ktlint (K-T-lint), detekt (dee-TEKT), Multiplatform (not "Multiplot from")
 2. **Complete thoughts** - don't trail off mid-sentence
 3. **Pause after key points** - give viewers time to absorb
 4. **Show, don't just tell** - demonstrate the tools running, show the output
+5. **Stick to the script for intro** - improvised intros are less searchable
+6. **Save philosophy for outro** - don't tangent mid-session
+7. **Time-box sections** - set a timer if needed
