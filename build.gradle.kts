@@ -46,5 +46,14 @@ subprojects {
     configure<io.gitlab.arturbosch.detekt.extensions.DetektExtension> {
         buildUponDefaultConfig = true
         config.setFrom(files("$rootDir/detekt.yml"))
+        source.setFrom(
+            files(
+                "src/commonMain/kotlin",
+                "src/androidMain/kotlin",
+                "src/iosMain/kotlin",
+                "src/desktopMain/kotlin",
+                "src/wasmJsMain/kotlin",
+            ),
+        )
     }
 }
