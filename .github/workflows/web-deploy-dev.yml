@@ -6,7 +6,7 @@ on:
     branches: [main]
     paths:
       - 'composeApp/**'
-      - '.github/workflows/deploy_web_dev.yml'
+      - '.github/workflows/web-deploy-dev.yml'
       - '.github/workflows/template-build-web.yml'
   workflow_dispatch:
 
@@ -28,7 +28,7 @@ jobs:
     uses: ./.github/workflows/template-build-web.yml
     with:
       version: ${{ needs.compute-version.outputs.version }}
-      cloudflare_project_name: justusefuckingkotlin-dev
+      cloudflare_project_name: jufk-test
     secrets:
       CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
       CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}

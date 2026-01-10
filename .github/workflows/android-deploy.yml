@@ -10,7 +10,7 @@ on:
       - 'androidApp/**'
       - 'kotrack/**'
       - 'fastlane/**'
-      - '.github/workflows/deploy_android.yml'
+      - '.github/workflows/android-deploy.yml'
   workflow_dispatch:
     inputs:
       track:
