@@ -220,6 +220,9 @@ style:
       - 'Composable'
     ignorePropertyDeclaration: true
     ignoreCompanionObjectPropertyDeclaration: true
+  UnusedParameter:
+    ignoreAnnotated:
+      - 'Composable'
   UnusedPrivateMember:
     ignoreAnnotated:
       - 'Preview'
@@ -235,6 +238,7 @@ style:
 configure<io.gitlab.arturbosch.detekt.extensions.DetektExtension> {
     buildUponDefaultConfig = true
     config.setFrom(files("$rootDir/detekt.yml"))
+    parallel = true
 }
 
 tasks.withType<io.gitlab.arturbosch.detekt.Detekt>().configureEach {
@@ -335,7 +339,7 @@ jobs:
         run: ./gradlew detektMetadataCommonMain
 
       - name: Unit Tests
-        run: ./gradlew allTests
+        run: ./gradlew testDebugUnitTest
 ```
 
 **Voiceover:**

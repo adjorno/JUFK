@@ -31,6 +31,9 @@ style:
   UnusedParameter:
     ignoreAnnotated:
       - 'Composable'
+  UnusedPrivateMember:
+    ignoreAnnotated:
+      - 'Preview'
   MaxLineLength:
     active: false
   MayBeConst:
