@@ -2,9 +2,9 @@
 
 **Searchable Title**: "How to Set Up CI Quality Gates for Kotlin Multiplatform"
 
-**Standalone Value**: Any developer can watch this session to learn how to set up professional CI quality gates (ktlint, detekt, Android Lint, unit tests) for a Kotlin Multiplatform project. Works for any KMP project, not just JUFK.
+**Standalone Value**: Any developer can watch this session to learn how to set up professional CI quality gates (ktlint, detekt, unit tests) for a Kotlin Multiplatform project. Works for any KMP project, not just JUFK.
 
-**Total Time Estimate**: 16-20 minutes (Sessions 1 & 2 both ran 21 min, so plan conservatively)
+**Total Time Estimate**: 14-18 minutes (Sessions 1 & 2 both ran 21 min, but we're keeping it focused)
 
 ---
 
@@ -52,7 +52,6 @@
 > By the end of this video, every pull request to your project will automatically be checked for:
 > - **Code formatting** with ktlint
 > - **Static analysis** with detekt
-> - **Compose-specific issues** with Android Lint
 > - **Unit tests** to catch regressions
 >
 > Let's set this up step by step.
@@ -207,35 +206,7 @@ alias(libs.plugins.detekt)
 
 ---
 
-## Iteration 3.4: Android Lint with Compose Checks (1-2 min)
-
-### Actions
-
-#### 1. Verify Android Lint
-
-Android Lint is already included with the Android Gradle Plugin - no setup needed! It includes Compose-specific checks out of the box.
-
-**Voiceover:**
-> "Android Lint comes free with the Android Gradle Plugin. It includes Compose-specific checks that catch performance issues like unstable parameters and missing modifiers. No extra setup required!"
-
-#### 2. Run Lint Locally
-
-**In Terminal:**
-```bash
-./gradlew :composeApp:lint
-```
-
-**Voiceover:**
-> "Let's run lint and see what it finds. We'll use the defaults - you can customize the rules later if certain checks are too noisy for your project."
-
-### Deliverable
-
-- Android Lint verified working
-- Any critical issues fixed
-
----
-
-## Iteration 3.5: Unit Tests in CI (2-3 min)
+## Iteration 3.4: Unit Tests in CI (2-3 min)
 
 ### Actions
 
@@ -264,7 +235,7 @@ Android Lint is already included with the Android Gradle Plugin - no setup neede
 
 ---
 
-## Iteration 3.6: GitHub Actions CI Workflow (3-4 min)
+## Iteration 3.5: GitHub Actions CI Workflow (3-4 min)
 
 ### Actions
 
@@ -307,17 +278,14 @@ jobs:
       - name: Static Analysis (detekt)
         run: ./gradlew detekt
 
-      - name: Android Lint
-        run: ./gradlew :composeApp:lint
-
       - name: Unit Tests
         run: ./gradlew allTests
 ```
 
 **Voiceover:**
-> "Here's our CI workflow. One job, four checks - each with its own step so you can see exactly what failed.
+> "Here's our CI workflow. One job, three checks - each with its own step so you can see exactly what failed.
 >
-> Gradle stays warm between steps, so this is actually faster than parallel jobs. And when something fails, you immediately know if it's formatting, static analysis, lint, or tests.
+> Gradle stays warm between steps, so this is actually faster than parallel jobs. And when something fails, you immediately know if it's formatting, static analysis, or tests.
 >
 > The workflow triggers on pushes to main and on all pull requests. Every PR gets checked before it can be merged."
 
@@ -326,7 +294,7 @@ jobs:
 **In Terminal:**
 ```bash
 git add .
-git commit -m "ci: Add CI quality gates (ktlint, detekt, lint, tests)"
+git commit -m "ci: Add CI quality gates (ktlint, detekt, tests)"
 git push --set-upstream origin feat/ci-quality-gates
 ```
 
@@ -338,7 +306,7 @@ git push --set-upstream origin feat/ci-quality-gates
 - Point out the sequential steps in the single job
 
 **Voiceover:**
-> "And now the magic happens. Our PR triggers the CI workflow. Watch the steps run one after another - ktlint, detekt, lint, tests. Each step is clearly labeled so you know exactly what's being checked.
+> "And now the magic happens. Our PR triggers the CI workflow. Watch the steps run one after another - ktlint, detekt, tests. Each step is clearly labeled so you know exactly what's being checked.
 >
 > If any step fails, the PR can't be merged. That's the power of quality gates."
 
@@ -363,7 +331,7 @@ git push --set-upstream origin feat/ci-quality-gates
 
 ---
 
-## Iteration 3.7: Extract Theme (2-3 min)
+## Iteration 3.6: Extract Theme (2-3 min)
 
 ### Actions
 
@@ -457,7 +425,7 @@ fun HeroSection(modifier: Modifier = Modifier) {
 
 ---
 
-## Iteration 3.8: Update App with Scaffold (2-3 min)
+## Iteration 3.7: Update App with Scaffold (2-3 min)
 
 ### Actions
 
@@ -528,8 +496,7 @@ git commit -m "feat: Extract theme and add Scaffold structure"
 
 > "That's it for today! We now have professional CI quality gates:
 > - ktlint ensures consistent formatting
-> - detekt catches potential bugs
-> - Android Lint catches Compose-specific issues
+> - detekt catches potential bugs and code smells
 > - Unit tests prevent regressions
 >
 > Every PR is automatically checked before it can be merged.
@@ -545,7 +512,6 @@ git commit -m "feat: Extract theme and add Scaffold structure"
 **Primary (Standalone Value):**
 - Set up ktlint for code formatting
 - Set up detekt for static analysis
-- Set up Android Lint with Compose-specific checks
 - Created CI workflow with sequential quality checks
 - Quality gates blocking PRs until all checks pass
 

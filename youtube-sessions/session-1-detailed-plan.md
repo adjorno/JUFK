@@ -180,11 +180,11 @@ git push --set-upstream origin feat/initial-project-setup
 **In Terminal (already logged into wrangler):**
 ```bash
 # Create the Cloudflare Pages project for production
-wrangler pages project create justusefuckingkotlin-com
+wrangler pages project create jufk-prod
 ```
 
 **Voiceover:**
-> "Now let's set up our deployment target. Cloudflare Pages is perfect for hosting static sites and WASM apps. Since I'm already logged into wrangler, I can create the project directly from the command line. We're naming it `justusefuckingkotlin-com` to match our domain. In a future session, we'll also create a `justusefuckingkotlin-dev` project for our development environment—but for now, let's keep it simple and ship to production!"
+> "Now let's set up our deployment target. Cloudflare Pages is perfect for hosting static sites and WASM apps. Since I'm already logged into wrangler, I can create the project directly from the command line. We're naming it `jufk-prod` for production. In a future session, we'll also create a `jufk-test` project for our development environment—but for now, let's keep it simple and ship to production!"
 
 #### 2. Get Cloudflare Account ID
 
@@ -230,7 +230,7 @@ wrangler whoami
 
 ### Deliverable Checklist
 
-- [ ] Cloudflare Pages project `justusefuckingkotlin-com` created
+- [ ] Cloudflare Pages project `jufk-prod` created
 - [ ] Account ID retrieved from `wrangler whoami`
 - [ ] API Token created with "Edit Cloudflare Workers" permissions
 - [ ] Both secrets added to GitHub repository
@@ -294,7 +294,7 @@ jobs:
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          command: pages deploy composeApp/build/dist/wasmJs/productionExecutable --project-name=justusefuckingkotlin-com
+          command: pages deploy composeApp/build/dist/wasmJs/productionExecutable --project-name=jufk-prod
 ```
 
 **Voiceover:**
@@ -337,7 +337,7 @@ git push --set-upstream origin feat/web-deployment-workflow
 
 **In Browser:**
 - [ ] Once the workflow completes successfully (green checkmark)
-- [ ] Go to https://justusefuckingkotlin-com.pages.dev (or the URL shown in the workflow output)
+- [ ] Go to https://jufk-prod.pages.dev (or the URL shown in the workflow output)
 - [ ] Verify the app loads correctly
 
 **Voiceover:**
@@ -360,7 +360,7 @@ git push --set-upstream origin feat/web-deployment-workflow
 - [ ] Workflow file created at `.github/workflows/deploy-web.yml`
 - [ ] Workflow includes both `push` trigger and `workflow_dispatch` for manual runs
 - [ ] Workflow tested successfully from feature branch before merging
-- [ ] Site live at https://justusefuckingkotlin-com.pages.dev
+- [ ] Site live at https://jufk-prod.pages.dev
 - [ ] PR merged, automated deployments now active
 
 ---
@@ -420,9 +420,8 @@ git push --set-upstream origin feat/web-deployment-workflow
 - **Impact**: None - just different naming convention
 
 ### 4. Cloudflare Project Name
-- **Planned**: `justusefuckingkotlin-com`
-- **Actual**: `jufk-prod`
-- **Impact**: None - functionally equivalent
+- **Plan updated**: Now uses `jufk-prod` (production) and `jufk-test` (dev)
+- **Impact**: Shorter, cleaner project names
 
 ### 5. Testing Workflow Before Merge
 - **Planned**: Use `workflow_dispatch` to test from feature branch before merging

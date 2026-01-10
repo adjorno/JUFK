@@ -86,7 +86,7 @@ This ensures:
 |---------|--------------|-------------|------------------|------|
 | 1 | Web to Production | - | - | 21 min ✓ |
 | 2 | KMP Migration | Hero text | - | 21 min ✓ |
-| 3 | CI Quality Gates | Theme + Scaffold | - | 16-20 min |
+| 3 | CI Quality Gates | Theme + Scaffold | - | 14-18 min |
 | 4 | iOS to TestFlight | Footer + versioning | + iOS release | 14-17 min |
 | 5 | Android to Play Store | GitHub button | + Android release | 14-16 min |
 | 6 | Desktop App | Social links | + Desktop release | 10-12 min |
@@ -256,7 +256,7 @@ This ensures:
 
 **Searchable Title**: "How to Set Up CI Quality Gates for Kotlin Multiplatform"
 
-**Standalone Value**: Any developer can watch this session to learn how to set up professional CI quality gates (ktlint, detekt, Android Lint, unit tests) for a Kotlin Multiplatform project.
+**Standalone Value**: Any developer can watch this session to learn how to set up professional CI quality gates (ktlint, detekt, unit tests) for a Kotlin Multiplatform project.
 
 **Session Goal**: Set up CI quality gates and clean up code architecture
 
@@ -269,7 +269,7 @@ This ensures:
 - CI quality gates = automatic checks that run on every PR
 - Prevents "it works on my machine" problems
 - Catches issues early, before code review
-- Overview: ktlint (formatting), detekt (static analysis), Android Lint (Compose), unit tests
+- Overview: ktlint (formatting), detekt (static analysis), unit tests
 
 ---
 
@@ -307,19 +307,7 @@ This ensures:
 
 ---
 
-### Iteration 3.4: Android Lint with Compose Checks
-**Time Estimate**: 1-2 min
-
-**Steps**:
-1. Android Lint comes with AGP - no setup needed
-2. Run `./gradlew :composeApp:lint` locally
-3. Fix any critical issues
-
-**Delivered**: Android Lint (with Compose checks) verified working
-
----
-
-### Iteration 3.5: Unit Tests in CI
+### Iteration 3.4: Unit Tests in CI
 **Time Estimate**: 2-3 min
 
 **Steps**:
@@ -331,12 +319,12 @@ This ensures:
 
 ---
 
-### Iteration 3.6: GitHub Actions CI Workflow
+### Iteration 3.5: GitHub Actions CI Workflow
 **Time Estimate**: 3-4 min
 
 **Steps**:
 1. Create `.github/workflows/ci.yml`
-2. Single job, separate steps for visibility (ktlint, detekt, lint, tests)
+2. Single job, separate steps for visibility (ktlint, detekt, tests)
 3. Trigger on push to main and all PRs
 4. Commit + push via PR, watch CI run
 5. Merge when CI passes
@@ -350,7 +338,7 @@ This ensures:
 
 ## Series Continuity: Theme + Scaffold (20%)
 
-### Iteration 3.7: Extract Theme + Add Scaffold
+### Iteration 3.6: Extract Theme + Add Scaffold
 **Time Estimate**: 3-4 min
 
 **Steps**:
@@ -368,7 +356,7 @@ This ensures:
 
 ---
 
-**Session 3 Total Time Estimate**: 16-20 min
+**Session 3 Total Time Estimate**: 14-18 min
 
 **Detailed Plan**: See [/youtube-sessions/session-3-detailed-plan.md](youtube-sessions/session-3-detailed-plan.md)
 
