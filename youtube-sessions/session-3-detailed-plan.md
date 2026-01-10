@@ -84,7 +84,7 @@ git checkout -b feat/ci-quality-gates
 
 Add to `[versions]` section:
 ```toml
-ktlint = "12.1.2"
+ktlint = "14.0.1"
 ```
 
 Add to `[plugins]` section:
@@ -111,26 +111,29 @@ alias(libs.plugins.ktlint)
 
 #### 3. Create .editorconfig
 
-**Create file `.editorconfig` in project root:**
+**In IDE: Right-click project root → New → File → `.editorconfig`**
+
+Start with basic editor settings:
 ```ini
+# Editor defaults
 root = true
 
 [*]
-charset = utf-8
-end_of_line = lf
 indent_size = 4
 indent_style = space
-insert_final_newline = true
-max_line_length = 120
+end_of_line = lf
+charset = utf-8
 trim_trailing_whitespace = true
+insert_final_newline = true
 
+# Kotlin + ktlint
 [*.{kt,kts}]
 ktlint_code_style = ktlint_official
-ktlint_standard_no-wildcard-imports = disabled
+ktlint_function_naming_ignore_when_annotated_with = Composable
 ```
 
 **Voiceover:**
-> "The editorconfig file tells ktlint and your IDE what rules to follow. We're using the official Kotlin style with 4-space indentation and 120-character line length."
+> "EditorConfig tells your IDE and ktlint what formatting rules to follow. We start with the basics - 4-space indentation, official Kotlin style. The Composable line is important - it lets us use PascalCase for Composable functions, which is the Compose convention."
 
 #### 4. Run ktlint and Fix Issues
 
@@ -138,13 +141,25 @@ ktlint_standard_no-wildcard-imports = disabled
 ```bash
 # Check for issues
 ./gradlew ktlintCheck
+```
 
-# Auto-fix what can be fixed
+**If ktlint reports violations you disagree with**, add overrides to `.editorconfig`:
+```ini
+# Disabled rules (too opinionated for our codebase)
+ktlint_standard_multiline-expression-wrapping = disabled
+ktlint_standard_function-signature = disabled
+```
+
+**Voiceover:**
+> "ktlint might flag some things you don't agree with. That's fine - just disable those rules in editorconfig. The rule name is in the error message. Prefix it with `ktlint_standard_` and set it to disabled."
+
+**Auto-fix formatting issues:**
+```bash
 ./gradlew ktlintFormat
 ```
 
 **Voiceover:**
-> "ktlint can automatically fix most formatting issues. Run ktlintFormat and it rewrites your code to match the style rules. This is safe - it only changes whitespace and formatting, never logic."
+> "ktlintFormat automatically fixes most issues. It only changes whitespace and formatting, never logic - so it's safe to run."
 
 ### Deliverable
 
@@ -164,7 +179,7 @@ ktlint_standard_no-wildcard-imports = disabled
 
 Add to `[versions]` section:
 ```toml
-detekt = "1.23.7"
+detekt = "1.23.8"
 ```
 
 Add to `[plugins]` section:
@@ -189,20 +204,59 @@ alias(libs.plugins.detekt)
 **Voiceover:**
 > "detekt is a static analysis tool. Unlike ktlint which only cares about formatting, detekt analyzes your code for potential bugs, complexity issues, and code smells. We'll use the default rules for now - you can always customize them later."
 
-#### 2. Run detekt
+#### 2. Create detekt.yml Configuration
 
-**In Terminal:**
-```bash
-./gradlew detekt
+**Create file `detekt.yml` in project root:**
+```yaml
+# Compose-friendly detekt configuration
+naming:
+  FunctionNaming:
+    ignoreAnnotated:
+      - 'Composable'
+
+complexity:
+  LongParameterList:
+    ignoreAnnotated:
+      - 'Composable'
+  LongMethod:
+    ignoreAnnotated:
+      - 'Composable'
+
+style:
+  MagicNumber:
+    ignoreAnnotated:
+      - 'Composable'
+    ignorePropertyDeclaration: true
 ```
 
 **Voiceover:**
-> "Let's run detekt and see if it finds any issues. The defaults are sensible - we can tune the rules in a future session if needed."
+> "Detekt's default rules don't know about Compose. Composables often have many parameters and long bodies - that's normal. We tell detekt to ignore these patterns when it sees the @Composable annotation."
+
+#### 3. Configure detekt in build.gradle.kts
+
+**In root `build.gradle.kts`, add to subprojects block:**
+```kotlin
+configure<io.gitlab.arturbosch.detekt.extensions.DetektExtension> {
+    buildUponDefaultConfig = true
+    config.setFrom(files("$rootDir/detekt.yml"))
+}
+```
+
+#### 4. Run detekt
+
+**In Terminal:**
+```bash
+# For KMP projects, use the metadata task:
+./gradlew detektMetadataCommonMain
+```
+
+**Voiceover:**
+> "For Kotlin Multiplatform, we run detektMetadataCommonMain - this checks the shared commonMain code. The plain 'detekt' task doesn't work for KMP projects."
 
 ### Deliverable
 
-- detekt plugin enabled with default configuration
-- Any critical issues fixed
+- detekt plugin enabled with Compose-friendly config
+- Reports in `build/reports/detekt/`
 
 ---
 
@@ -276,7 +330,7 @@ jobs:
         run: ./gradlew ktlintCheck
 
       - name: Static Analysis (detekt)
-        run: ./gradlew detekt
+        run: ./gradlew detektMetadataCommonMain
 
       - name: Unit Tests
         run: ./gradlew allTests
@@ -510,9 +564,10 @@ git commit -m "feat: Extract theme and add Scaffold structure"
 ### What We Accomplished
 
 **Primary (Standalone Value):**
-- Set up ktlint for code formatting
-- Set up detekt for static analysis
+- Set up ktlint for code formatting (with .editorconfig)
+- Set up detekt for static analysis (Compose-friendly config)
 - Created CI workflow with sequential quality checks
+- Learned KMP-specific task: `detektMetadataCommonMain`
 - Quality gates blocking PRs until all checks pass
 
 **Series Continuity:**
@@ -530,10 +585,10 @@ git commit -m "feat: Extract theme and add Scaffold structure"
 
 | File | Purpose |
 |------|---------|
-| `gradle/libs.versions.toml` | ktlint, detekt versions |
-| `build.gradle.kts` | ktlint, detekt plugins |
-| `composeApp/build.gradle.kts` | Apply ktlint, detekt |
-| `.editorconfig` | Code style rules |
+| `gradle/libs.versions.toml` | ktlint 14.0.1, detekt 1.23.8 |
+| `build.gradle.kts` | ktlint, detekt plugins + config |
+| `.editorconfig` | ktlint code style + rule overrides |
+| `detekt.yml` | Compose-friendly detekt rules |
 | `.github/workflows/ci.yml` | CI quality gates workflow |
 | `theme/Theme.kt` | JufkTheme, JufkColors |
 | `ui/components/HeroSection.kt` | Extracted hero component |
