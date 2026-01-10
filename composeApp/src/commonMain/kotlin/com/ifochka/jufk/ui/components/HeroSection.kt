@@ -21,7 +21,7 @@ import com.ifochka.jufk.ui.theme.Dimensions
 
 @Composable
 fun HeroSection(
-    title: String, // Note: The title string is now used for the parts of the hero text
+    @Suppress("unused") title: String, // Reserved for future dynamic title parsing
     subtitle: String,
     modifier: Modifier = Modifier,
 ) {

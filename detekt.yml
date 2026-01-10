@@ -1,10 +1,12 @@
 # Compose-friendly detekt configuration
+# Based on: https://detekt.dev/docs/introduction/compose/
+
 naming:
   FunctionNaming:
     ignoreAnnotated:
       - 'Composable'
-    excludes:
-      - '**/build/**'
+  TopLevelPropertyNaming:
+    constantPattern: '[A-Z][_A-Za-z0-9]*'
 
 complexity:
   LongParameterList:
@@ -16,6 +18,9 @@ complexity:
   CyclomaticComplexMethod:
     ignoreAnnotated:
       - 'Composable'
+  TooManyFunctions:
+    ignoreAnnotatedFunctions:
+      - 'Preview'
 
 style:
   MagicNumber:
