@@ -111,55 +111,38 @@ alias(libs.plugins.ktlint)
 
 #### 3. Create .editorconfig
 
-**In IDE: Right-click project root → New → File → `.editorconfig`**
+**Copy `.editorconfig` from previous project or template:**
 
-Start with basic editor settings:
 ```ini
-# Editor defaults
 root = true
 
 [*]
+charset = utf-8
+end_of_line = lf
 indent_size = 4
 indent_style = space
-end_of_line = lf
-charset = utf-8
-trim_trailing_whitespace = true
 insert_final_newline = true
+max_line_length = 120
+trim_trailing_whitespace = true
 
-# Kotlin + ktlint
 [*.{kt,kts}]
 ktlint_code_style = ktlint_official
 ktlint_function_naming_ignore_when_annotated_with = Composable
+ktlint_standard_multiline-expression-wrapping = disabled
 ```
 
 **Voiceover:**
-> "EditorConfig tells your IDE and ktlint what formatting rules to follow. We start with the basics - 4-space indentation, official Kotlin style. The Composable line is important - it lets us use PascalCase for Composable functions, which is the Compose convention."
+> "I have this editorconfig from my previous projects. It sets up the official Kotlin style with 4-space indentation. The important Compose-specific line allows PascalCase for Composable functions."
 
-#### 4. Run ktlint and Fix Issues
+#### 4. Run ktlint
 
 **In Terminal:**
 ```bash
-# Check for issues
 ./gradlew ktlintCheck
 ```
 
-**If ktlint reports violations you disagree with**, add overrides to `.editorconfig`:
-```ini
-# Disabled rules (too opinionated for our codebase)
-ktlint_standard_multiline-expression-wrapping = disabled
-ktlint_standard_function-signature = disabled
-```
-
 **Voiceover:**
-> "ktlint might flag some things you don't agree with. That's fine - just disable those rules in editorconfig. The rule name is in the error message. Prefix it with `ktlint_standard_` and set it to disabled."
-
-**Auto-fix formatting issues:**
-```bash
-./gradlew ktlintFormat
-```
-
-**Voiceover:**
-> "ktlintFormat automatically fixes most issues. It only changes whitespace and formatting, never logic - so it's safe to run."
+> "Let's run ktlint and make sure our code passes. If there are formatting issues, ktlintFormat can auto-fix them."
 
 ### Deliverable
 
@@ -206,13 +189,16 @@ alias(libs.plugins.detekt)
 
 #### 2. Create detekt.yml Configuration
 
-**Create file `detekt.yml` in project root:**
+**Copy `detekt.yml` from previous project (based on [detekt Compose docs](https://detekt.dev/docs/introduction/compose/)):**
+
 ```yaml
 # Compose-friendly detekt configuration
 naming:
   FunctionNaming:
     ignoreAnnotated:
       - 'Composable'
+  TopLevelPropertyNaming:
+    constantPattern: '[A-Z][_A-Za-z0-9]*'
 
 complexity:
   LongParameterList:
@@ -221,16 +207,26 @@ complexity:
   LongMethod:
     ignoreAnnotated:
       - 'Composable'
+  CyclomaticComplexMethod:
+    ignoreAnnotated:
+      - 'Composable'
+  TooManyFunctions:
+    ignoreAnnotatedFunctions:
+      - 'Preview'
 
 style:
   MagicNumber:
     ignoreAnnotated:
       - 'Composable'
     ignorePropertyDeclaration: true
+    ignoreCompanionObjectPropertyDeclaration: true
+  UnusedPrivateMember:
+    ignoreAnnotated:
+      - 'Preview'
 ```
 
 **Voiceover:**
-> "Detekt's default rules don't know about Compose. Composables often have many parameters and long bodies - that's normal. We tell detekt to ignore these patterns when it sees the @Composable annotation."
+> "I have this detekt config from my previous Compose projects. It's based on the official detekt documentation for Compose. The key is telling detekt to ignore Composable functions for rules like LongMethod and LongParameterList - Composables are naturally longer than regular functions."
 
 #### 3. Configure detekt in build.gradle.kts
 
@@ -240,23 +236,29 @@ configure<io.gitlab.arturbosch.detekt.extensions.DetektExtension> {
     buildUponDefaultConfig = true
     config.setFrom(files("$rootDir/detekt.yml"))
 }
+
+tasks.withType<io.gitlab.arturbosch.detekt.Detekt>().configureEach {
+    exclude { it.file.path.contains("/build/") }
+}
 ```
+
+**Voiceover:**
+> "We point detekt to our config file and exclude the build directory - that's where generated code lives."
 
 #### 4. Run detekt
 
 **In Terminal:**
 ```bash
-# For KMP projects, use the metadata task:
 ./gradlew detektMetadataCommonMain
 ```
 
 **Voiceover:**
-> "For Kotlin Multiplatform, we run detektMetadataCommonMain - this checks the shared commonMain code. The plain 'detekt' task doesn't work for KMP projects."
+> "For Kotlin Multiplatform, we run detektMetadataCommonMain - this checks the shared code in commonMain."
 
 ### Deliverable
 
-- detekt plugin enabled with Compose-friendly config
-- Reports in `build/reports/detekt/`
+- detekt plugin with Compose-friendly config
+- Generated code excluded via Gradle task config
 
 ---
 
