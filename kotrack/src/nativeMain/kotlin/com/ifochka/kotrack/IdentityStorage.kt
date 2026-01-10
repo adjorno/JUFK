@@ -4,15 +4,11 @@ package com.ifochka.kotrack
 
 import io.ktor.utils.io.readText
 import kotlinx.cinterop.ExperimentalForeignApi
-import kotlinx.cinterop.toKString
 import kotlinx.io.Buffer
-import kotlinx.io.Source
 import kotlinx.io.buffered
-import kotlinx.io.files.FileSystem
 import kotlinx.io.files.Path
 import kotlinx.io.files.SystemFileSystem
 import kotlinx.io.files.SystemTemporaryDirectory
-import platform.posix.getenv // Used to get environment variables like HOME
 
 private const val ID_FILENAME = ".jufk_analytics_distinct_id"
 

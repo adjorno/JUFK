@@ -1,0 +1,9 @@
+naming:
+  FunctionNaming:
+    ignoreAnnotated:
+      - 'Composable'
+
+complexity:
+  LongParameterList:
+    ignoreAnnotated:
+      - 'Composable'

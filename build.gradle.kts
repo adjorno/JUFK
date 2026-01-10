@@ -37,9 +37,14 @@ subprojects {
         }
     }
 
+    configure<org.jlleitschuh.gradle.ktlint.KtlintExtension> {
+        filter {
+            exclude { it.file.path.contains("/build/") }
+        }
+    }
+
     configure<io.gitlab.arturbosch.detekt.extensions.DetektExtension> {
         buildUponDefaultConfig = true
-        config.setFrom(files("$rootDir/config/detekt/detekt.yml"))
-        parallel = true
+        config.setFrom(files("$rootDir/detekt.yml"))
     }
 }
