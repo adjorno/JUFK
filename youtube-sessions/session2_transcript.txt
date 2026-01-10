@@ -1,0 +1,339 @@
+[00:00 - 00:04] Let's get to the next iteration.
+[00:04 - 00:07] In the previous one, we achieved quite an ambitious target.
+[00:07 - 00:10] We are in production within quite short period of time,
+[00:10 - 00:13] but I created a few issues which are important to be
+[00:13 - 00:15] addressed as early as possible.
+[00:15 - 00:18] Let's do it now.
+[00:18 - 00:22] When I look at the run to deploy our application,
+[00:22 - 00:25] I see that the build task takes six minutes.
+[00:25 - 00:27] We can do better.
+[00:28 - 00:32] Also, I see that the build system already recommends
+[00:32 - 00:35] to migrate to the new plugin,
+[00:35 - 00:38] and that the Android application plugin will not be compatible
+[00:38 - 00:40] with Multiplot from anymore.
+[00:40 - 00:45] These are the things that we are going to address right now.
+[00:45 - 00:54] Oh, let's fix the type of first and first create the branch.
+[00:54 - 00:57] In order to make our pipeline faster,
+[00:57 - 01:04] we are going to use the GitHub action created by GradleGuys,
+[01:04 - 01:09] which does the magic by magic.
+[01:09 - 01:16] I mean that they cache the Gradle home folder on the agent
+[01:16 - 01:19] and then reuse it in the following runs.
+[01:19 - 01:22] The very first run right now would take the same five, six minutes,
+[01:22 - 01:27] but the following ones would be lightning fast.
+[01:27 - 01:32] Speed, I am speed.
+[01:32 - 01:35] Now, migration of a plugin.
+[01:35 - 01:37] It's a little bit more challenging task,
+[01:37 - 01:40] but I think we can pull it off.
+[01:40 - 01:44] First, let's copy the name of the plugin
+[01:44 - 01:49] and add it to our version catalog.
+[01:49 - 01:52] I will use the Android library,
+[01:52 - 01:58] because I'm not planning to use the Android library in our journey.
+[01:58 - 02:03] So, I need to register on a base Gradle file,
+[02:03 - 02:07] and I need to apply in our Compose application.
+[02:07 - 02:10] I will replace the Android application plugin,
+[02:10 - 02:12] as it says, it's not compatible.
+[02:12 - 02:18] Now, I need to remove all the Android application specific configuration.
+[02:18 - 02:21] I will not delete it because it's still useful,
+[02:21 - 02:26] so I will comment it out.
+[02:26 - 02:31] Still, Compose needs, Gradle needs to know how to build the Android library.
+[02:31 - 02:34] Some configuration is still needed,
+[02:34 - 02:39] and Android target has become Android library in the new plugin.
+[02:39 - 02:41] I think that's it.
+[02:41 - 02:44] We've migrated from the old plugin to the new plugin,
+[02:44 - 02:49] but we've lost Android application target temporarily.
+[02:49 - 02:54] Now, we need to restore it.
+[02:54 - 02:56] I'll do it.
+[02:56 - 02:58] I'll do it.
+[02:58 - 03:01] Up.
+[03:01 - 03:04] JUFK.
+[03:04 - 03:09] Next, we need mapping.
+[03:09 - 03:12] Again.
+[03:12 - 03:15] Now, it says something about target.
+[03:15 - 03:17] Yeah, it's important one.
+[03:17 - 03:20] So, when you have the Android multi-module or application,
+[03:20 - 03:24] it's important to use the same GVM tool chain across different modules,
+[03:24 - 03:26] and we address it.
+[03:26 - 03:32] But first thing first, let me grade the application configuration
+[03:32 - 03:35] from the Compose that we have,
+[03:35 - 03:38] the one that I called useful,
+[03:38 - 03:41] to the newly created one.
+[03:42 - 03:48] And let's bring it to life.
+[03:48 - 03:52] Now, let's address the GVM issue.
+[03:52 - 03:57] JetBrains created nice configuration,
+[03:57 - 04:00] which is called tool chain,
+[04:00 - 04:02] and let's set to 17.
+[04:02 - 04:04] That's it.
+[04:04 - 04:06] Now, we don't need anything.
+[04:06 - 04:08] These things are still useful for very complex configuration,
+[04:08 - 04:10] which is not our case.
+[04:10 - 04:18] And the same will be applied to the library.
+[04:18 - 04:23] Now, both Compose Multiplotron application
+[04:23 - 04:28] and the target of the Android application
+[04:28 - 04:34] would use the same GVM tool chain.
+[04:35 - 04:43] We still would need to add Android resources here explicitly.
+[04:43 - 04:46] I don't know why, this is still a case.
+[04:46 - 04:51] And Android application and Compose Multiplotron application
+[04:51 - 04:54] were using the same dependencies,
+[04:54 - 04:57] and now, since they in separate modules,
+[04:57 - 05:02] we need to add them explicitly, which is Compose.
+[05:05 - 05:16] And dependency to Compose.
+[05:16 - 05:21] And now, we need to link Android target
+[05:21 - 05:24] and Multiplotron target.
+[05:24 - 05:29] Implementation, projects, Compose App.
+[05:30 - 05:36] I think the application module is set
+[05:36 - 05:39] from build configuration perspective.
+[05:39 - 05:43] Now, we need to carefully migrate the sources,
+[05:43 - 05:46] manifest and resources.
+[05:46 - 05:51] First, let's clean everything that we have here.
+[05:51 - 05:53] It's not important.
+[05:53 - 05:55] Also, worst to mention,
+[05:55 - 05:58] in multi-module setup,
+[05:58 - 06:04] namespace should be unique for every module.
+[06:04 - 06:11] So, for Android one, let's call it Up.
+[06:11 - 06:14] And then, yeah, let's have Up.
+[06:14 - 06:21] Now, we need to migrate the source code
+[06:22 - 06:25] from here to here carefully.
+[06:25 - 06:28] If it's existing project,
+[06:28 - 06:31] and you have quite serious git history,
+[06:31 - 06:34] probably you want to keep it there.
+[06:34 - 06:37] So, copy, pasting would not be the best choice.
+[06:37 - 06:40] What I would recommend to use git move.
+[06:40 - 06:42] And this is what I will do.
+[06:42 - 06:45] Okay, git move.
+[06:45 - 06:47] Android manifest.
+[06:47 - 06:50] Copy from root.
+[06:51 - 06:54] And we want in this folder,
+[06:54 - 06:58] copy from root.
+[06:58 - 07:00] But it's here.
+[07:00 - 07:03] The same with respect to resources.
+[07:03 - 07:09] Now, we need to mention the folder explicitly.
+[07:09 - 07:11] It's there.
+[07:11 - 07:16] Now, the last touch, main activity.
+[07:16 - 07:19] Git move.
+[07:19 - 07:20] Main activity.
+[07:20 - 07:23] Copy from root.
+[07:23 - 07:31] To this application folder.
+[07:31 - 07:34] It's here.
+[07:34 - 07:37] The package needs to be changed.
+[07:37 - 07:41] And now, yes, the compose content
+[07:41 - 07:43] is in different package.
+[07:43 - 07:46] So, we need to import it.
+[07:46 - 07:51] And you see, it immediately works.
+[07:51 - 07:53] I think we did a great job.
+[07:53 - 07:58] Let's double check.
+[07:58 - 08:01] Compose application doesn't exist anymore.
+[08:01 - 08:04] We can delete Android.
+[08:04 - 08:07] Let's run it.
+[08:07 - 08:12] I'm going to run on my physical device.
+[08:12 - 08:14] The reason is simple,
+[08:14 - 08:19] because I don't have space anymore on my MacBook.
+[08:19 - 08:20] It compiles.
+[08:20 - 08:21] Great.
+[08:21 - 08:26] Let's commit all the changes.
+[08:26 - 08:27] Nick.
+[08:27 - 08:28] Great.
+[08:28 - 08:29] Two.
+[08:29 - 08:30] New.
+[08:30 - 08:31] Login.
+[08:31 - 08:33] Nice.
+[08:33 - 08:35] One thing.
+[08:35 - 08:39] Every release I promised that there will be something new.
+[08:39 - 08:41] So let's update the content.
+[08:41 - 08:44] But let's address the elephant in the room.
+[08:44 - 08:48] What kind of application it would look like?
+[08:48 - 08:50] I talk with LLM a little bit.
+[08:50 - 08:53] And we've come up with the design.
+[08:53 - 08:57] And the design would look like this.
+[08:57 - 09:00] I think it's okay.
+[09:00 - 09:06] So now, let's implement the part of the header.
+[09:06 - 09:09] In order to do this,
+[09:09 - 09:12] we would need two.
+[09:12 - 09:18] Go to the Compose application.
+[09:18 - 09:19] This one.
+[09:19 - 09:26] And let's remove everything.
+[09:26 - 09:30] We want our application to fill in the whole space.
+[09:30 - 09:38] So it's going to be box.
+[09:38 - 09:40] Modifier.
+[09:40 - 09:41] Mugs.
+[09:41 - 09:46] For now, let's keep the color black.
+[09:46 - 09:49] Maybe it would be something different.
+[09:49 - 09:52] Then, Contain Alignment.
+[09:52 - 09:53] Alignment.
+[09:53 - 09:56] Center.
+[09:56 - 09:58] Yep.
+[09:58 - 10:01] Let's look at this one more time.
+[10:01 - 10:05] I think this is one text widget.
+[10:05 - 10:12] But it will be just annotated because the Kotlin word is not bold.
+[10:12 - 10:16] And it is a bit different color.
+[10:16 - 10:18] Let's try to build this.
+[10:18 - 10:20] Text.
+[10:20 - 10:21] Okay.
+[10:21 - 10:26] Let's build something basic.
+[10:26 - 10:27] Text.
+[10:27 - 10:31] And build annotated string.
+[10:31 - 10:34] And for the base style, it would be.
+[10:34 - 10:35] Okay.
+[10:35 - 10:37] Color white.
+[10:37 - 10:41] The font size.
+[10:41 - 10:42] Yeah.
+[10:42 - 10:45] Font size 72.
+[10:45 - 10:48] I don't know.
+[10:48 - 10:52] Then font weight.
+[10:52 - 10:55] Font weight.
+[10:55 - 10:56] Bold.
+[10:56 - 10:58] Are we there?
+[10:58 - 10:59] Anything else?
+[10:59 - 11:01] We will find out on the fly.
+[11:01 - 11:03] Now, we are building the annotated string.
+[11:03 - 11:07] The first one is.
+[11:07 - 11:09] Just.
+[11:09 - 11:11] Use.
+[11:11 - 11:13] Lovely.
+[11:13 - 11:17] Now, we need to style the Kotlin a little bit.
+[11:17 - 11:22] So we do with style.
+[11:22 - 11:28] And the span style will be.
+[11:28 - 11:35] Oh, oh, oh, oh.
+[11:35 - 11:37] What do we have?
+[11:37 - 11:40] Let's look at this font size.
+[11:40 - 11:43] Font weight.
+[11:43 - 11:46] And the color.
+[11:46 - 11:48] Yeah.
+[11:48 - 11:49] Okay.
+[11:49 - 11:52] Let's do.
+[11:52 - 11:54] Font size.
+[11:54 - 11:58] And the same 72.
+[11:58 - 12:00] Font weight.
+[12:00 - 12:03] It would be.
+[12:03 - 12:05] Font weight.
+[12:05 - 12:06] Normal.
+[12:06 - 12:08] And the color.
+[12:08 - 12:09] It would be.
+[12:09 - 12:10] I don't know.
+[12:10 - 12:13] Let's use the build in.
+[12:13 - 12:17] Color picker.
+[12:17 - 12:19] Preview.
+[12:19 - 12:21] This one.
+[12:21 - 12:26] I need to activate this application.
+[12:26 - 12:28] Comment L.
+[12:28 - 12:32] Window color as a text.
+[12:32 - 12:34] So color.
+[12:34 - 12:35] Copy.
+[12:35 - 12:37] And it should start 0-0.
+[12:37 - 12:39] And it's not transparent.
+[12:39 - 12:40] Yeah.
+[12:40 - 12:42] This one.
+[12:42 - 12:49] Now we append Kotlin.
+[12:49 - 12:54] And after this we append the dot.
+[12:54 - 12:58] And from the new line.
+[12:58 - 13:01] Period dot.
+[13:01 - 13:04] I think this is it.
+[13:04 - 13:08] Let's see how it's going to look like.
+[13:08 - 13:15] Build.
+[13:16 - 13:18] Oh!
+[13:18 - 13:22] Something went not really well.
+[13:22 - 13:25] We need to fix a few things.
+[13:25 - 13:27] First one.
+[13:27 - 13:29] That lines are overlapping.
+[13:29 - 13:34] And that's because we didn't mention it here.
+[13:34 - 13:37] Line 8.
+[13:37 - 13:40] 96 SP.
+[13:40 - 13:44] And another one is the alignment.
+[13:44 - 13:49] So it should be text align.
+[13:49 - 13:54] Text align center.
+[13:54 - 13:58] And probably we want it at the top.
+[13:58 - 14:03] So this is it.
+[14:03 - 14:10] I'm doing it right now in not the most efficient way intentionally.
+[14:10 - 14:17] So then I can show how it should be done faster and better.
+[14:17 - 14:19] We have it.
+[14:19 - 14:20] Yeah.
+[14:20 - 14:25] Let's add new content.
+[14:25 - 14:27] Cool.
+[14:27 - 14:34] I think.
+[14:34 - 14:39] We have the pull request.
+[14:39 - 14:42] Ready to be created.
+[14:42 - 14:47] Let me grade to the new Kampa plugin.
+[14:47 - 14:53] Great pull request.
+[14:53 - 15:03] Squash and merge.
+[15:03 - 15:08] This one still will take five minutes.
+[15:08 - 15:11] But the next one will be faster.
+[15:11 - 15:14] So let's discuss a few things.
+[15:14 - 15:18] Maybe some habits that you notice that I use.
+[15:18 - 15:22] First one is about trunk based development.
+[15:22 - 15:28] Some people would say, you should commit and push directly to the trunk branch.
+[15:28 - 15:31] This is the idiomatic way.
+[15:31 - 15:34] I would not agree.
+[15:34 - 15:43] For me, the main benefit of a trunk based development is that it provides you a single source of truth.
+[15:43 - 15:52] For you, for team members, for product managers, which means like if the team member asks,
+[15:52 - 15:55] what's the command I will build the new feature upfront?
+[15:55 - 15:57] Is it developers master?
+[15:57 - 16:00] Is it some other branch?
+[16:00 - 16:02] The latest commit?
+[16:02 - 16:03] Good to go.
+[16:03 - 16:06] The same with respect of product.
+[16:06 - 16:09] How do we make the release?
+[16:09 - 16:11] When do we make release?
+[16:11 - 16:12] Are we ready?
+[16:12 - 16:13] Are we not?
+[16:13 - 16:18] And the answer is always the latest commit of a trunk branch.
+[16:18 - 16:27] That's why I believe that it should always be clean and high quality.
+[16:27 - 16:36] That is why I would like to perform all the quality checks before I actually push something to the main branch.
+[16:36 - 16:42] This is why I guarded it and I enforced to use the pull request.
+[16:42 - 16:48] If you think that the other approach is better, I don't know.
+[16:48 - 16:50] Provide the feedback.
+[16:50 - 16:51] I will listen to you.
+[16:51 - 16:53] Maybe leave some comments.
+[16:53 - 16:54] It's interesting.
+[16:54 - 17:03] Another thing, probably you saw that I pick my branch names and commits in a free way.
+[17:03 - 17:06] And yes, I do it intentionally.
+[17:06 - 17:15] First thing, I believe that the feature branches are short term to live.
+[17:15 - 17:23] And that means it doesn't really care how I name them if I delete them in a few minutes or in a few hours.
+[17:23 - 17:27] With respect to commits.
+[17:27 - 17:30] Commits, commit names there.
+[17:30 - 17:34] For me, let's look at this.
+[17:34 - 17:38] So first with respect to branches.
+[17:38 - 17:42] We do not need to have a lot of branches.
+[17:42 - 17:43] We have them.
+[17:43 - 17:44] I don't like it.
+[17:44 - 17:46] Let's remove.
+[17:46 - 17:47] Remove.
+[17:47 - 17:50] Probably I missed some settings.
+[17:51 - 17:52] General.
+[17:52 - 17:54] A low rebasing.
+[17:54 - 17:56] Automatically delete head branches.
+[17:56 - 17:57] Yes.
+[17:57 - 17:58] This is it.
+[17:58 - 18:07] And then when it comes to the pull request that we just closed, these commits only for me.
+[18:07 - 18:10] And maybe for the code reviewer.
+[18:10 - 18:18] But for the code reviewer, you could just make really, really small pull request and he would be grateful.
+[18:18 - 18:22] I would say thank you that it's small.
+[18:22 - 18:24] I can review it quite fast.
+[18:24 - 18:30] And thank you that you invited me to share the knowledge of a new change.
+[18:30 - 18:38] That's why I believe that commit messages, branch names, doesn't really matter.
+[18:38 - 18:45] There shouldn't be any strict policy on the naming.
+[18:45 - 18:55] Also, the whole process itself should be like roller coasters, ups and downs.
+[18:55 - 19:01] The very first iteration we deployed something new, but then we created a little bit of tech depth.
+[19:01 - 19:08] Now we addressed the tech depth and we are ready to create something new.
+[19:08 - 19:14] I would say never try to focus on two things in one goal.
+[19:14 - 19:24] Yeah, I will create a new feature and it will be clean and polished from like architecture point of view.
+[19:24 - 19:27] And it would be very beautiful.
+[19:27 - 19:30] I think that's not efficient approach.
+[19:30 - 19:35] First, you build something new, then you validate, then you improve it.
+[19:35 - 19:42] Kind of red green refactor, but at the biggest scale.
+[19:42 - 19:52] Unfortunately, I don't know what to talk about while it's building.
+[19:52 - 19:58] But I hope it will be deployed quite fast.
+[19:58 - 20:05] So before the deployment, our application was looking like this.
+[20:05 - 20:13] Hopefully, now it's going to be finished and being deployed to Cloudflare.
+[20:13 - 20:20] And we will see something new and I would be happy that it actually worked out.
+[20:20 - 20:33] Oh, honestly, these are my first YouTube sessions and I didn't expect that they would be so mentally exhaustive.
+[20:34 - 20:38] I need some time to rest.
+[20:38 - 20:42] We've deployed something which is great.
+[20:42 - 20:46] Let's go.
+[20:46 - 20:50] No, not yet. Maybe some cash.
+[20:50 - 20:57] It should work.
+[20:57 - 21:00] Maybe there is some hardly reload, no?
+[21:00 - 21:10] If you open in Cognito page, just call, sorry.
+[21:10 - 21:13] Yes, we have the new deployment.
+[21:13 - 21:14] That's it.
+[21:14 - 21:19] So let's look at our code history.
+[21:19 - 21:22] Let's make it habit.
+[21:22 - 21:25] Beautiful.
